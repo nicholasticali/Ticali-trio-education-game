@@ -19068,6 +19068,125 @@ function getNonMcQuestions(pack, profileId, count) {
 }
 
 // Get 10 questions: ~50/50 mix of MC and non-MC
+// ═══════════════════════════════════════════════════════════════
+// BANK REGISTRY
+// Packs name their question bank as a string ('CKLA_G3_ROME'), so the bank
+// has to be looked up by name at runtime. Each pack category used to carry
+// its own near-identical lookup block that hand-listed every bank behind a
+// `typeof X !== 'undefined'` guard — eight blocks, and adding one pack meant
+// editing two places and forgetting the second. This is that list, once.
+// ═══════════════════════════════════════════════════════════════
+const BANKS = {
+  BRIDGE_G3_ADDSUB,
+  BRIDGE_G3_FRACTIONS,
+  BRIDGE_G3_FRACTIONS_ADDITIONS,
+  BRIDGE_G3_MEASURE,
+  BRIDGE_G3_MULT,
+  BRIDGE_G3_READING,
+  BRIDGE_G3_READING_ADDITIONS,
+  BRIDGE_G3_WORD,
+  BRIDGE_G5_DECIMALS,
+  BRIDGE_G5_FRACT_OPS,
+  BRIDGE_G5_MULTDIV,
+  BRIDGE_G5_OPS,
+  BRIDGE_G5_READING,
+  BRIDGE_G5_READING_ADDITIONS,
+  BRIDGE_G5_VOLUME,
+  CKLA_G2_CAUSE,
+  CKLA_G2_CIVIL_WAR,
+  CKLA_G2_CYCLES,
+  CKLA_G2_EARLY_ASIA,
+  CKLA_G2_FAIRY_TALES,
+  CKLA_G2_GREECE,
+  CKLA_G2_IMMIGRATION,
+  CKLA_G2_INSECTS,
+  CKLA_G2_MYTHS,
+  CKLA_G2_WAR_1812,
+  CKLA_G2_WAR_1812_ADDITIONS,
+  CKLA_G2_WESTWARD,
+  CKLA_G3_ANIMALS,
+  CKLA_G3_ASTRONOMY,
+  CKLA_G3_HUMAN_BODY,
+  CKLA_G4_EMPIRES,
+  CKLA_G4_GEOLOGY,
+  CKLA_G4_INVENTORS,
+  CKLA_G4_MIDDLE_AGES,
+  CKLA_G4_NARRATIVES,
+  CKLA_G4_NARRATIVES_ADDITIONS,
+  CKLA_G4_POETRY,
+  CKLA_G4_REVOLUTION,
+  CKLA_G4_TREASURE,
+  CKLA_G5_EARLY_AMERICA,
+  CKLA_G5_MIDSUMMER,
+  CKLA_G5_RENAISSANCE,
+  CKLA_K_FIVE_SENSES,
+  CKLA_K_FIVE_SENSES_ADDITIONS,
+  CKLA_K_PLANTS,
+  CKLA_K_PLANTS_ADDITIONS,
+  COUNT_EMOJI,
+  DEC_FRAC,
+  EQUIV_SETS,
+  K_ENDING_SOUNDS,
+  K_SOUND_BLENDING,
+  K_SOUND_SEGMENTATION,
+  MCAP_G2,
+  MCAP_G2_ADDITIONS,
+  MCAP_G3,
+  MCAP_G4,
+  MCAP_G4_ADDITIONS,
+  MCAP_G5,
+  QUEST_G2_READING,
+  QUEST_G3_ADDITIONS,
+  QUEST_G3_READING,
+  QUEST_G4_READING,
+  QUEST_G5_ADDITIONS,
+  QUEST_G5_READING,
+  SCI_G2_EARTH,
+  SCI_G2_ENGINEERING,
+  SCI_G2_HABITATS,
+  SCI_G2_MATERIALS,
+  SCI_G2_PLANTS,
+  SCI_G4_EARTH_FEATURES,
+  SCI_G4_ENERGY,
+  SCI_G4_ENGINEERING,
+  SCI_G4_HAZARDS,
+  SCI_G4_STRUCTURES,
+  SCI_G4_WAVES,
+  SIMPLIFY_CASES,
+  SS_G2,
+  SS_G4,
+  SUBJECT_SECTIONS,
+  TECH_G2_CITIZENSHIP,
+  TECH_G2_CODING,
+  TECH_G2_COMPUTER_SKILLS,
+  TECH_G4_CITIZENSHIP,
+  TECH_G4_CODING,
+  TECH_G4_COMPUTER_SKILLS,
+  THEME_G2_BASEBALL,
+  THEME_G2_WRESTLING,
+  THEME_G4_BASEBALL,
+  THEME_G4_WRESTLING,
+  THEME_K_DOLLS,
+  TROPHIES,
+};
+
+// The property a pack uses to name its bank differs by category for
+// historical reasons; any of these will do.
+const PACK_BANK_KEYS = [
+  'bank', 'cklaBank', 'sciBank', 'techBank', 'ssBank',
+  'healthBank', 'mcapBank', 'themeBank', 'bridgeBank',
+];
+
+// Returns the question array a pack points at, or null when it points at
+// nothing — which happens if a pack names a bank that was never written.
+function resolvePackBank(pack) {
+  for (const key of PACK_BANK_KEYS) {
+    const name = pack[key];
+    if (name && BANKS[name]) return BANKS[name];
+  }
+  return null;
+}
+
 function getQuestions(pack, profileId) {
   // K Bridge packs (kindergarten preview): pull from K_BANKS, already mixed
   if (pack.kBankKey && typeof K_BANKS !== 'undefined' && K_BANKS[pack.kBankKey]) {
@@ -19079,154 +19198,12 @@ function getQuestions(pack, profileId) {
     return [];
   }
 
-  // Bridge packs (G3 preview for G2 profile, G5 preview for G4 profile)
-  if (pack.bridge && pack.bridgeBank) {
-    const bridgeRegistry = {};
-    if (typeof BRIDGE_G3_MULT !== 'undefined') bridgeRegistry.BRIDGE_G3_MULT = BRIDGE_G3_MULT;
-    if (typeof BRIDGE_G3_ADDSUB !== 'undefined') bridgeRegistry.BRIDGE_G3_ADDSUB = BRIDGE_G3_ADDSUB;
-    if (typeof BRIDGE_G3_FRACTIONS !== 'undefined') bridgeRegistry.BRIDGE_G3_FRACTIONS = BRIDGE_G3_FRACTIONS;
-    if (typeof BRIDGE_G3_READING !== 'undefined') bridgeRegistry.BRIDGE_G3_READING = BRIDGE_G3_READING;
-    if (typeof BRIDGE_G3_MEASURE !== 'undefined') bridgeRegistry.BRIDGE_G3_MEASURE = BRIDGE_G3_MEASURE;
-    if (typeof BRIDGE_G5_OPS !== 'undefined') bridgeRegistry.BRIDGE_G5_OPS = BRIDGE_G5_OPS;
-    if (typeof BRIDGE_G3_WORD !== 'undefined') bridgeRegistry.BRIDGE_G3_WORD = BRIDGE_G3_WORD;
-    if (typeof BRIDGE_G5_DECIMALS !== 'undefined') bridgeRegistry.BRIDGE_G5_DECIMALS = BRIDGE_G5_DECIMALS;
-    if (typeof BRIDGE_G5_MULTDIV !== 'undefined') bridgeRegistry.BRIDGE_G5_MULTDIV = BRIDGE_G5_MULTDIV;
-    if (typeof BRIDGE_G5_FRACT_OPS !== 'undefined') bridgeRegistry.BRIDGE_G5_FRACT_OPS = BRIDGE_G5_FRACT_OPS;
-    if (typeof BRIDGE_G5_VOLUME !== 'undefined') bridgeRegistry.BRIDGE_G5_VOLUME = BRIDGE_G5_VOLUME;
-    if (typeof BRIDGE_G5_READING !== 'undefined') bridgeRegistry.BRIDGE_G5_READING = BRIDGE_G5_READING;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.bridgeBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.bridgeBank] : null));
-    const source = fromGlobal || bridgeRegistry[pack.bridgeBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
-  }
-
-  // Science packs: pre-mixed bank, just shuffle and take 10
-  if (pack.science && pack.sciBank) {
-    const sciRegistry = {};
-    if (typeof SCI_G2_PLANTS !== 'undefined') sciRegistry.SCI_G2_PLANTS = SCI_G2_PLANTS;
-    if (typeof SCI_G2_EARTH !== 'undefined') sciRegistry.SCI_G2_EARTH = SCI_G2_EARTH;
-    if (typeof SCI_G2_HABITATS !== 'undefined') sciRegistry.SCI_G2_HABITATS = SCI_G2_HABITATS;
-    if (typeof SCI_G2_MATERIALS !== 'undefined') sciRegistry.SCI_G2_MATERIALS = SCI_G2_MATERIALS;
-    if (typeof SCI_G4_ENERGY !== 'undefined') sciRegistry.SCI_G4_ENERGY = SCI_G4_ENERGY;
-    if (typeof SCI_G4_STRUCTURES !== 'undefined') sciRegistry.SCI_G4_STRUCTURES = SCI_G4_STRUCTURES;
-    if (typeof SCI_G4_WAVES !== 'undefined') sciRegistry.SCI_G4_WAVES = SCI_G4_WAVES;
-    if (typeof SCI_G4_EARTH_FEATURES !== 'undefined') sciRegistry.SCI_G4_EARTH_FEATURES = SCI_G4_EARTH_FEATURES;
-    if (typeof SCI_G2_ENGINEERING !== 'undefined') sciRegistry.SCI_G2_ENGINEERING = SCI_G2_ENGINEERING;
-    if (typeof SCI_G4_HAZARDS !== 'undefined') sciRegistry.SCI_G4_HAZARDS = SCI_G4_HAZARDS;
-    if (typeof SCI_G4_ENGINEERING !== 'undefined') sciRegistry.SCI_G4_ENGINEERING = SCI_G4_ENGINEERING;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.sciBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.sciBank] : null));
-    const source = fromGlobal || sciRegistry[pack.sciBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
-  }
-
-  // Tech packs: pre-mixed bank, just shuffle and take 10
-  if (pack.tech && pack.techBank) {
-    const techRegistry = {};
-    if (typeof TECH_G2_CITIZENSHIP !== 'undefined') techRegistry.TECH_G2_CITIZENSHIP = TECH_G2_CITIZENSHIP;
-    if (typeof TECH_G2_COMPUTER_SKILLS !== 'undefined') techRegistry.TECH_G2_COMPUTER_SKILLS = TECH_G2_COMPUTER_SKILLS;
-    if (typeof TECH_G2_CODING !== 'undefined') techRegistry.TECH_G2_CODING = TECH_G2_CODING;
-    if (typeof TECH_G4_CITIZENSHIP !== 'undefined') techRegistry.TECH_G4_CITIZENSHIP = TECH_G4_CITIZENSHIP;
-    if (typeof TECH_G4_COMPUTER_SKILLS !== 'undefined') techRegistry.TECH_G4_COMPUTER_SKILLS = TECH_G4_COMPUTER_SKILLS;
-    if (typeof TECH_G4_CODING !== 'undefined') techRegistry.TECH_G4_CODING = TECH_G4_CODING;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.techBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.techBank] : null));
-    const source = fromGlobal || techRegistry[pack.techBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
-  }
-
-  // Social Studies packs: pre-mixed bank, just shuffle and take 10
-  if (pack.ss && pack.ssBank) {
-    const ssRegistry = {};
-    if (typeof SS_G2 !== 'undefined') ssRegistry.SS_G2 = SS_G2;
-    if (typeof SS_G4 !== 'undefined') ssRegistry.SS_G4 = SS_G4;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.ssBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.ssBank] : null));
-    const source = fromGlobal || ssRegistry[pack.ssBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
-  }
-
-  // MCAP test prep packs: pre-mixed bank, just shuffle and take 10
-  if (pack.mcap && pack.mcapBank) {
-    const mcapRegistry = {};
-    if (typeof MCAP_G2 !== 'undefined') mcapRegistry.MCAP_G2 = MCAP_G2;
-    if (typeof MCAP_G4 !== 'undefined') mcapRegistry.MCAP_G4 = MCAP_G4;
-    if (typeof MCAP_G3 !== 'undefined') mcapRegistry.MCAP_G3 = MCAP_G3;
-    if (typeof MCAP_G5 !== 'undefined') mcapRegistry.MCAP_G5 = MCAP_G5;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.mcapBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.mcapBank] : null));
-    const source = fromGlobal || mcapRegistry[pack.mcapBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
-  }
-
-  // Summer Bridge packs (G2→G3 and G4→G5): pre-mixed bank, shuffle, take 10
-  if (pack.bridge && pack.bridgeBank) {
-    const bridgeRegistry = {};
-    if (typeof BRIDGE_G3_ADDSUB !== 'undefined') bridgeRegistry.BRIDGE_G3_ADDSUB = BRIDGE_G3_ADDSUB;
-    if (typeof BRIDGE_G3_MULT !== 'undefined') bridgeRegistry.BRIDGE_G3_MULT = BRIDGE_G3_MULT;
-    if (typeof BRIDGE_G3_FRACTIONS !== 'undefined') bridgeRegistry.BRIDGE_G3_FRACTIONS = BRIDGE_G3_FRACTIONS;
-    if (typeof BRIDGE_G3_WORD !== 'undefined') bridgeRegistry.BRIDGE_G3_WORD = BRIDGE_G3_WORD;
-    if (typeof BRIDGE_G3_READING !== 'undefined') bridgeRegistry.BRIDGE_G3_READING = BRIDGE_G3_READING;
-    if (typeof BRIDGE_G3_MEASURE !== 'undefined') bridgeRegistry.BRIDGE_G3_MEASURE = BRIDGE_G3_MEASURE;
-    if (typeof BRIDGE_G5_OPS !== 'undefined') bridgeRegistry.BRIDGE_G5_OPS = BRIDGE_G5_OPS;
-    if (typeof BRIDGE_G5_MULTDIV !== 'undefined') bridgeRegistry.BRIDGE_G5_MULTDIV = BRIDGE_G5_MULTDIV;
-    if (typeof BRIDGE_G5_DECIMALS !== 'undefined') bridgeRegistry.BRIDGE_G5_DECIMALS = BRIDGE_G5_DECIMALS;
-    if (typeof BRIDGE_G5_FRACT_OPS !== 'undefined') bridgeRegistry.BRIDGE_G5_FRACT_OPS = BRIDGE_G5_FRACT_OPS;
-    if (typeof BRIDGE_G5_VOLUME !== 'undefined') bridgeRegistry.BRIDGE_G5_VOLUME = BRIDGE_G5_VOLUME;
-    if (typeof BRIDGE_G5_READING !== 'undefined') bridgeRegistry.BRIDGE_G5_READING = BRIDGE_G5_READING;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.bridgeBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.bridgeBank] : null));
-    const source = fromGlobal || bridgeRegistry[pack.bridgeBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
-  }
-
-  // Themed packs (Baseball, Wrestling, Dolls): pre-mixed bank, shuffle, take 10
-  if (pack.theme && pack.themeBank) {
-    const themeRegistry = {};
-    if (typeof THEME_G2_BASEBALL !== 'undefined') themeRegistry.THEME_G2_BASEBALL = THEME_G2_BASEBALL;
-    if (typeof THEME_G4_BASEBALL !== 'undefined') themeRegistry.THEME_G4_BASEBALL = THEME_G4_BASEBALL;
-    if (typeof THEME_G2_WRESTLING !== 'undefined') themeRegistry.THEME_G2_WRESTLING = THEME_G2_WRESTLING;
-    if (typeof THEME_G4_WRESTLING !== 'undefined') themeRegistry.THEME_G4_WRESTLING = THEME_G4_WRESTLING;
-    if (typeof THEME_K_DOLLS !== 'undefined') themeRegistry.THEME_K_DOLLS = THEME_K_DOLLS;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.themeBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.themeBank] : null));
-    const source = fromGlobal || themeRegistry[pack.themeBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
-  }
-
-  // Reading Quest packs: banks are PASSAGE SETS. Unlike other packs, the
-  // questions from one passage stay GROUPED and IN ORDER — the kid reads
-  // the passage once and answers its questions in sequence, like a real
-  // reading test. We shuffle which sets appear, not the questions within.
+  // Reading Quest packs: banks are PASSAGE SETS. Unlike every other pack, the
+  // questions from one passage stay GROUPED and IN ORDER — the child reads the
+  // passage once and answers its questions in sequence, like a real reading
+  // test. We shuffle which sets appear, not the questions within one.
   if (pack.quest && pack.questBank) {
-    const questRegistry = {};
-    if (typeof QUEST_G2_READING !== 'undefined') questRegistry.QUEST_G2_READING = QUEST_G2_READING;
-    if (typeof QUEST_G3_READING !== 'undefined') questRegistry.QUEST_G3_READING = QUEST_G3_READING;
-    if (typeof QUEST_G4_READING !== 'undefined') questRegistry.QUEST_G4_READING = QUEST_G4_READING;
-    if (typeof QUEST_G5_READING !== 'undefined') questRegistry.QUEST_G5_READING = QUEST_G5_READING;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.questBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.questBank] : null));
-    const source = fromGlobal || questRegistry[pack.questBank];
+    const source = BANKS[pack.questBank];
     if (source && source.length > 0) {
       const sets = shuffleArr(source);
       const out = [];
@@ -19234,7 +19211,6 @@ function getQuestions(pack, profileId) {
         if (out.length >= 10) break;
         for (const q of set.questions) {
           if (out.length >= 10) break;
-          // Attach the set's passage to each question; shuffle MC answers
           const withPassage = Object.assign({}, q, { passage: set.passage });
           out.push(withPassage.type === 'mc' ? shuffleMcAnswers(withPassage) : withPassage);
         }
@@ -19244,45 +19220,15 @@ function getQuestions(pack, profileId) {
     return [];
   }
 
-  // CKLA packs: pre-mixed question types in one bank, just shuffle and take 10
-  if (pack.ckla && pack.cklaBank) {
-    // Registry maps bank name → variable. Add new domains here as they're built.
-    const cklaRegistry = {};
-    if (typeof CKLA_G3_HUMAN_BODY !== 'undefined') cklaRegistry.CKLA_G3_HUMAN_BODY = CKLA_G3_HUMAN_BODY;
-    if (typeof CKLA_G3_ASTRONOMY !== 'undefined') cklaRegistry.CKLA_G3_ASTRONOMY = CKLA_G3_ASTRONOMY;
-    if (typeof CKLA_G3_ANIMALS !== 'undefined') cklaRegistry.CKLA_G3_ANIMALS = CKLA_G3_ANIMALS;
-    if (typeof CKLA_G5_EARLY_AMERICA !== 'undefined') cklaRegistry.CKLA_G5_EARLY_AMERICA = CKLA_G5_EARLY_AMERICA;
-    if (typeof CKLA_G5_RENAISSANCE !== 'undefined') cklaRegistry.CKLA_G5_RENAISSANCE = CKLA_G5_RENAISSANCE;
-    if (typeof CKLA_G5_MIDSUMMER !== 'undefined') cklaRegistry.CKLA_G5_MIDSUMMER = CKLA_G5_MIDSUMMER;
-    if (typeof CKLA_G4_GEOLOGY !== 'undefined') cklaRegistry.CKLA_G4_GEOLOGY = CKLA_G4_GEOLOGY;
-    if (typeof CKLA_G4_MIDDLE_AGES !== 'undefined') cklaRegistry.CKLA_G4_MIDDLE_AGES = CKLA_G4_MIDDLE_AGES;
-    if (typeof CKLA_G2_FAIRY_TALES !== 'undefined') cklaRegistry.CKLA_G2_FAIRY_TALES = CKLA_G2_FAIRY_TALES;
-    if (typeof CKLA_G2_INSECTS !== 'undefined') cklaRegistry.CKLA_G2_INSECTS = CKLA_G2_INSECTS;
-    if (typeof CKLA_K_FIVE_SENSES !== 'undefined') cklaRegistry.CKLA_K_FIVE_SENSES = CKLA_K_FIVE_SENSES;
-    if (typeof CKLA_K_PLANTS !== 'undefined') cklaRegistry.CKLA_K_PLANTS = CKLA_K_PLANTS;
-    if (typeof CKLA_G4_REVOLUTION !== 'undefined') cklaRegistry.CKLA_G4_REVOLUTION = CKLA_G4_REVOLUTION;
-    if (typeof CKLA_G4_INVENTORS !== 'undefined') cklaRegistry.CKLA_G4_INVENTORS = CKLA_G4_INVENTORS;
-    if (typeof CKLA_G2_CYCLES !== 'undefined') cklaRegistry.CKLA_G2_CYCLES = CKLA_G2_CYCLES;
-    if (typeof CKLA_G2_CIVIL_WAR !== 'undefined') cklaRegistry.CKLA_G2_CIVIL_WAR = CKLA_G2_CIVIL_WAR;
-    if (typeof CKLA_G2_WAR_1812 !== 'undefined') cklaRegistry.CKLA_G2_WAR_1812 = CKLA_G2_WAR_1812;
-    if (typeof CKLA_G2_WESTWARD !== 'undefined') cklaRegistry.CKLA_G2_WESTWARD = CKLA_G2_WESTWARD;
-    if (typeof CKLA_G2_EARLY_ASIA !== 'undefined') cklaRegistry.CKLA_G2_EARLY_ASIA = CKLA_G2_EARLY_ASIA;
-    if (typeof CKLA_G4_EMPIRES !== 'undefined') cklaRegistry.CKLA_G4_EMPIRES = CKLA_G4_EMPIRES;
-    if (typeof CKLA_G2_GREECE !== 'undefined') cklaRegistry.CKLA_G2_GREECE = CKLA_G2_GREECE;
-    if (typeof CKLA_G2_IMMIGRATION !== 'undefined') cklaRegistry.CKLA_G2_IMMIGRATION = CKLA_G2_IMMIGRATION;
-    if (typeof CKLA_G2_CAUSE !== 'undefined') cklaRegistry.CKLA_G2_CAUSE = CKLA_G2_CAUSE;
-    if (typeof CKLA_G4_NARRATIVES !== 'undefined') cklaRegistry.CKLA_G4_NARRATIVES = CKLA_G4_NARRATIVES;
-    if (typeof CKLA_G2_MYTHS !== 'undefined') cklaRegistry.CKLA_G2_MYTHS = CKLA_G2_MYTHS;
-    if (typeof CKLA_G4_POETRY !== 'undefined') cklaRegistry.CKLA_G4_POETRY = CKLA_G4_POETRY;
-    if (typeof CKLA_G4_TREASURE !== 'undefined') cklaRegistry.CKLA_G4_TREASURE = CKLA_G4_TREASURE;
-    const fromGlobal = (typeof window !== 'undefined' ? window[pack.cklaBank] : (typeof globalThis !== 'undefined' ? globalThis[pack.cklaBank] : null));
-    const source = fromGlobal || cklaRegistry[pack.cklaBank];
-    if (source && source.length > 0) {
-      const picked = shuffleArr(source).slice(0, 10);
-      // Shuffle MC answer positions for variety on replay
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
-    }
-    return [];
+  // Every other pre-mixed bank — CKLA, science, social studies, health, tech,
+  // state test prep, themed, and grade-level bridge packs — is a flat array of
+  // ready-made questions. Shuffle, take ten, and re-order each multiple
+  // choice's options so a replay is not the same four positions.
+  const preMixed = resolvePackBank(pack);
+  if (preMixed) {
+    if (!preMixed.length) return [];
+    const picked = shuffleArr(preMixed).slice(0, 10);
+    return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
   }
 
   const totalNeeded = 10;
