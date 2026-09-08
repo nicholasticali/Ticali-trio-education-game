@@ -1,0 +1,13 @@
+{
+  "name": "ticali-trio-tools",
+  "private": true,
+  "description": "Checks for the Ticali Trio app. Run `npm install`, then `node packcheck.js` and `node smoke.js`.",
+  "scripts": {
+    "check": "node packcheck.js",
+    "smoke": "node smoke.js",
+    "screens": "node screens.js"
+  },
+  "dependencies": {
+    "playwright": "^1.49.1"
+  }
+}
