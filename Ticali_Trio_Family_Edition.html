@@ -19080,6 +19080,17 @@ const MISA_SCIENCE_PACKS = new Set([
   'g4_sci_earth', 'g4_sci_hazards', 'g4_sci_eng',
 ]);
 
+// These six per grade were written as previews — one broad, shallow pack per
+// strand, for a child looking ahead from the grade below. This year each of
+// those strands is covered properly by several packs of its own, so as
+// current-grade material they are duplicates with vaguer titles. They are
+// still perfectly good questions and a gentler way in, so they keep their
+// place under a heading that says what they now are.
+const WARMUP_PACKS = new Set([
+  'g3_mult', 'g3_addsub', 'g3_fractions', 'g3_reading', 'g3_measure', 'g3_word',
+  'g5_decimals', 'g5_multdiv', 'g5_fract_ops', 'g5_volume', 'g5_reading', 'g5_ops',
+]);
+
 // Those same packs were titled "G3: Fractions" and described as "G3: parts
 // of a whole" because they sat in a preview section. Under a heading that
 // already reads 3RD GRADE — MY GRADE THIS YEAR, the prefix is just noise
@@ -19091,6 +19102,7 @@ const GRADE_PREFIX = /^(?:PRE-?K|K|G[1-6]|GRADE\s*[1-6])\s*(?:CKLA)?\s*:\s*/i;
 Object.entries(PACKS).forEach(([profileId, list]) => list.forEach(pk => {
   pk.tier = TIER_ALIASES[pk.tier] || pk.tier || 'review';
   if (profileId === 'g5' && MISA_SCIENCE_PACKS.has(pk.id)) pk.tier = 'misa';
+  if (WARMUP_PACKS.has(pk.id)) pk.tier = 'warmup';
   if (pk.tier === 'now') {
     const stripped = pk.title.replace(GRADE_PREFIX, '');
     // "G3 CKLA: Human Body" should keep the CKLA, which names the reading
@@ -35278,6 +35290,7 @@ function renderHub() {
     if (pk.tier === 'review') badge = `<div class="pack-badge">📦 REVIEW</div>`;
     if (pk.tier === 'ahead') badge = `<div class="pack-badge bridge-badge">🚀 NEXT YEAR</div>`;
     if (pk.tier === 'misa') badge = `<div class="pack-badge k-badge">🔬 ON MISA</div>`;
+    if (pk.tier === 'warmup') badge = `<div class="pack-badge">🌤️ WARM-UP</div>`;
     if (done && done.best === 10) badge = `<div class="pack-badge star">★ ACED</div>`;
     else if (done) badge = `<div class="pack-badge">BEST ${done.best}/10</div>`;
     const roundText = rounds > 0 ? `<span class="round-counter">R${rounds}</span>` : '';
@@ -35301,6 +35314,7 @@ function renderHub() {
   // actually asking. Last year's work stays available underneath as
   // retrieval practice, and next year's sits at the bottom.
   const nowPacks    = packs.filter(pk => pk.tier === 'now');
+  const warmupPacks = packs.filter(pk => pk.tier === 'warmup');
   const misaPacks   = packs.filter(pk => pk.tier === 'misa');
   const reviewPacks = packs.filter(pk => pk.tier === 'review');
   const aheadPacks  = packs.filter(pk => pk.tier === 'ahead');
@@ -35326,6 +35340,13 @@ function renderHub() {
     const known = new Set(SUBJECT_SECTIONS.map(sc => sc.key));
     const leftovers = nowPacks.filter(pk => !known.has(pk.subject));
     if (leftovers.length) packsHtml += `<div class="section-head sub-head">✨ MORE</div>` + grid(leftovers);
+  }
+
+  if (warmupPacks.length) {
+    packsHtml += `
+      <div class="section-head">🌤️ WARM-UPS — SAME TOPICS, GENTLER</div>
+      <p class="section-tagline">Broader and easier than the packs above. A good place to start if one of them is fighting you.</p>
+    ` + grid(warmupPacks);
   }
 
   if (misaPacks.length) {
