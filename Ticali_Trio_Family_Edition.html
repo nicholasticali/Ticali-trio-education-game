@@ -31344,12 +31344,34 @@ function renderParentDash() {
   const pset = state.parent || { reportRequired: true };
   render(`
     <div class="parent-dash">
-      <h2>📊 Parent Dashboard — v3 Mixed Mode</h2>
-      <p>50/50 MC + non-MC questions. Review the kids' paper-and-pencil work below.</p>
+      <h2>📊 Parent Dashboard</h2>
+      <p>School year 2026-2027 · Kindergarten, 3rd and 5th grade · Anne Arundel County</p>
+
+      <div class="kid-block" style="border-color:var(--gold);">
+        <h3>📚 What this is aligned to</h3>
+        <p style="font-size:0.9rem;line-height:1.55;">
+          Questions are written to what AACPS teaches: <strong>Amplify CKLA</strong> for
+          reading (the packs match the real unit sequence for each grade),
+          <strong>Reveal Math</strong> for math, <strong>NGSS</strong> for science, and the
+          Maryland social studies standards. Every pack mixes multiple choice, true/false,
+          typed answers and show-your-work.
+        </p>
+        <p style="font-size:0.85rem;line-height:1.55;color:var(--muted);margin-top:0.75rem;">
+          <strong>Worth knowing:</strong> the research behind this could reach search
+          results but not the source documents themselves. The CKLA unit lists, the fact
+          that 5th grade science testing covers grades 3-5, and the 5th grade social
+          studies sequence all checked out. Maryland's revised 2025 math standards were
+          reported but the specific standard codes did not survive checking — so no
+          question here cites a standard code at all. They are written to the content.
+          Nothing specific to AACPS for 2026-2027 (new adoptions, calendar, marking
+          periods) could be researched. Full detail is in CURRICULUM-NOTES.md alongside
+          this file.
+        </p>
+      </div>
 
       <div class="kid-block" style="border-color:var(--gold);">
         <h3>📮 Round Reports</h3>
-        <p style="font-size:0.85rem;">This is the FAMILY EDITION — round reports are disabled and no contact info is stored in this file. Kids' progress still tracks on the 📈 PROGRESS page on each profile's hub.</p>
+        <p style="font-size:0.85rem;">This is the FAMILY EDITION — round reports are disabled and no contact info is stored in this file. Each child's progress tracks on the 📈 PROGRESS page on their own hub.</p>
       </div>
 
       ${blocks}
