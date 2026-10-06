@@ -7,7 +7,7 @@ drawn from the work their school is actually doing this year.
 No install, no server, no account, no network. Progress lives in the browser's
 local storage on that device.
 
-    ticali-trio/Ticali_Trio_Family_Edition.html
+    Ticali_Trio_Family_Edition.html
 
 Put it in iCloud Drive or email it to the iPad, open it in Safari, then
 **Share ▸ Add to Home Screen** and it gets a real app tile and runs full-screen.
