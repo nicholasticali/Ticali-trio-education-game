@@ -1729,13 +1729,14 @@
     border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
     font-weight: 700; font-size: 1.05rem; cursor: pointer;
   }
-  .order-item .voice-btn-sm { background: white; }
   .profile-k .order-item, .profile-k .order-slot { font-size: 1.35rem; }
-  /* Her pieces carry a 🔊. Wide enough that it sits at the right edge, never
-     in the middle: tapping the middle of a short piece ("13", "A") must
-     place it, not read it. */
-  .profile-k .order-item { min-width: 10rem; }
-  .profile-k .order-item-text { flex: 1; text-align: center; }
+  /* The kindergartener's 🔊 for a piece sits BESIDE the piece, not inside
+     it. Inside a short piece ("13", "A") it was a few pixels from the
+     middle, and touchscreens steer a fingertip toward the smaller button
+     under it, so tapping the piece read it instead of placing it. */
+  .order-pick { display: inline-flex; align-items: center; gap: 0.6rem; }
+  .order-pick .voice-btn-sm { background: white; flex: none; margin-left: 0; }
+  .profile-k .order-item { min-width: 5.5rem; justify-content: center; }
 
   /* ─── SORT IT ─── */
   .sort-list { display: grid; gap: 0.6rem; margin-bottom: 0.25rem; }
@@ -36968,10 +36969,14 @@ function orderWidgetHtml(q) {
       </div>`;
   }).join('');
   const pool = q._shuffle.filter(i => !s.slots.includes(i));
-  const poolHtml = pool.map(i => `
+  const pieceHtml = i => `
       <div class="order-item" role="button" tabindex="0" onclick="orderPlace(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();orderPlace(${i})}">
-        <span class="order-item-text">${q.items[i]}</span>${isK() ? speakBtn(q.items[i], false) : ''}
-      </div>`).join('');
+        <span class="order-item-text">${q.items[i]}</span>
+      </div>`;
+  // The kindergartener hears a piece from a 🔊 beside it, never inside it.
+  const poolHtml = pool.map(i => isK()
+    ? `<div class="order-pick">${pieceHtml(i)}${speakBtn(q.items[i], false)}</div>`
+    : pieceHtml(i)).join('');
   const full = !s.slots.includes(null);
   return `
     <div class="order-slots">${slots}</div>

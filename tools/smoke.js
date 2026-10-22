@@ -106,8 +106,10 @@ async function answerQuestion(page, missFirst) {
     for (let pos = 0; pos < slots; pos++) {
       const locked = await page.locator('.order-slot').nth(pos).evaluate(el => el.classList.contains('locked') || el.classList.contains('filled'));
       if (locked) continue;
-      const want = missFirst ? q.items[q.shuffle[pos]] : q.items[pos];
-      const item = page.locator('.order-item', { hasText: want }).first();
+      // Piece i belongs in spot i. Find it by its handler, not its text:
+      // a text match for "1" would also find "11".
+      const want = missFirst ? q.shuffle[pos] : pos;
+      const item = page.locator(`.order-item[onclick="orderPlace(${want})"]`);
       if (await item.count()) await item.click(); else await page.locator('.order-item').first().click();
     }
     await page.locator('.puzzle-check').click();
