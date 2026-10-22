@@ -69,7 +69,9 @@ async function answer(page, how) {
       return page.keyboard.press('Enter');
     }
     for (const ch of value.replace(/ /g, '')) {
-      await press(page, how, page.locator('.numpad-key', { hasText: new RegExp('^\\' + ch + '$') }).first());
+      // Escape only symbols: \5 in a regex means character code 5, not the digit 5.
+      const pat = new RegExp('^' + ch.replace(/[.*+?^${}()|[\]\\/$]/g, '\\$&') + '$');
+      await press(page, how, page.locator('.numpad-key', { hasText: pat }).first());
     }
     return press(page, how, page.locator('.typed-submit'));
   }
