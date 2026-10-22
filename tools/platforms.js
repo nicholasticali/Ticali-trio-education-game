@@ -171,30 +171,61 @@ async function answer(page, how) {
     });
     audit.small.forEach(s => failures.push(`[${dev.name}] small target ${s}`));
     audit.unreachable.forEach(u => failures.push(`[${dev.name}] clickable but not keyboard-reachable: .${u}`));
-    // The kindergartener's answers carry a 🔊. A tap on the middle of any
-    // answer must land on the answer itself, never on its speaker.
+    // The kindergartener's answers carry a 🔊. A tap on an answer must choose
+    // it, never read it. A mouse lands exactly where it points, so checking
+    // what is under the middle is enough. A finger does not: touchscreens
+    // steer a fingertip toward a smaller button nearby, so on touch devices
+    // every puzzle answer gets a real tap, middle and right of middle.
     await page.goto(APP); await page.waitForTimeout(250);
-    const onSpeaker = await page.evaluate(() => {
-      pickProfile('k');
-      const hits = new Set();
+    const readInstead = new Set();
+    await page.evaluate(() => {
+      pickProfile('k'); state.profiles.k.autoRead = false;
+      window.__hit = null;
+      for (const fn of ['pickMc', 'pickTf', 'multiToggle', 'pickPart', 'orderPlace']) window[fn] = () => { __hit = 'chose'; };
+      window.speakText = (t, evt) => { __hit = 'read'; if (evt) { evt.stopPropagation(); if (evt.cancelable) evt.preventDefault(); } };
+    });
+    const cases = await page.evaluate(() => {
+      const out = [];
       for (const pk of PACKS.k) {
-        startPack(pk.id);
-        const go = document.querySelector('.briefing-go'); if (go) go.click();
-        for (const q of (THINK_ITEMS[pk.id] || []).concat(getQuestions(pk, pk.home || 'k').slice(0, 3))) {
-          questions = [prepareQuestion(JSON.parse(JSON.stringify(q)))]; qIdx = 0; renderQuestion();
-          for (const el of document.querySelectorAll('.order-item, .choice, .tf-btn')) {
-            el.scrollIntoView({ block: 'center' });
-            const r = el.getBoundingClientRect();
-            const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-            if (at && at.closest('.js-speak')) hits.add(`${pk.id} ${q.type || 'mc'} "${el.textContent.trim().slice(0, 20)}"`);
-          }
+        (THINK_ITEMS[pk.id] || []).forEach((q, i) => out.push([pk.id, 'think', i]));
+        for (let i = 0; i < 2; i++) out.push([pk.id, 'bank', i]);
+      }
+      return out;
+    });
+    for (const [pk, src, i] of cases) {
+      const n = await page.evaluate(([pk, src, i]) => {
+        currentPack = PACKS.k.find(x => x.id === pk);
+        const q = src === 'think' ? THINK_ITEMS[pk][i] : getQuestions(currentPack, 'k')[i];
+        if (!q || q.type === 'sort') return 0;
+        questions = [prepareQuestion(JSON.parse(JSON.stringify(q)))]; qIdx = 0; renderQuestion();
+        return document.querySelectorAll('.order-item, .choice, .tf-btn').length;
+      }, [pk, src, i]);
+      if (!n) continue;
+      if (dev.how !== 'tap') {
+        const hits = await page.evaluate(() => [...document.querySelectorAll('.order-item, .choice, .tf-btn')].filter(el => {
+          el.scrollIntoView({ block: 'center' });
+          const r = el.getBoundingClientRect();
+          const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+          return at && at.closest('.js-speak');
+        }).map(el => el.textContent.trim().slice(0, 20)));
+        hits.forEach(h => readInstead.add(`${pk} "${h}"`));
+        continue;
+      }
+      if (src === 'bank') continue;   // real taps on the puzzles; bank answers are full-width cards
+      await page.waitForFunction(() => document.getAnimations().every(a => a.playState !== 'running'));
+      for (let c = 0; c < n; c++) {
+        const loc = page.locator('.order-item, .choice, .tf-btn').nth(c);
+        await loc.scrollIntoViewIfNeeded();
+        const box = await loc.boundingBox();
+        for (const f of [0.5, 0.7]) {
+          await page.evaluate(() => { __hit = null; });
+          await page.touchscreen.tap(box.x + box.width * f, box.y + box.height / 2);
+          if ((await page.evaluate(() => __hit)) !== 'chose') readInstead.add(`${pk} "${(await loc.textContent()).trim().slice(0, 20)}" tapped ${f * 100}% across`);
         }
       }
-      exitToHub();
-      return [...hits];
-    });
-    onSpeaker.slice(0, 6).forEach(h => failures.push(`[${dev.name}] tapping the middle of an answer reads it instead of choosing it: ${h}`));
-    if (onSpeaker.length > 6) failures.push(`[${dev.name}] ...and ${onSpeaker.length - 6} more answers like that`);
+    }
+    [...readInstead].slice(0, 6).forEach(h => failures.push(`[${dev.name}] tapping an answer reads it (or does nothing) instead of choosing it: ${h}`));
+    if (readInstead.size > 6) failures.push(`[${dev.name}] ...and ${readInstead.size - 6} more answers like that`);
     errors.forEach(e => failures.push(`[${dev.name}] JS error: ${e}`));
     await ctx.close();
   }
