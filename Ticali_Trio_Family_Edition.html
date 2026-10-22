@@ -1899,6 +1899,31 @@
   @media (max-width: 480px) { .fun-zone { grid-template-columns: 1fr 1fr; gap: 0.75rem; } .fun-card { min-height: 100px; padding: 0.75rem; } }
   @media (max-width: 360px) { .fun-zone { grid-template-columns: 1fr; } }
 
+
+  /* ─── Explore any grade ─── */
+  .grade-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.85rem; margin-bottom: 2rem; }
+  .grade-chip {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem;
+    min-height: 92px; padding: 0.8rem 0.9rem; text-align: left;
+    background: white; color: var(--ink); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+    cursor: pointer; font: inherit;
+  }
+  .grade-chip.mine { background: var(--user-color); color: white; }
+  .grade-chip-icon { font-size: 1.6rem; line-height: 1; }
+  .grade-chip-label { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.9rem; }
+  .grade-chip-count { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.7rem; letter-spacing: 1px; opacity: 0.85; }
+  .grade-chip:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+  @media (hover: hover) and (pointer: fine) {
+  .grade-chip:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+  .grade-door:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+  }
+  .grade-door {
+    display: block; width: 100%; margin: -0.5rem 0 2rem; min-height: 56px;
+    background: var(--bg-deep); color: var(--ink); border: 3px dashed var(--ink);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.9rem; letter-spacing: 1px; cursor: pointer;
+  }
+  @media (max-width: 480px) { .grade-chips { grid-template-columns: 1fr 1fr; } }
+
   /* ═══ FUN MODULE STYLES ═══ */
 
   /* ═══════════════════════════════════════════════════════════════
@@ -1942,7 +1967,7 @@
   .parent-link, .summer-toggle, .tut-ctrl-btn, .tut-close, .tut-skip-btn,
   .tut-step-dot, .scratch-color, .scratch-clear, .scratch-close,
   .report-send-btn, .reset-btn, .rev-ok, .rev-no, .autoread-btn,
-  .scratch-btn, .numpad-key, .js-speak, .order-item, .order-slot, .sort-btn, label {
+  .scratch-btn, .numpad-key, .js-speak, .order-item, .order-slot, .sort-btn, .grade-chip, .grade-door, label {
     touch-action: manipulation;
     -webkit-touch-callout: none;
   }
@@ -19673,6 +19698,62 @@ Object.keys(PACKS).forEach(pid => PACKS[pid].push({
   desc:'Puzzles from every subject: put it in order, sort it, prove it.',
 }));
 
+// ═══════════════════════════════════════════════════════════════
+// EVERY GRADE, K-5
+// Each child's hub shows their own year, but every grade's packs stay
+// playable from the Explore Any Grade library: last year's for review,
+// next year's for a peek, and a sibling's for fun. A pack remembers the
+// profile its banks were written for (`home`) and the grade it teaches,
+// so a kindergartener opening a 4th grade pack gets exactly 4th grade
+// questions — and the XP that grade is worth, not her own rate, so easy
+// packs cannot be farmed by an older child.
+// ═══════════════════════════════════════════════════════════════
+const GRADES = [
+  { key: 'K', label: 'KINDERGARTEN', icon: '🌈' },
+  { key: '1', label: '1ST GRADE',    icon: '🌱' },
+  { key: '2', label: '2ND GRADE',    icon: '🪁' },
+  { key: '3', label: '3RD GRADE',    icon: '⚡' },
+  { key: '4', label: '4TH GRADE',    icon: '🧭' },
+  { key: '5', label: '5TH GRADE',    icon: '🔥' },
+];
+const GRADE_XP = { K: 5, 1: 7, 2: 8, 3: 10, 4: 12, 5: 15 };
+// The grade a pack teaches, from the profile it lives in and its tier.
+// Pre-K review, the Big Thinker round and hidden game modes have none.
+const PROFILE_GRADE = {
+  k:  { now: 'K', ahead: '1' },
+  g3: { now: '3', warmup: '3', review: '2' },
+  g5: { now: '5', warmup: '5', review: '4', misa: '4' },
+};
+const OWN_GRADE = { k: 'K', g3: '3', g5: '5' };
+let libraryGrade = null;   // the grade being browsed, so BACK returns there
+
+// Every pack in every profile, with `home` and `grade` filled in. Computed
+// on demand so packs that modules add at load time are included.
+function allPacks() {
+  const out = [];
+  for (const [pid, list] of Object.entries(PACKS)) for (const pk of list) {
+    pk.home = pid;
+    if (pk.grade === undefined) pk.grade = (PROFILE_GRADE[pid] || {})[pk.tier] || null;
+    out.push(pk);
+  }
+  return out;
+}
+function gradePacks(key) {
+  return allPacks().filter(pk => pk.grade === key && !pk.hidden);
+}
+// A child's own packs first (several profiles share ids like think_mix),
+// then any grade's.
+function findPack(id) {
+  return PACKS[currentProfile.id].find(p => p.id === id) || allPacks().find(p => p.id === id);
+}
+// XP per right answer: the child's own rate in their own hub; another
+// grade's pack is worth what that grade is worth.
+function roundXpPer(pack) {
+  pack = pack || currentPack;
+  if (!pack || PACKS[currentProfile.id].includes(pack)) return currentProfile.xpPer;
+  return GRADE_XP[pack.grade] || currentProfile.xpPer;
+}
+
 // Fixed subject order for the MY GRADE section of the hub.
 const SUBJECT_SECTIONS = [
   { key: 'math',    label: 'MATH',                icon: '🔢' },
@@ -36242,7 +36323,42 @@ function pickProfile(id) {
   renderHub();
 }
 
+// libraryView: shown in Explore Any Grade, where "review" or "next year"
+// would describe some other child's year, so the badge names the grade.
+function renderPackCard(pk, libraryView) {
+  const p = currentProfile;
+  const d = state.profiles[p.id];
+  const done = d.packs[pk.id];
+  const rounds = (d.rounds && d.rounds[pk.id]) || 0;
+  let badge = `<div class="pack-badge mixed">MIXED</div>`;
+  if (pk.tier === 'review') badge = `<div class="pack-badge">📦 REVIEW</div>`;
+  if (pk.tier === 'ahead') badge = `<div class="pack-badge bridge-badge">🚀 NEXT YEAR</div>`;
+  if (pk.tier === 'misa') badge = `<div class="pack-badge k-badge">🔬 ON MISA</div>`;
+  if (pk.tier === 'warmup') badge = `<div class="pack-badge">🌤️ WARM-UP</div>`;
+  if (pk.tier === 'think') badge = `<div class="pack-badge think-badge">🧩 PUZZLES</div>`;
+  if (libraryView === true) {
+    const g = GRADES.find(x => x.key === pk.grade);
+    badge = `<div class="pack-badge">${g ? g.icon + ' ' + (g.key === 'K' ? 'K' : g.key + (['', 'ST', 'ND', 'RD'][g.key] || 'TH')) : ''}</div>`;
+  }
+  if (done && done.best === 10) badge = `<div class="pack-badge star">★ ACED</div>`;
+  else if (done) badge = `<div class="pack-badge">BEST ${done.best}/10</div>`;
+  const roundText = rounds > 0 ? `<span class="round-counter">R${rounds}</span>` : '';
+  return `
+    <div class="pack-card" onclick="startPack('${pk.id}')">
+      ${badge}
+      <div class="pack-icon-box">${pk.icon}</div>
+      <div class="pack-title">${pk.title}${roundText}</div>
+      <div class="pack-desc">${pk.desc}</div>
+      <div class="pack-meta">
+        <span class="qc">${pk.tier === 'think' ? 'all puzzles · 10 per round' : 'mixed · 10 per round'}</span>
+        <span class="xp">+${10 * roundXpPer(pk)} XP</span>
+      </div>
+    </div>
+  `;
+}
+
 function renderHub() {
+  libraryGrade = null;
   const p = currentProfile;
   const d = state.profiles[p.id];
   const packs = PACKS[p.id];
@@ -36251,32 +36367,6 @@ function renderHub() {
   const level = Math.floor(d.xp / 150) + 1;
   const totalRounds = Object.values(d.rounds || {}).reduce((a,b) => a+b, 0);
   const pendingReviews = (d.reviews || []).filter(r => r.status === 'pending').length;
-
-  function renderPackCard(pk) {
-    const done = d.packs[pk.id];
-    const rounds = (d.rounds && d.rounds[pk.id]) || 0;
-    let badge = `<div class="pack-badge mixed">MIXED</div>`;
-    if (pk.tier === 'review') badge = `<div class="pack-badge">📦 REVIEW</div>`;
-    if (pk.tier === 'ahead') badge = `<div class="pack-badge bridge-badge">🚀 NEXT YEAR</div>`;
-    if (pk.tier === 'misa') badge = `<div class="pack-badge k-badge">🔬 ON MISA</div>`;
-    if (pk.tier === 'warmup') badge = `<div class="pack-badge">🌤️ WARM-UP</div>`;
-    if (pk.tier === 'think') badge = `<div class="pack-badge think-badge">🧩 PUZZLES</div>`;
-    if (done && done.best === 10) badge = `<div class="pack-badge star">★ ACED</div>`;
-    else if (done) badge = `<div class="pack-badge">BEST ${done.best}/10</div>`;
-    const roundText = rounds > 0 ? `<span class="round-counter">R${rounds}</span>` : '';
-    return `
-      <div class="pack-card" onclick="startPack('${pk.id}')">
-        ${badge}
-        <div class="pack-icon-box">${pk.icon}</div>
-        <div class="pack-title">${pk.title}${roundText}</div>
-        <div class="pack-desc">${pk.desc}</div>
-        <div class="pack-meta">
-          <span class="qc">${pk.tier === 'think' ? 'all puzzles · 10 per round' : 'mixed · 10 per round'}</span>
-          <span class="xp">+${10 * p.xpPer} XP</span>
-        </div>
-      </div>
-    `;
-  }
 
   // ─── The hub, organised the way a school year actually is ───
   // MY GRADE comes first and is broken out by subject, because "what am I
@@ -36339,11 +36429,30 @@ function renderHub() {
   }
 
   if (aheadPacks.length) {
+    const g = aheadPacks[0].grade;
     packsHtml += `
       <div class="section-head k-section">🚀 LOOKING AHEAD — ${p.aheadTo}</div>
       <p class="section-tagline">A peek at what is coming next year. No pressure — just a look.</p>
-    ` + grid(aheadPacks);
+    ` + (aheadPacks.length > 6 && g
+      ? grid(aheadPacks.slice(0, 3)) + `<button class="grade-door" onclick="renderGrade('${g}')">See all ${aheadPacks.length} ${p.aheadTo.toLowerCase()} packs →</button>`
+      : grid(aheadPacks));
   }
+
+  // ─── Explore any grade ───
+  const own = OWN_GRADE[p.id];
+  packsHtml += `
+    <div class="section-head">📚 EXPLORE ANY GRADE</div>
+    <p class="section-tagline">Every grade from kindergarten to 5th. Look back, peek ahead, or try a brother's or sister's packs.</p>
+    <div class="grade-chips">${GRADES.map(g => {
+      const n = gradePacks(g.key).length;
+      if (!n) return '';
+      return `<button type="button" class="grade-chip${g.key === own ? ' mine' : ''}" onclick="renderGrade('${g.key}')">
+          <span class="grade-chip-icon">${g.icon}</span>
+          <span class="grade-chip-label">${g.label}</span>
+          <span class="grade-chip-count">${g.key === own ? 'MY GRADE · ' : ''}${n} packs</span>
+        </button>`;
+    }).join('')}</div>
+  `;
   const trophyRow = TROPHIES.map(t => {
     const got = d.trophies.includes(t.id);
     return `
@@ -36390,10 +36499,50 @@ function renderHub() {
   `);
 }
 
+// One grade's packs, by subject, from any child's hub.
+function renderGrade(key) {
+  const p = currentProfile;
+  const g = GRADES.find(x => x.key === key);
+  const packs = gradePacks(key);
+  libraryGrade = key;
+  const grid = list => `<div class="packs-grid">${list.map(pk => renderPackCard(pk, true)).join('')}</div>`;
+  let html = '';
+  SUBJECT_SECTIONS.forEach(sec => {
+    const inSec = packs.filter(pk => pk.subject === sec.key);
+    if (inSec.length) html += `<div class="section-head sub-head">${sec.icon} ${sec.label}</div>` + grid(inSec);
+  });
+  const known = new Set(SUBJECT_SECTIONS.map(sc => sc.key));
+  const rest = packs.filter(pk => !known.has(pk.subject));
+  if (rest.length) html += `<div class="section-head sub-head">✨ MORE</div>` + grid(rest);
+  const mine = OWN_GRADE[p.id] === key;
+  render(`
+    <div class="hub">
+      <div class="hub-header">
+        <div class="hub-user">
+          <div class="hub-avatar">${g.icon}</div>
+          <div class="hub-name-block">
+            <h2>${g.label}</h2>
+            <p>${packs.length} packs · ${mine ? 'your grade' : `playing as ${p.name.toLowerCase()} · +${GRADE_XP[key]} XP a question`}</p>
+          </div>
+        </div>
+        <div class="hub-stats">
+          <button class="switch-btn" onclick="renderHub()">← MY HUB</button>
+        </div>
+      </div>
+      ${html}
+    </div>
+  `);
+}
+
+// After a round, or leaving one: back to the grade being browsed, if any.
+function backToPacks() {
+  if (libraryGrade) renderGrade(libraryGrade);
+  else renderHub();
+}
+
 function startPack(packId) {
-  const packs = PACKS[currentProfile.id];
-  currentPack = packs.find(p => p.id === packId);
-  questions = getQuestions(currentPack, currentProfile.id);
+  currentPack = findPack(packId);
+  questions = getQuestions(currentPack, currentPack.home || currentProfile.id);
   if (questions.length === 0) {
     alert('No questions loaded. Please refresh and try again.');
     renderHub();
@@ -37451,7 +37600,7 @@ function handleAnswer(isRight, correctAnswer, givenAnswer, opts) {
     streak++;
     if (streak > bestStreak) bestStreak = streak;
     if (streak > d.bestStreak) d.bestStreak = streak;
-    xpPop(currentProfile.xpPer);
+    xpPop(roundXpPer());
 
     if (streak === 3 || streak === 5 || streak === 7 || streak === 10) {
       setTimeout(() => {
@@ -37467,11 +37616,11 @@ function handleAnswer(isRight, correctAnswer, givenAnswer, opts) {
     // COMEBACK KID, but the streak was already broken by the first miss.
     fixedCount++;
     d.fixedCount = (d.fixedCount || 0) + 1;
-    xpPop(Math.ceil(currentProfile.xpPer / 2));
+    xpPop(Math.ceil(roundXpPer() / 2));
   } else {
     streak = 0;
     // Half of a two-part question still earns half the XP.
-    if (opts.parts && opts.parts.some(Boolean)) xpPop(Math.ceil(currentProfile.xpPer / 2));
+    if (opts.parts && opts.parts.some(Boolean)) xpPop(Math.ceil(roundXpPer() / 2));
   }
 
   const t = qNow.type || 'mc';
@@ -37671,7 +37820,7 @@ function finishPack() {
         ${reportSection}
 
         <button class="next-btn gated-btn" ${gateAttr} onclick="startPack('${currentPack.id}')">↻ PLAY AGAIN (NEW QUESTIONS)</button>
-        <button class="next-btn gated-btn" ${gateAttr} style="background:white;color:var(--ink);box-shadow:5px 5px 0 var(--user-color);margin-top:0.75rem;" onclick="renderHub()">← BACK TO PACKS</button>
+        <button class="next-btn gated-btn" ${gateAttr} style="background:white;color:var(--ink);box-shadow:5px 5px 0 var(--user-color);margin-top:0.75rem;" onclick="backToPacks()">← BACK TO PACKS</button>
         ${reportGate ? '<div class="gate-hint" id="gate-hint">🔒 Buttons unlock after you send your report</div>' : ''}
       </div>
     </div>
@@ -37875,7 +38024,7 @@ function exitToHub() {
   );
   stragglers.forEach(el => el.remove());
 
-  renderHub();
+  backToPacks();
 }
 
 function toggleSummerMode() {
@@ -38762,7 +38911,9 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
   }, { passive: false });
 })();
 
-// Launch
+// Launch. Every module has added its packs by now, so each pack's home
+// profile and grade can be settled once.
+allPacks();
 renderProfileSelect();
 </script>
 </body>
