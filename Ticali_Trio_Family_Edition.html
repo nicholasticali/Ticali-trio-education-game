@@ -1731,6 +1731,11 @@
   }
   .order-item .voice-btn-sm { background: white; }
   .profile-k .order-item, .profile-k .order-slot { font-size: 1.35rem; }
+  /* Her pieces carry a 🔊. Wide enough that it sits at the right edge, never
+     in the middle: tapping the middle of a short piece ("13", "A") must
+     place it, not read it. */
+  .profile-k .order-item { min-width: 10rem; }
+  .profile-k .order-item-text { flex: 1; text-align: center; }
 
   /* ─── SORT IT ─── */
   .sort-list { display: grid; gap: 0.6rem; margin-bottom: 0.25rem; }

@@ -76,7 +76,9 @@ async function answer(page, how) {
     return press(page, how, page.locator('.typed-submit'));
   }
   if (t === 'order') {
-    for (const it of q.items) await press(page, how, page.locator('.order-item', { hasText: it }).first());
+    // Piece i belongs in spot i; find it by its own handler, not its text
+    // (a text match for "1" would also find "11").
+    for (let i = 0; i < q.items.length; i++) await press(page, how, page.locator(`.order-item[onclick="orderPlace(${i})"]`));
     return press(page, how, page.locator('.puzzle-check'));
   }
   if (t === 'sort') {
@@ -169,6 +171,30 @@ async function answer(page, how) {
     });
     audit.small.forEach(s => failures.push(`[${dev.name}] small target ${s}`));
     audit.unreachable.forEach(u => failures.push(`[${dev.name}] clickable but not keyboard-reachable: .${u}`));
+    // The kindergartener's answers carry a 🔊. A tap on the middle of any
+    // answer must land on the answer itself, never on its speaker.
+    await page.goto(APP); await page.waitForTimeout(250);
+    const onSpeaker = await page.evaluate(() => {
+      pickProfile('k');
+      const hits = new Set();
+      for (const pk of PACKS.k) {
+        startPack(pk.id);
+        const go = document.querySelector('.briefing-go'); if (go) go.click();
+        for (const q of (THINK_ITEMS[pk.id] || []).concat(getQuestions(pk, pk.home || 'k').slice(0, 3))) {
+          questions = [prepareQuestion(JSON.parse(JSON.stringify(q)))]; qIdx = 0; renderQuestion();
+          for (const el of document.querySelectorAll('.order-item, .choice, .tf-btn')) {
+            el.scrollIntoView({ block: 'center' });
+            const r = el.getBoundingClientRect();
+            const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            if (at && at.closest('.js-speak')) hits.add(`${pk.id} ${q.type || 'mc'} "${el.textContent.trim().slice(0, 20)}"`);
+          }
+        }
+      }
+      exitToHub();
+      return [...hits];
+    });
+    onSpeaker.slice(0, 6).forEach(h => failures.push(`[${dev.name}] tapping the middle of an answer reads it instead of choosing it: ${h}`));
+    if (onSpeaker.length > 6) failures.push(`[${dev.name}] ...and ${onSpeaker.length - 6} more answers like that`);
     errors.forEach(e => failures.push(`[${dev.name}] JS error: ${e}`));
     await ctx.close();
   }
