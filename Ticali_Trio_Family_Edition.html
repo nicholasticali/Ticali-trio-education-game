@@ -1924,6 +1924,27 @@
   }
   @media (max-width: 480px) { .grade-chips { grid-template-columns: 1fr 1fr; } }
 
+
+  /* ─── Keyboard: where focus is, on every control ───
+     :focus-visible shows the ring for keyboard use only, so a mouse click
+     or a tap never leaves an outline behind. */
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible,
+  [role="button"]:focus-visible, [role="checkbox"]:focus-visible, [tabindex]:focus-visible {
+    outline: 4px solid var(--gold); outline-offset: 3px;
+  }
+  .choice:focus-visible, .tf-btn:focus-visible, .pack-card:focus-visible, .profile-card:focus-visible {
+    outline: 5px solid var(--gold); outline-offset: 4px;
+  }
+  .kbd-hint {
+    display: none; margin-top: 1rem; text-align: center;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.72rem; letter-spacing: 1px; color: var(--muted);
+  }
+  /* Only where a mouse or trackpad is the main pointer — a laptop, with or
+     without a touchscreen. Not on an iPad, where it would be noise. */
+  @media (hover: hover) and (pointer: fine) { .kbd-hint { display: block; } }
+  @media print { .kbd-hint { display: none !important; } }
+
   /* ═══ FUN MODULE STYLES ═══ */
 
   /* ═══════════════════════════════════════════════════════════════
@@ -1952,6 +1973,12 @@
   }
   html, body {
     overscroll-behavior: none;        /* kill the whole-page bounce */
+  }
+  /* No double-tap zoom anywhere, so two quick taps are always two taps.
+     Pinch-zoom and scrolling still work. The scratch pad's own
+     touch-action: none still wins inside it. */
+  html, body, .app {
+    touch-action: manipulation;
   }
   body {
     /* Painted behind the safe areas so the notch/home-indicator strips
@@ -36139,9 +36166,11 @@ function funAudio() {
     }
     document.removeEventListener('touchend', unlock, true);
     document.removeEventListener('click', unlock, true);
+    document.removeEventListener('keydown', unlock, true);
   };
   document.addEventListener('touchend', unlock, true);
   document.addEventListener('click', unlock, true);
+  document.addEventListener('keydown', unlock, true);
 })();
 
 function funSoundOn() {
@@ -36291,7 +36320,7 @@ function renderProfileSelect() {
     const level = Math.floor(d.xp / 150) + 1;
     const pct = (d.xp % 150) / 150 * 100;
     return `
-      <div class="profile-card" style="--card-color:${p.color};--card-soft:${p.soft};" onclick="pickProfile('${p.id}')">
+      <div class="profile-card" role="button" tabindex="0" aria-label="${p.name}" style="--card-color:${p.color};--card-soft:${p.soft};" onclick="pickProfile('${p.id}')">
         <div class="profile-banner">
           <span class="profile-emoji">${p.emoji}</span>
           <div class="profile-name">${p.name}</div>
@@ -36344,7 +36373,7 @@ function renderPackCard(pk, libraryView) {
   else if (done) badge = `<div class="pack-badge">BEST ${done.best}/10</div>`;
   const roundText = rounds > 0 ? `<span class="round-counter">R${rounds}</span>` : '';
   return `
-    <div class="pack-card" onclick="startPack('${pk.id}')">
+    <div class="pack-card" role="button" tabindex="0" aria-label="${ccEscapeForAttr(plainText(pk.title))}" onclick="startPack('${pk.id}')">
       ${badge}
       <div class="pack-icon-box">${pk.icon}</div>
       <div class="pack-title">${pk.title}${roundText}</div>
@@ -36606,6 +36635,7 @@ function renderBriefing() {
     </div>
   `);
   if (d.autoRead) setTimeout(() => speakText('Why this matters. ' + why), 350);
+  if (keyboardDriving || NO_TOUCH) focusFirst(['.briefing-go']);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -36658,8 +36688,8 @@ function typedAnswerHtml(q, submitFn, opts) {
   const submitLabel = opts.submitLabel || 'SUBMIT ANSWER';
 
   const placeholder = usePad
-    ? 'Tap the numbers below'
-    : 'Tap here, then type your answer';
+    ? (NO_TOUCH ? 'Type the number, or click the keys below' : 'Tap the numbers below')
+    : (NO_TOUCH ? 'Type your answer' : 'Tap here, then type your answer');
 
   // readonly (not disabled) in pad mode: still styled and readable, but
   // iOS will not raise the keyboard when it is tapped.
@@ -36900,6 +36930,7 @@ function renderQuestion() {
           ${questionBody}
           ${helpBtnHtml}
           <div id="fb"></div>
+          <div class="kbd-hint">⌨️ ${q.type === 'tf' ? 'T or F to answer' : (q.type || 'mc') === 'mc' || q.type === 'multi' || q.type === 'twopart' ? 'A–D or 1–4 to answer' : q.type === 'order' || q.type === 'sort' ? 'Tab and Enter to choose' : 'type your answer'} · Enter for next · Esc to leave</div>
         </div>
       </div>
     </div>
@@ -36910,6 +36941,7 @@ function renderQuestion() {
   if (dState.autoRead) {
     setTimeout(() => speakText(spokenQuestion(q)), 350);
   }
+  focusAnswerArea(q);
 }
 
 // ─── PUT IN ORDER ───
@@ -37434,6 +37466,8 @@ function showThink(q, note) {
       <div class="think-sub">One more try — you've got this.</div>
     </div>`;
   fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  // The wrong choice greys out after its shake; then focus the answers again.
+  setTimeout(() => focusAnswerArea(q), 400);
   if (state.profiles[currentProfile.id].autoRead) {
     setTimeout(() => speakText('Not quite. Think again. ' + (note ? plainText(note) + ' ' : '') + hint), 300);
   }
@@ -37696,6 +37730,7 @@ function showFeedback(isRight, correctAnswer, opts) {
     </button>
   `;
   fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if (keyboardDriving) focusFirst(['#fb .next-btn']);
 
   // Auto-read (on by default for the kindergartener) says the verdict and
   // then the why, so a child who cannot read yet still hears the reason.
@@ -38092,6 +38127,7 @@ function confirmExit() {
     </div>
   `;
   document.body.appendChild(modal);
+  focusFirst(['#exit-modal-stay']);
 
   const closeModal = () => {
     const m = document.getElementById('exit-modal-backdrop');
@@ -38669,9 +38705,11 @@ function stopSpeakKeepalive() {
     } catch(e) {}
     document.removeEventListener('touchend', prime, true);
     document.removeEventListener('click', prime, true);
+    document.removeEventListener('keydown', prime, true);
   };
   document.addEventListener('touchend', prime, true);
   document.addEventListener('click', prime, true);
+  document.addEventListener('keydown', prime, true);
 })();
 
 // HTML-escape helper for putting text safely into attribute values.
@@ -38896,19 +38934,149 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
   }, true);
 })();
 
-// ─── Double-tap zoom guard for the answer surface ───
-// touch-action: manipulation covers buttons, but a fast double tap that
-// straddles two elements can still zoom. Swallow the second tap when it
-// lands on the quiz within the double-tap window.
-(function preventDoubleTapZoom() {
-  let last = 0;
-  document.addEventListener('touchend', (e) => {
-    const now = Date.now();
-    if (now - last < 320 && e.target && e.target.closest && e.target.closest('.quiz, .hub, .numpad')) {
-      e.preventDefault();
+// ─── Double-tap zoom ───
+// This used to be a JS guard that cancelled any tap landing within 320ms
+// of the one before — which also swallowed a fast child's second tap: an
+// answer then NEXT, two number-pad digits, two picks on a pick-all
+// question. The CSS rule `touch-action: manipulation` on the whole page
+// (see "Document-level touch behavior" in the CSS) stops double-tap zoom without
+// eating taps, and pinch-zoom still works.
+
+// ═══════════════════════════════════════════════════════════════
+// SAME ON EVERY DEVICE — touch, mouse, trackpad, pencil and keyboard
+// The game has to play the same on an iPad, on a touchscreen laptop, and
+// on a laptop with only a trackpad and keyboard. Every control is a single
+// tap or click — no dragging, no hover-only controls, no long-press — and
+// everything can also be done from the keyboard:
+//   Tab / Shift-Tab   move between controls (a gold ring shows where)
+//   Enter or Space    press the control that has focus
+//   A-D or 1-4        pick an answer (A-F, 1-6 on pick-all questions)
+//   T / F             true or false
+//   0-9 . / : $ , -   type into the number pad; Backspace deletes
+//   Enter             check, submit, next question, let's go
+//   ← →               step through a walkthrough
+//   Esc               close a pop-up, or offer to leave the round
+// A screen with keys of its own (a timed sprint) marks its root with
+// data-own-keys and these shortcuts stand aside.
+// ═══════════════════════════════════════════════════════════════
+
+// No touch at all: a plain laptop or desktop. Answer boxes get focus so a
+// child can just start typing. On anything with a touchscreen, focusing a
+// text box raises an on-screen keyboard, so that is left to a tap.
+const NO_TOUCH = !(window.matchMedia && window.matchMedia('(any-pointer: coarse)').matches) &&
+                 !('ontouchstart' in window) && !(navigator.maxTouchPoints > 0);
+
+// Whether the child is driving with the keyboard right now. Keyboard use
+// moves focus to the next sensible control after each screen change;
+// pointer use leaves focus alone, so taps never jump the page around.
+let keyboardDriving = false;
+document.addEventListener('keydown', e => {
+  if (['Tab', 'Enter', ' ', 'ArrowLeft', 'ArrowRight'].includes(e.key) || /^[a-f1-6]$/i.test(e.key)) keyboardDriving = true;
+}, true);
+document.addEventListener('pointerdown', () => { keyboardDriving = false; }, true);
+
+// After a screen renders, put focus where the next action is.
+function focusFirst(selectors) {
+  for (const sel of selectors) {
+    const el = document.querySelector(sel);
+    if (el && !el.disabled && el.offsetParent !== null) {
+      try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+      return el;
     }
-    last = now;
-  }, { passive: false });
+  }
+  return null;
+}
+function focusAnswerArea(q) {
+  const t = (q && q.type) || 'mc';
+  if ((t === 'typed' || t === 'fib') && NO_TOUCH) { if (focusFirst(['#typedInput'])) return; }
+  if (!keyboardDriving) return;
+  focusFirst(['.choice:not(.eliminated):not(.disabled)', '.tf-btn', '.order-item', '.sort-btn:not([disabled])',
+              '#workDone', '#typedInput:not([disabled])', '.part-choice']);
+}
+
+// Enter or Space on a role="button" element presses it, as on a real
+// button. Elements that already handle their own keys are left alone.
+document.addEventListener('keydown', e => {
+  if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+  const t = e.target;
+  if ((e.key === 'Enter' || e.key === ' ') && t && t.matches &&
+      t.matches('[role="button"], [role="checkbox"]') && !t.hasAttribute('onkeydown')) {
+    e.preventDefault();
+    t.click();
+  }
+});
+
+(function gameKeys() {
+  const isTyping = el => el && (el.tagName === 'TEXTAREA' || el.isContentEditable ||
+    (el.tagName === 'INPUT' && !el.readOnly && !['checkbox', 'radio', 'button'].includes(el.type)));
+  const onControl = el => el && el.closest && el.closest('button, a, input, select, textarea, [role="button"], [role="checkbox"]');
+
+  document.addEventListener('keydown', e => {
+    if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (document.querySelector('[data-own-keys]')) return;
+    const key = e.key;
+    const t = e.target;
+
+    // Walkthrough: arrows step, Esc closes.
+    if (document.getElementById('tut-overlay')) {
+      if (key === 'ArrowRight') { e.preventDefault(); tutNext(); }
+      else if (key === 'ArrowLeft') { e.preventDefault(); tutPrev(); }
+      else if (key === 'Escape') { e.preventDefault(); closeTutorial(); }
+      return;
+    }
+    // Scratch pad: Esc is DONE.
+    if (document.getElementById('scratch-overlay')) {
+      if (key === 'Escape') { const done = document.getElementById('scratch-close'); if (done) { e.preventDefault(); done.click(); } }
+      return;
+    }
+    if (document.getElementById('exit-modal-backdrop')) return;   // it handles its own Esc
+
+    if (key === 'Escape') {
+      if (document.querySelector('.question-frame')) { e.preventDefault(); confirmExit(); }
+      return;
+    }
+    if (isTyping(t)) return;   // a real text box: the child is typing
+
+    // Briefing card: Enter starts the round.
+    const go = document.querySelector('.briefing-go');
+    if (go && key === 'Enter' && !onControl(t)) { e.preventDefault(); go.click(); return; }
+
+    if (!document.querySelector('.question-frame') || !questions[qIdx]) return;
+    const q = questions[qIdx];
+    const type = q.type || 'mc';
+    const next = document.querySelector('#fb .next-btn');
+
+    if (key === 'Enter' && !onControl(t)) {
+      if (next) { e.preventDefault(); next.click(); return; }
+      const check = document.querySelector('.puzzle-check:not([disabled])') ||
+                    document.querySelector('.typed-submit:not([disabled])');
+      if (check) { e.preventDefault(); check.click(); }
+      return;
+    }
+    if (next || locked) return;   // answered: only Enter moves on
+
+    // The number pad takes the same keys a child would type.
+    const pad = document.getElementById('typedInput');
+    if (pad && pad.classList.contains('padmode') && !pad.disabled) {
+      if (key === 'Backspace') { e.preventDefault(); numpadPress(' BACK'); return; }
+      if (key.length === 1 && /[0-9.,:\/$%()\-]/.test(key)) { e.preventDefault(); numpadPress(key); return; }
+    }
+
+    if (type === 'tf') {
+      if (/^[t1]$/i.test(key)) { e.preventDefault(); pickTf(true); }
+      else if (/^[f2]$/i.test(key)) { e.preventDefault(); pickTf(false); }
+      return;
+    }
+    const idx = /^[1-6]$/.test(key) ? Number(key) - 1 : /^[a-f]$/i.test(key) ? key.toUpperCase().charCodeAt(0) - 65 : -1;
+    if (idx < 0) return;
+    if (type === 'mc' && idx < q.options.length) { e.preventDefault(); pickMc(idx); }
+    else if (type === 'multi' && idx < q.options.length) { e.preventDefault(); multiToggle(idx); }
+    else if (type === 'twopart' && qState) {
+      const which = qState.aPick === null ? 'A' : 'B';
+      const part = which === 'A' ? q.partA : q.partB;
+      if (idx < part.options.length) { e.preventDefault(); pickPart(which, idx); }
+    }
+  });
 })();
 
 // Launch. Every module has added its packs by now, so each pack's home
