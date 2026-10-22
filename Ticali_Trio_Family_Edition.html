@@ -1598,6 +1598,310 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════
+     THE WHY, AND THINKING IT THROUGH
+     The briefing card, the HERE'S WHY panel, the THINK AGAIN hint, the
+     four puzzle question types, and the end-of-round look back.
+     ═══════════════════════════════════════════════════════════════ */
+  :root {
+    --why-bg: #fff4d6;
+    --think-bg: #ece9ff;
+  }
+
+  /* ─── HERE'S WHY / WHY THIS MATTERS ─── */
+  .why-box {
+    margin-top: 1rem;
+    background: var(--why-bg);
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--gold);
+    padding: 1rem 1.15rem;
+    animation: cardIn 0.3s;
+  }
+  .why-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: 0.95rem; letter-spacing: 1px;
+    margin-bottom: 0.45rem;
+  }
+  .why-text {
+    font-size: 1.08rem; line-height: 1.55; font-weight: 600;
+    user-select: text; -webkit-user-select: text;
+  }
+  .profile-k .why-text { font-size: 1.3rem; }
+
+  /* ─── THINK AGAIN ─── */
+  .think-box {
+    margin-top: 1.25rem;
+    background: var(--think-bg);
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--showwork);
+    padding: 1rem 1.15rem;
+    animation: cardIn 0.3s;
+  }
+  .think-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: 1rem; letter-spacing: 1px; color: var(--showwork);
+    margin-bottom: 0.4rem;
+  }
+  .think-note { font-weight: 700; margin-bottom: 0.35rem; }
+  .think-text { font-size: 1.08rem; line-height: 1.5; font-weight: 600; }
+  .profile-k .think-text { font-size: 1.3rem; }
+  .think-sub {
+    margin-top: 0.5rem;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* A wrong first pick shakes, then greys out and can't be chosen again. */
+  .choice.wrong-once, .typed-input.wrong-once { background: var(--danger) !important; color: white !important; animation: shake 0.3s; }
+  .choice.eliminated {
+    background: var(--bg-deep) !important; color: var(--muted) !important;
+    box-shadow: none; opacity: 0.55; cursor: default; pointer-events: none;
+  }
+  .choice.eliminated .choice-content { text-decoration: line-through; text-decoration-thickness: 2px; }
+  .choice.eliminated .choice-letter { background: var(--muted); border-color: var(--muted); }
+  .choice.eliminated .voice-btn-sm { pointer-events: auto; }
+
+  /* ─── Briefing ─── */
+  .briefing {
+    background: white; border: 4px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+    padding: 1.75rem 1.5rem;
+    animation: cardIn 0.35s cubic-bezier(.4,0,.2,1);
+  }
+  .briefing-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+  .briefing-icon {
+    font-size: 2.6rem; line-height: 1;
+    width: 72px; height: 72px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--user-color); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+  }
+  .briefing-kicker {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; color: var(--muted);
+  }
+  .briefing-title {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: clamp(1.3rem, 3.4vw, 1.9rem); line-height: 1.15;
+  }
+  .briefing .why-matters .why-text { font-size: 1.2rem; }
+  .profile-k .briefing .why-matters .why-text { font-size: 1.45rem; }
+  .briefing-rules { list-style: none; margin: 1.25rem 0 0.5rem; display: grid; gap: 0.5rem; }
+  .briefing-rules li { display: flex; gap: 0.6rem; align-items: baseline; font-size: 1rem; line-height: 1.4; }
+  .briefing-rules li span:first-child { flex-shrink: 0; width: 1.5rem; text-align: center; }
+  .briefing-go { margin-top: 1.25rem; font-size: 1.15rem; }
+
+  /* ─── Puzzle type tags ─── */
+  .q-type-tag.order, .q-type-tag.sort, .q-type-tag.multi { background: var(--showwork); color: white; }
+  .q-type-tag.twopart { background: var(--ink); color: var(--gold); }
+  .puzzle-instruction {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--muted); margin: 0.25rem 0 0.75rem;
+  }
+  .profile-k .puzzle-instruction { font-size: 0.95rem; }
+
+  /* ─── PUT IN ORDER ─── */
+  .order-slots { display: grid; gap: 0.6rem; margin-bottom: 1rem; }
+  .order-slot {
+    display: flex; align-items: center; gap: 0.8rem;
+    min-height: 60px; padding: 0.55rem 0.9rem;
+    background: white; border: 3px dashed var(--muted);
+    font-weight: 600; font-size: 1.1rem;
+  }
+  .order-slot.filled { border-style: solid; border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+  .order-slot.locked, .order-slot.right { background: var(--success); color: white; border-color: var(--ink); cursor: default; }
+  .order-slot.wrong { background: var(--danger); color: white; border-color: var(--ink); }
+  .slot-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%;
+    background: var(--ink); color: white;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.9rem;
+  }
+  .order-slot.locked .slot-num, .order-slot.right .slot-num, .order-slot.wrong .slot-num { background: white; color: var(--ink); }
+  .slot-content { flex: 1; }
+  .slot-mark { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.1rem; }
+  .order-pool { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-bottom: 0.5rem; }
+  .order-item {
+    display: flex; align-items: center; gap: 0.5rem;
+    min-height: 56px; padding: 0.6rem 1rem;
+    background: var(--user-color); color: white;
+    border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+    font-weight: 700; font-size: 1.05rem; cursor: pointer;
+  }
+  .order-item .voice-btn-sm { background: white; }
+  .profile-k .order-item, .profile-k .order-slot { font-size: 1.35rem; }
+
+  /* ─── SORT IT ─── */
+  .sort-list { display: grid; gap: 0.6rem; margin-bottom: 0.25rem; }
+  .sort-row {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: white; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+  }
+  .sort-row.locked, .sort-row.right { background: #d9f2ee; }
+  .sort-row.wrong { background: #fde2e2; border-color: var(--danger); }
+  .sort-item { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.08rem; min-width: 0; }
+  .profile-k .sort-item { font-size: 1.35rem; }
+  .sort-btns { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: flex-end; }
+  .sort-btn {
+    min-height: 48px; padding: 0.5rem 0.85rem;
+    background: white; color: var(--ink);
+    border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.8rem; letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+  .sort-btn.on.sg0 { background: var(--success); color: white; }
+  .sort-btn.on.sg1 { background: var(--p-g2); color: white; }
+  .sort-btn.on.sg2 { background: var(--showwork); color: white; }
+  .sort-btn.on.sg3 { background: var(--p-g4); color: white; }
+  .sort-btn.on { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
+  .sort-btn:disabled { cursor: default; }
+  .sort-btn:disabled:not(.on) { opacity: 0.35; }
+  .sort-fix { grid-column: 1 / -1; font-size: 0.9rem; color: var(--danger); }
+
+  /* ─── PICK ALL ─── */
+  .choice.multi-choice .choice-letter { background: white; color: var(--ink); }
+  .choice.multi-choice.picked {
+    background: var(--bg-deep); border-color: var(--ink);
+    box-shadow: 4px 4px 0 var(--user-color);
+  }
+  .choice.multi-choice.picked .choice-letter { background: var(--user-color); color: white; }
+
+  /* ─── PROVE IT ─── */
+  .part-label {
+    display: inline-block;
+    background: var(--ink); color: var(--gold);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: 0.8rem; letter-spacing: 2px;
+    padding: 0.25rem 0.7rem; margin-bottom: 0.75rem;
+  }
+  .part-b { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 3px dashed var(--ink); animation: cardIn 0.3s; }
+  .part-note { font-weight: 700; margin-bottom: 0.75rem; }
+  .part-note.ok { color: var(--success); }
+  .part-note.no { color: var(--ink); }
+
+  .puzzle-check { margin-top: 0.75rem; }
+
+  /* ─── Look back ─── */
+  .lookback {
+    text-align: left; margin: 0 0 1.25rem;
+    background: white; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    padding: 1rem 1.1rem;
+  }
+  .lookback-clean { text-align: center; font-weight: 700; font-size: 1.05rem; background: var(--why-bg); }
+  .lookback-head {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: 0.95rem; letter-spacing: 1px; margin-bottom: 0.75rem;
+  }
+  .lookback-item { padding: 0.75rem 0; border-top: 2px dashed rgba(0,0,0,0.15); }
+  .lookback-item:first-of-type { border-top: none; padding-top: 0; }
+  .lb-q { font-weight: 700; line-height: 1.4; }
+  .lb-n {
+    display: inline-block; background: var(--ink); color: white;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.7rem; padding: 0.1rem 0.4rem; margin-right: 0.3rem; vertical-align: 2px;
+  }
+  .lb-a { margin-top: 0.3rem; }
+  .lb-you { color: var(--muted); font-size: 0.9rem; }
+  .lb-why {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 0.6rem;
+    margin-top: 0.45rem; padding: 0.6rem 0.75rem;
+    background: var(--why-bg); border-left: 4px solid var(--gold);
+    line-height: 1.5;
+  }
+  .lookback-item.fixed .lb-a { color: var(--success); }
+
+  /* ─── Hub ─── */
+  .section-head.think-section { color: var(--showwork); }
+  .pack-badge.think-badge { background: var(--showwork); color: white; }
+
+  /* ─── Parent toggle ─── */
+  .parent-toggle { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.95rem; line-height: 1.5; cursor: pointer; }
+  .parent-toggle input { width: 26px; height: 26px; flex-shrink: 0; margin-top: 0.1rem; accent-color: var(--showwork); }
+
+  @media (hover: hover) and (pointer: fine) {
+  .order-item:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+  .order-slot.filled:not(.locked):not(.right):not(.wrong):hover { background: var(--bg-deep); }
+  .sort-btn:hover:not(:disabled) { background: var(--bg-deep); }
+  .sort-btn.on:hover:not(:disabled) { filter: brightness(1.05); }
+  }
+  .order-item:active, .sort-btn:active:not(:disabled), .order-slot.filled:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+
+  @media (any-pointer: coarse) {
+    .order-item { min-height: 64px; }
+    .order-slot { min-height: 64px; }
+    .sort-btn { min-height: 52px; padding: 0.55rem 1rem; }
+  }
+  /* On a narrow screen a sort row stacks: the item, then full-width buttons. */
+  @media (max-width: 560px) {
+    .sort-row { grid-template-columns: 1fr; }
+    .sort-btns { justify-content: stretch; }
+    .sort-btn { flex: 1 1 0; }
+    .briefing { padding: 1.25rem 1rem; box-shadow: 6px 6px 0 var(--ink); }
+    .briefing-icon { width: 58px; height: 58px; font-size: 2rem; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     FUN LAYER — play zone, confetti, toasts (shared by the modules)
+     ═══════════════════════════════════════════════════════════════ */
+  .fun-zone {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1rem; margin: 0 0 1.75rem;
+  }
+  .fun-card {
+    background: white; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--fun-accent);
+    padding: 0.9rem 1rem; min-height: 112px;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .fun-card.tappable { cursor: pointer; }
+  .fun-card.tappable:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0 var(--fun-accent); }
+  @media (hover: hover) and (pointer: fine) {
+  .fun-card.tappable:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--fun-accent); }
+  }
+  .fun-card-top { display: flex; align-items: center; gap: 0.5rem; }
+  .fun-card-icon { font-size: 1.6rem; line-height: 1; }
+  .fun-card-title {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: 0.9rem; letter-spacing: 0.5px; flex: 1;
+  }
+  .fun-card-badge {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
+    background: var(--fun-accent); color: white; border: 2px solid var(--ink); padding: 0.1rem 0.45rem;
+  }
+  .fun-card-body { font-size: 0.95rem; line-height: 1.4; }
+  .fun-meter { height: 14px; background: var(--bg-deep); border: 2px solid var(--ink); overflow: hidden; }
+  .fun-meter > span { display: block; height: 100%; background: var(--fun-accent, var(--user-color)); transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+  .fun-sound-btn { white-space: nowrap; }
+
+  .fun-confetti { position: fixed; inset: 0; pointer-events: none; z-index: 100001; overflow: hidden; }
+  .fun-confetti-bit {
+    position: absolute; top: -20px; width: 10px; height: 14px; border-radius: 2px;
+    animation-name: funFall; animation-timing-function: cubic-bezier(.25,.6,.4,1); animation-fill-mode: forwards;
+  }
+  .fun-confetti-bit.emoji { width: auto; height: auto; font-size: 1.6rem; background: none; }
+  @keyframes funFall {
+    0%   { transform: translate(0, 0) rotate(0); opacity: 1; }
+    100% { transform: translate(var(--drift), 108vh) rotate(var(--spin)); opacity: 0.9; }
+  }
+  .fun-toast {
+    position: fixed; left: 50%; bottom: calc(1.5rem + env(safe-area-inset-bottom) + var(--stack, 0) * 4.2rem);
+    transform: translateX(-50%); z-index: 100000;
+    background: var(--ink); color: white; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--gold);
+    padding: 0.75rem 1.2rem; max-width: min(92vw, 460px);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.95rem; letter-spacing: 0.5px;
+    animation: funToastIn 0.35s cubic-bezier(.3,1.4,.6,1), funToastOut 0.4s ease-in forwards;
+    animation-delay: 0s, calc(var(--toast-ms, 2800ms));
+  }
+  @keyframes funToastIn { from { transform: translate(-50%, 140%); } to { transform: translate(-50%, 0); } }
+  @keyframes funToastOut { to { transform: translate(-50%, 140%); opacity: 0; } }
+  @media (max-width: 480px) { .fun-zone { grid-template-columns: 1fr 1fr; gap: 0.75rem; } .fun-card { min-height: 100px; padding: 0.75rem; } }
+  @media (max-width: 360px) { .fun-zone { grid-template-columns: 1fr; } }
+
+  /* ═══ FUN MODULE STYLES ═══ */
+
+  /* ═══════════════════════════════════════════════════════════════
      TOUCH LAYER — iPad, iPhone, and touchscreen laptops
      ───────────────────────────────────────────────────────────────
      Everything below assumes a finger (or an Apple Pencil) is the
@@ -1638,7 +1942,7 @@
   .parent-link, .summer-toggle, .tut-ctrl-btn, .tut-close, .tut-skip-btn,
   .tut-step-dot, .scratch-color, .scratch-clear, .scratch-close,
   .report-send-btn, .reset-btn, .rev-ok, .rev-no, .autoread-btn,
-  .scratch-btn, .numpad-key, .js-speak, label {
+  .scratch-btn, .numpad-key, .js-speak, .order-item, .order-slot, .sort-btn, label {
     touch-action: manipulation;
     -webkit-touch-callout: none;
   }
@@ -1741,7 +2045,7 @@
      body sets user-select:none to stop stray highlight-drag on buttons.
      Reading passages are the one place a child (or parent) may genuinely
      want to select text, e.g. to have iPadOS speak a sentence. */
-  .passage, .tut-narration, .review-item-text {
+  .passage, .tut-narration, .review-item-text, .lb-why {
     user-select: text;
     -webkit-user-select: text;
   }
@@ -3965,7 +4269,7 @@ const G4_BANKS = {
 
 // ═══════════════════════════════════════════════════════════════
 // MATH GENERATORS — Procedural math question generation
-// Each generator returns { text, options, correct }
+// Each generator returns { text, options, correct, why, hint }
 // Wrong options are chosen to look plausible, not random numbers
 // ═══════════════════════════════════════════════════════════════
 
@@ -3980,8 +4284,11 @@ function shuffle(arr) {
   return a;
 }
 // Build a question with 4 options where `answer` is one, and wrongs are near it
+// Candidates can repeat (prekAdd10 offers both `a` and `ans-1`, which are
+// often the same number), so they are de-duplicated before picking three —
+// otherwise a child could see "4, 5, 4, 3" with two identical choices.
 function buildMC(text, answer, wrongCandidates) {
-  const wrongs = shuffle(wrongCandidates.filter(w => w !== answer)).slice(0, 3);
+  const wrongs = shuffle([...new Set(wrongCandidates)].filter(w => w !== answer && w >= 0)).slice(0, 3);
   while (wrongs.length < 3) {
     // Safety: add random distractors if not enough unique wrongs
     const w = answer + randInt(-5, 5);
@@ -3996,7 +4303,7 @@ function buildMC(text, answer, wrongCandidates) {
 }
 // String-based options (used for money, answers like "$1.25")
 function buildMCStr(text, answerStr, wrongStrs) {
-  const wrongs = shuffle(wrongStrs.filter(w => w !== answerStr)).slice(0, 3);
+  const wrongs = shuffle([...new Set(wrongStrs)].filter(w => w !== answerStr)).slice(0, 3);
   while (wrongs.length < 3) wrongs.push("none"); // safety
   const allOptions = shuffle([answerStr, ...wrongs]);
   return {
@@ -4004,6 +4311,65 @@ function buildMCStr(text, answerStr, wrongStrs) {
     options: allOptions,
     correct: allOptions.indexOf(answerStr)
   };
+}
+
+// Every generated question explains itself with the numbers it was built
+// from: `why` is shown after the child answers, `hint` before a second try.
+// The pre-K generators feed the kindergartener's review packs, whose text is
+// read aloud — so their explanations say "plus", never "+".
+function withWhy(q, why, hint) {
+  q.why = why;
+  if (hint) q.hint = hint;
+  return q;
+}
+function countUp(from, to) { const out = []; for (let i = from; i <= to; i++) out.push(i); return out.join(', '); }
+function countDown(from, to) { const out = []; for (let i = from; i >= to; i--) out.push(i); return out.join(', '); }
+function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+
+// Shared explanations, used by both the multiple-choice and typed versions.
+function whyAddK(a, b) {
+  return `Start at ${a} and count up ${b} more: ${countUp(a + 1, a + b)}. So ${a} plus ${b} is ${a + b}.`;
+}
+function whySubK(a, b) {
+  const left = a - b;
+  const leftWords = left === 0 ? 'None are left' : `${left} ${left === 1 ? 'is' : 'are'} left`;
+  return b <= 5
+    ? `Start with ${a} and take away ${b}. Count back ${b}: ${countDown(a - 1, left)}. ${leftWords}.`
+    : `Start with ${a} and take away ${b}. ${leftWords}, because ${left} and ${b} make ${a}.`;
+}
+function whyAddTensOnes(a, b) {
+  const at = a - a % 10, bt = b - b % 10, ao = a % 10, bo = b % 10;
+  if (ao + bo === 0) return `Add the tens: ${at / 10} tens + ${bt / 10} tens = ${(at + bt) / 10} tens, which is ${a + b}.`;
+  if (at === 0 || bt === 0) {
+    const big = Math.max(a, b), small = Math.min(a, b);
+    return `Start at ${big} and add ${small} more: ${big} + ${small} = ${a + b}.`;
+  }
+  return `Add the tens: ${at} + ${bt} = ${at + bt}. Add the ones: ${ao} + ${bo} = ${ao + bo}. Then ${at + bt} + ${ao + bo} = ${a + b}.`;
+}
+function whySubTensOnes(a, b) {
+  const bt = b - b % 10, bo = b % 10, ans = a - b;
+  const steps = bt === 0 ? `${a} − ${bo} = ${ans}.`
+    : bo === 0 ? `Take away ${bt / 10} ten${bt === 10 ? '' : 's'}: ${a} − ${bt} = ${ans}.`
+    : `Take away the tens, then the ones: ${a} − ${bt} = ${a - bt}, then ${a - bt} − ${bo} = ${ans}.`;
+  return `${steps} Check by adding back: ${ans} + ${b} = ${a}.`;
+}
+function whyMultPartial(a, b) {
+  // Split the second factor into tens and ones — the area model on paper.
+  const big = Math.max(a, b), small = Math.min(a, b);
+  if (small < 10) {
+    const t = big - big % 10, o = big % 10;
+    return o === 0
+      ? `${big} is ${t / 10} tens, and ${t / 10} tens × ${small} = ${t / 10 * small} tens, which is ${big * small}.`
+      : `Break ${big} into ${t} + ${o}. ${t} × ${small} = ${t * small} and ${o} × ${small} = ${o * small}. Add the partial products: ${t * small} + ${o * small} = ${big * small}.`;
+  }
+  const bt = b - b % 10, bo = b % 10;
+  return bo === 0
+    ? `${a} × ${b} = ${a} × ${b / 10} × 10. ${a} × ${b / 10} = ${a * b / 10}, and × 10 makes ${a * b}.`
+    : `Split ${b} into ${bt} + ${bo}. ${a} × ${bt} = ${a * bt} and ${a} × ${bo} = ${a * bo}. Add the partial products: ${a * bt} + ${a * bo} = ${a * b}.`;
+}
+function whySimplify(frac) {
+  const [n, d] = frac.split('/').map(Number), g = gcd(n, d);
+  return `${g} is the greatest common factor of ${n} and ${d}. Divide both by ${g}: ${n} ÷ ${g} = ${n / g} and ${d} ÷ ${g} = ${d / g}, so ${frac} = ${n / g}/${d / g}.`;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4016,7 +4382,9 @@ function prekCountEmoji() {
   const n = randInt(2, 10);
   const emoji = COUNT_EMOJI[randInt(0, COUNT_EMOJI.length-1)];
   const group = emoji.repeat(n);
-  return buildMC(`How many? ${group}`, n, [n-1, n+1, n-2, n+2, n+3].filter(x => x>0));
+  return withWhy(buildMC(`How many? ${group}`, n, [n-1, n+1, n-2, n+2, n+3].filter(x => x>0)),
+    `Touch each one and count. The last number you say tells how many: ${n}.`,
+    'Touch each picture one time as you count out loud.');
 }
 
 // Basic add within 10
@@ -4024,7 +4392,8 @@ function prekAdd10() {
   const a = randInt(1, 5);
   const b = randInt(1, 5);
   const ans = a + b;
-  return buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-2, ans+2, a, b].filter(x => x>=0));
+  return withWhy(buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-2, ans+2, a, b].filter(x => x>=0)),
+    whyAddK(a, b), `Hold up ${a} fingers, then ${b} more. Count them all.`);
 }
 
 // Basic sub within 10
@@ -4032,19 +4401,24 @@ function prekSub10() {
   const a = randInt(3, 10);
   const b = randInt(1, a);
   const ans = a - b;
-  return buildMC(`${a} - ${b} = ?`, ans, [ans+1, ans-1, ans+2, a, b].filter(x => x>=0));
+  return withWhy(buildMC(`${a} - ${b} = ?`, ans, [ans+1, ans-1, ans+2, a, b].filter(x => x>=0)),
+    whySubK(a, b), `Hold up ${a} fingers. Put down ${b}. How many are still up?`);
 }
 
 // What comes after?
 function prekAfter() {
   const n = randInt(1, 18);
-  return buildMC(`What comes AFTER ${n}?`, n+1, [n-1, n, n+2, n+3]);
+  return withWhy(buildMC(`What comes AFTER ${n}?`, n+1, [n-1, n, n+2, n+3]),
+    `When we count, ${n + 1} comes right after ${n}. It is one more.`,
+    `Count out loud and stop at ${n}. What do you say next?`);
 }
 
 // What comes before?
 function prekBefore() {
   const n = randInt(2, 19);
-  return buildMC(`What comes BEFORE ${n}?`, n-1, [n+1, n, n-2, n-3]);
+  return withWhy(buildMC(`What comes BEFORE ${n}?`, n-1, [n+1, n, n-2, n-3]),
+    `When we count, ${n - 1} comes right before ${n}. It is one less.`,
+    `Count out loud. What do you say just before ${n}?`);
 }
 
 // Missing number in sequence
@@ -4052,9 +4426,12 @@ function prekMissing() {
   const start = randInt(1, 15);
   const missPos = randInt(1, 3); // 0,1,2,3,4 positions; we'll hide position missPos
   const seq = [start, start+1, start+2, start+3, start+4];
+  const full = seq.join(', ');
   const missVal = seq[missPos];
   seq[missPos] = '?';
-  return buildMC(`${seq.join(', ')}`, missVal, [missVal-1, missVal+1, missVal-2, missVal+2]);
+  return withWhy(buildMC(`${seq.join(', ')}`, missVal, [missVal-1, missVal+1, missVal-2, missVal+2]),
+    `Each number is one more than the one before: ${full}. The missing number is ${missVal}.`,
+    'Count along the row. Each number goes up by one.');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4066,7 +4443,15 @@ function g2Add20() {
   const a = randInt(2, 11);
   const b = randInt(2, 11);
   const ans = a + b;
-  return buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-2, ans+2, ans+3]);
+  const big = Math.max(a, b), small = Math.min(a, b);
+  const makeTen = big < 10 && ans > 10;
+  const need = 10 - big;
+  return withWhy(buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-2, ans+2, ans+3]),
+    makeTen
+      ? `Make a ten: ${big} + ${need} = 10, and that leaves ${small - need} of the ${small}. 10 + ${small - need} = ${ans}.`
+      : `Start at ${big} and count on ${small}: ${big} + ${small} = ${ans}.`,
+    makeTen ? 'Try making a 10 first. How much does the bigger number need to reach 10?'
+            : 'Start at the bigger number and count on.');
 }
 
 // Subtraction within 20
@@ -4074,7 +4459,9 @@ function g2Sub20() {
   const a = randInt(10, 20);
   const b = randInt(1, a-1);
   const ans = a - b;
-  return buildMC(`${a} − ${b} = ?`, ans, [ans+1, ans-1, ans+2, ans-2, a-b+1]);
+  return withWhy(buildMC(`${a} − ${b} = ?`, ans, [ans+1, ans-1, ans+2, ans-2, a-b+1]),
+    `${a} − ${b} = ${ans}. Check it with addition: ${ans} + ${b} = ${a}.`,
+    `Think addition: ${b} plus what number makes ${a}?`);
 }
 
 // Addition within 100 with regrouping
@@ -4082,7 +4469,8 @@ function g2Add100() {
   const a = randInt(20, 75);
   const b = randInt(15, 50);
   const ans = a + b;
-  return buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-10, ans+10, ans-2, ans+2]);
+  return withWhy(buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-10, ans+10, ans-2, ans+2]),
+    whyAddTensOnes(a, b), 'Add the tens, then the ones, then put the two together.');
 }
 
 // Subtraction within 100 with regrouping
@@ -4090,7 +4478,8 @@ function g2Sub100() {
   const a = randInt(40, 99);
   const b = randInt(15, a-10);
   const ans = a - b;
-  return buildMC(`${a} − ${b} = ?`, ans, [ans+1, ans-1, ans+10, ans-10, ans+2, ans-2]);
+  return withWhy(buildMC(`${a} − ${b} = ?`, ans, [ans+1, ans-1, ans+10, ans-10, ans+2, ans-2]),
+    whySubTensOnes(a, b), 'Take away the tens first, then the ones. Check by adding back.');
 }
 
 // Place value — build number from place values
@@ -4106,7 +4495,9 @@ function g2PlaceValue() {
     o*100 + t*10 + h,   // reverse
     ans + 10, ans - 10
   ].filter(x => x !== ans && x > 0);
-  return buildMC(`${h} hundreds + ${t} tens + ${o} ones = ?`, ans, distractors);
+  return withWhy(buildMC(`${h} hundreds + ${t} tens + ${o} ones = ?`, ans, distractors),
+    `${h} hundreds is ${h * 100}, ${t} tens is ${t * 10}, and ${o} ones is ${o}. Together that makes ${ans}.`,
+    'Write the hundreds digit first, then the tens digit, then the ones digit.');
 }
 
 // Compare numbers — which is greater?
@@ -4114,27 +4505,41 @@ function g2Compare() {
   const a = randInt(100, 999);
   let b = randInt(100, 999);
   while (b === a) b = randInt(100, 999);
-  const greater = Math.max(a, b);
-  return buildMCStr(`Which is greater: ${a} or ${b}?`, String(greater), [String(a), String(b), "Same", "Cannot tell"]);
+  const greater = Math.max(a, b), smaller = Math.min(a, b);
+  const sg = String(greater), ss = String(smaller);
+  let i = 0;
+  while (sg[i] === ss[i]) i++;
+  const place = ['hundreds', 'tens', 'ones'][i];
+  const lead = i === 0 ? '' : i === 1 ? 'The hundreds match, so look at the tens. ' : 'The hundreds and tens match, so look at the ones. ';
+  return withWhy(buildMCStr(`Which is greater: ${a} or ${b}?`, String(greater), [String(a), String(b), "Same", "Cannot tell"]),
+    `Compare from the left. ${lead}${greater} has ${sg[i]} ${place} and ${smaller} has ${ss[i]}, so ${greater} is greater.`,
+    'Compare the hundreds digits first. If they are the same, move to the tens.');
 }
 
 // Count by 10s
 function g2CountBy10() {
   const start = randInt(10, 80) * 10;
-  return buildMC(`Count by 10s: ${start}, ${start+10}, ${start+20}, ?`, start+30, [start+20, start+40, start+35, start+25, start+31]);
+  return withWhy(buildMC(`Count by 10s: ${start}, ${start+10}, ${start+20}, ?`, start+30, [start+20, start+40, start+35, start+25, start+31]),
+    `Counting by 10s adds 10 each time: ${start + 20} + 10 = ${start + 30}.`,
+    'How much does each number go up by? Add that to the last number.');
 }
 
 // Count by 100s
 function g2CountBy100() {
   const start = randInt(1, 7) * 100;
-  return buildMC(`Count by 100s: ${start}, ${start+100}, ?`, start+200, [start+150, start+300, start+110, start+250]);
+  return withWhy(buildMC(`Count by 100s: ${start}, ${start+100}, ?`, start+200, [start+150, start+300, start+110, start+250]),
+    `Counting by 100s adds 100 each time, so the hundreds digit goes up by 1: ${start + 100} + 100 = ${start + 200}.`,
+    'How much does each number go up by? Add that to the last number.');
 }
 
 // Time: minutes to hours (original)
 function g2TimeMin() {
   const hours = randInt(1, 6);
   const mins = hours * 60;
-  return buildMC(`${hours} hour${hours>1?'s':''} = how many minutes?`, mins, [hours*10, hours*30, mins+15, mins-15, mins+30, mins-30]);
+  return withWhy(buildMC(`${hours} hour${hours>1?'s':''} = how many minutes?`, mins, [hours*10, hours*30, mins+15, mins-15, mins+30, mins-30]),
+    hours === 1 ? 'There are 60 minutes in 1 hour.'
+                : `There are 60 minutes in each hour, so ${hours} hours is ${hours} × 60 = ${mins} minutes.`,
+    'How many minutes are in one hour?');
 }
 
 // Time: half past X
@@ -4142,7 +4547,9 @@ function g2TimeHalf() {
   const h = randInt(1, 12);
   const answer = `${h}:30`;
   const wrongs = [`${h}:00`, `${h}:15`, `${h}:45`, `${h+1 > 12 ? 1 : h+1}:30`, `${h}:03`];
-  return buildMCStr(`Half past ${h} means?`, answer, wrongs);
+  return withWhy(buildMCStr(`Half past ${h} means?`, answer, wrongs),
+    `Half of an hour is 30 minutes, because half of 60 is 30. So half past ${h} is 30 minutes after ${h}:00, which is ${answer}.`,
+    'How many minutes are in a whole hour? What is half of that?');
 }
 
 // Time: quarter past X
@@ -4150,7 +4557,9 @@ function g2TimeQuarter() {
   const h = randInt(1, 12);
   const answer = `${h}:15`;
   const wrongs = [`${h}:00`, `${h}:30`, `${h}:45`, `${h+1 > 12 ? 1 : h+1}:15`, `${h}:04`];
-  return buildMCStr(`Quarter past ${h} means?`, answer, wrongs);
+  return withWhy(buildMCStr(`Quarter past ${h} means?`, answer, wrongs),
+    `An hour split into 4 equal quarters is 15 minutes each, because 60 ÷ 4 = 15. Quarter past ${h} is 15 minutes after ${h}:00, which is ${answer}.`,
+    'An hour has 60 minutes. Split it into 4 equal parts.');
 }
 
 // Time: X minutes later
@@ -4168,7 +4577,12 @@ function g2TimeLater() {
     `${startH}:${String((startM+addMin)%60).padStart(2,'0')}`,
     `${endH}:${String(endM > 15 ? endM-15 : endM+15).padStart(2,'0')}`
   ];
-  return buildMCStr(`It's ${startH}:${String(startM).padStart(2,'0')}. What time ${addMin} minutes later?`, answer, wrongs);
+  const sum = startM + addMin;
+  return withWhy(buildMCStr(`It's ${startH}:${String(startM).padStart(2,'0')}. What time ${addMin} minutes later?`, answer, wrongs),
+    sum >= 60
+      ? `${startM} + ${addMin} = ${sum} minutes. That is 1 hour and ${sum - 60} minutes, so the hour moves up to ${endH}. The time is ${answer}.`
+      : `Add the minutes: ${startM} + ${addMin} = ${sum}. The hour stays ${startH}, so the time is ${answer}.`,
+    'Add the minutes. If you get to 60 or more, move up to the next hour.');
 }
 
 // Time: how long school lasted
@@ -4176,7 +4590,12 @@ function g2TimeElapsed() {
   const startH = randInt(7, 9);
   const endH = randInt(startH + 3, 15);
   const hours = endH - startH;
-  return buildMC(`School starts at ${startH}:00 AM and ends at ${endH > 12 ? endH-12 : endH}:00 ${endH >= 12 ? 'PM' : 'AM'}. How many hours?`, hours, [hours-1, hours+1, hours-2, hours+2]);
+  const endLabel = `${endH > 12 ? endH-12 : endH}:00 ${endH >= 12 ? 'PM' : 'AM'}`;
+  return withWhy(buildMC(`School starts at ${startH}:00 AM and ends at ${endLabel}. How many hours?`, hours, [hours-1, hours+1, hours-2, hours+2]),
+    endH > 12
+      ? `From ${startH}:00 AM to 12:00 noon is ${12 - startH} hours. From noon to ${endLabel} is ${endH - 12} more. ${12 - startH} + ${endH - 12} = ${hours} hours.`
+      : `Count the hours from ${startH}:00 to ${endLabel}: that is ${hours} hours.`,
+    'Count one hour at a time. After 12:00 noon, the clock starts again at 1.');
 }
 
 // Time: minutes on a clock
@@ -4191,7 +4610,11 @@ function g2TimeMinutes() {
   const correct = positions[randInt(0, positions.length-1)];
   const answer = correct.label;
   const wrongs = positions.filter(p => p !== correct).map(p => p.label);
-  return buildMCStr(`Minute hand pointing at ${correct.hand} means?`, answer, wrongs);
+  return withWhy(buildMCStr(`Minute hand pointing at ${correct.hand} means?`, answer, wrongs),
+    correct.hand === 12
+      ? 'The minute hand counts by 5s around the clock. At the 12 it is back at the top: 0 minutes, exactly on the hour.'
+      : `The minute hand counts by 5s around the clock. At the ${correct.hand} it has gone ${correct.hand} × 5 = ${correct.mins} minutes past the hour, written ${correct.label}.`,
+    'Count by 5s around the clock, starting from the 12.');
 }
 
 // Time: convert hours/minutes
@@ -4208,25 +4631,32 @@ function g2TimeConvert() {
     `${h-1 < 0 ? 1 : h-1} hr ${m} min`,
     `${h} hr ${m > 0 ? m-15 : 45} min`
   ];
-  return buildMCStr(`${totalMin} minutes = ?`, answer, wrongs);
+  return withWhy(buildMCStr(`${totalMin} minutes = ?`, answer, wrongs),
+    m === 0
+      ? `Every 60 minutes is 1 hour. ${totalMin} = ${h} × 60, so it is exactly ${answer}.`
+      : `Every 60 minutes is 1 hour. ${totalMin} minutes is ${h * 60} minutes (${h} hour${h > 1 ? 's' : ''}) plus ${m} minutes left over: ${answer}.`,
+    'How many groups of 60 minutes fit? How many minutes are left over?');
 }
 
 // Time: AM or PM
 function g2TimeAmPm() {
+  // Lunch is at 12:30, not "at noon": noon is one of the four choices, so
+  // asking whether noon is AM or PM had two defensible answers.
   const scenarios = [
-    { text: 'Eating breakfast at 7:30', answer: 'AM' },
-    { text: 'Going to bed at 9:00', answer: 'PM' },
-    { text: 'Lunch at noon', answer: 'PM' },
-    { text: 'Sunrise at 6:30', answer: 'AM' },
-    { text: 'Dinner at 6:00', answer: 'PM' },
-    { text: 'Getting up for school at 7:00', answer: 'AM' },
-    { text: 'Watching TV at 8:00 (after dinner)', answer: 'PM' },
-    { text: 'Morning cartoons at 9:00', answer: 'AM' },
-    { text: 'Baseball practice after school at 4:30', answer: 'PM' },
-    { text: 'Brushing teeth before bed at 8:30', answer: 'PM' },
+    { text: 'Eating breakfast at 7:30', answer: 'AM', why: 'Breakfast is in the morning. Times from midnight until noon are AM.' },
+    { text: 'Going to bed at 9:00', answer: 'PM', why: 'Bedtime at 9:00 is at night. Times from noon until midnight are PM.' },
+    { text: 'Lunch at 12:30', answer: 'PM', why: '12:30 is half an hour after noon. Once it is noon, the clock switches to PM.' },
+    { text: 'Sunrise at 6:30', answer: 'AM', why: 'The sun rises in the early morning, and morning times are AM.' },
+    { text: 'Dinner at 6:00', answer: 'PM', why: 'Dinner at 6:00 is in the evening. Times from noon until midnight are PM.' },
+    { text: 'Getting up for school at 7:00', answer: 'AM', why: 'You get up for school in the morning, so it is AM.' },
+    { text: 'Watching TV at 8:00 (after dinner)', answer: 'PM', why: 'After dinner is the evening, and evening times are PM.' },
+    { text: 'Morning cartoons at 9:00', answer: 'AM', why: 'The word "morning" is your clue: morning times, before noon, are AM.' },
+    { text: 'Baseball practice after school at 4:30', answer: 'PM', why: 'After school is the afternoon. Afternoon times are PM.' },
+    { text: 'Brushing teeth before bed at 8:30', answer: 'PM', why: 'Before bed is at night, and night times before midnight are PM.' },
   ];
   const s = scenarios[randInt(0, scenarios.length-1)];
-  return buildMCStr(`${s.text} — AM or PM?`, s.answer, ['AM','PM','Noon','Midnight']);
+  return withWhy(buildMCStr(`${s.text} — AM or PM?`, s.answer, ['AM','PM','Noon','Midnight']),
+    s.why, 'Does this happen in the morning, or in the afternoon or night?');
 }
 
 // Money: add coins
@@ -4242,14 +4672,23 @@ function g2Coins() {
   if (n) parts.push(`${n} nickel${n>1?'s':''}`);
   if (p) parts.push(`${p} penn${p>1?'ies':'y'}`);
   if (parts.length < 2) return g2Coins(); // retry if only 1 coin type
-  return buildMC(`${parts.join(' + ')} = how many cents?`, total, [total+5, total-5, total+10, total-10, total+15]);
+  const values = [];
+  if (q) values.push(`${parts[values.length]} = ${q*25}¢`);
+  if (d) values.push(`${parts[values.length]} = ${d*10}¢`);
+  if (n) values.push(`${parts[values.length]} = ${n*5}¢`);
+  if (p) values.push(`${parts[values.length]} = ${p}¢`);
+  return withWhy(buildMC(`${parts.join(' + ')} = how many cents?`, total, [total+5, total-5, total+10, total-10, total+15]),
+    `${values.join(', ')}. Add them up: ${total}¢.`,
+    'Quarters are 25¢, dimes 10¢, nickels 5¢, pennies 1¢. Count the biggest coins first.');
 }
 
 // Money: change from $1
 function g2Change() {
   const spent = randInt(20, 90);
   const change = 100 - spent;
-  return buildMC(`$1 - ${spent}¢ = change (in cents)?`, change, [change+5, change-5, change+10, change-10, spent]);
+  return withWhy(buildMC(`$1 - ${spent}¢ = change (in cents)?`, change, [change+5, change-5, change+10, change-10, spent]),
+    `$1 is 100 cents. 100 − ${spent} = ${change}. Check: ${spent} + ${change} = 100.`,
+    'A dollar is 100 cents. Count up from the price to 100.');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4261,7 +4700,8 @@ function g4Mult2x1() {
   const a = randInt(12, 99);
   const b = randInt(3, 9);
   const ans = a * b;
-  return buildMC(`${a} × ${b} = ?`, ans, [ans-10, ans+10, ans-1, ans+1, ans-100, ans+100]);
+  return withWhy(buildMC(`${a} × ${b} = ?`, ans, [ans-10, ans+10, ans-1, ans+1, ans-100, ans+100]),
+    whyMultPartial(a, b), 'Split the two-digit number into tens and ones. Multiply each part, then add.');
 }
 
 // Multiplication 2-digit × 2-digit
@@ -4269,7 +4709,8 @@ function g4Mult2x2() {
   const a = randInt(12, 50);
   const b = randInt(11, 40);
   const ans = a * b;
-  return buildMC(`${a} × ${b} = ?`, ans, [ans-10, ans+10, ans-100, ans+100, ans-1, ans+1]);
+  return withWhy(buildMC(`${a} × ${b} = ?`, ans, [ans-10, ans+10, ans-100, ans+100, ans-1, ans+1]),
+    whyMultPartial(a, b), 'Use partial products: multiply by the tens part, then the ones part, then add.');
 }
 
 // Division with nice answers
@@ -4277,7 +4718,9 @@ function g4DivClean() {
   const b = randInt(3, 12);
   const quotient = randInt(5, 30);
   const a = b * quotient;
-  return buildMC(`${a} ÷ ${b} = ?`, quotient, [quotient-1, quotient+1, quotient-2, quotient+2, quotient*2]);
+  return withWhy(buildMC(`${a} ÷ ${b} = ?`, quotient, [quotient-1, quotient+1, quotient-2, quotient+2, quotient*2]),
+    `${b} × ${quotient} = ${a}, so ${a} ÷ ${b} = ${quotient}. Division asks how many groups of ${b} make ${a}.`,
+    `Think multiplication: ${b} times what number equals ${a}?`);
 }
 
 // Division with remainder
@@ -4286,12 +4729,14 @@ function g4DivRem() {
   const quotient = randInt(8, 20);
   const rem = randInt(1, b-1);
   const a = b * quotient + rem;
-  return buildMCStr(`${a} ÷ ${b} = ?`, `${quotient} r ${rem}`, [
+  return withWhy(buildMCStr(`${a} ÷ ${b} = ?`, `${quotient} r ${rem}`, [
     `${quotient-1} r ${rem}`,
     `${quotient+1} r ${rem}`,
     `${quotient} r ${rem-1 || b-1}`,
     `${quotient} r ${rem+1 <= b-1 ? rem+1 : 1}`
-  ]);
+  ]),
+    `${b} × ${quotient} = ${b * quotient}, the biggest multiple of ${b} that fits in ${a}. ${a} − ${b * quotient} = ${rem} left over, and a remainder must be less than ${b}. So it is ${quotient} r ${rem}.`,
+    `Find the biggest multiple of ${b} that is not more than ${a}. Then see what is left.`);
 }
 
 // Equivalent fractions
@@ -4307,7 +4752,11 @@ const EQUIV_SETS = [
 function g4EquivFrac() {
   const set = EQUIV_SETS[randInt(0, EQUIV_SETS.length-1)];
   const answer = set.equivs[randInt(0, set.equivs.length-1)];
-  return buildMCStr(`Which is equivalent to ${set.base}?`, answer, set.wrongs);
+  const [bn, bd] = set.base.split('/').map(Number), [an, ad] = answer.split('/').map(Number);
+  const k = ad / bd;
+  return withWhy(buildMCStr(`Which is equivalent to ${set.base}?`, answer, set.wrongs),
+    `${answer} is ${set.base} with the top and bottom both multiplied by ${k}: ${bn} × ${k} = ${an} and ${bd} × ${k} = ${ad}. Multiplying by ${k}/${k} is multiplying by 1, so the value does not change.`,
+    'Equivalent fractions multiply the numerator and the denominator by the SAME number.');
 }
 
 // Simplify fraction — pick one of: 6/8, 9/12, 4/8, 10/12, etc.
@@ -4327,7 +4776,8 @@ const SIMPLIFY_CASES = [
 ];
 function g4Simplify() {
   const c = SIMPLIFY_CASES[randInt(0, SIMPLIFY_CASES.length-1)];
-  return buildMCStr(`Simplify ${c.frac}`, c.simple, c.wrongs);
+  return withWhy(buildMCStr(`Simplify ${c.frac}`, c.simple, c.wrongs),
+    whySimplify(c.frac), 'Find the largest number that divides evenly into both the numerator and the denominator.');
 }
 
 // Add fractions same denom
@@ -4335,9 +4785,11 @@ function g4AddFrac() {
   const den = randInt(4, 10);
   const a = randInt(1, den-2);
   const b = randInt(1, den-a);
-  return buildMCStr(`${a}/${den} + ${b}/${den} = ?`,
+  return withWhy(buildMCStr(`${a}/${den} + ${b}/${den} = ?`,
     `${a+b}/${den}`,
-    [`${a+b}/${den*2}`, `${a*b}/${den}`, `${a+b}/${den-1}`, `${a+b+1}/${den}`, `${a+b-1}/${den}`]);
+    [`${a+b}/${den*2}`, `${a*b}/${den}`, `${a+b}/${den-1}`, `${a+b+1}/${den}`, `${a+b-1}/${den}`]),
+    `Both fractions count pieces of the same size, 1/${den}, so add the numerators: ${a} + ${b} = ${a + b}. The denominator stays ${den} because the size of the pieces does not change: ${a + b}/${den}.`,
+    'The denominators match, so the pieces are the same size. Which part do you add?');
 }
 
 // Subtract fractions same denom
@@ -4345,9 +4797,11 @@ function g4SubFrac() {
   const den = randInt(5, 12);
   const a = randInt(3, den-1);
   const b = randInt(1, a-1);
-  return buildMCStr(`${a}/${den} − ${b}/${den} = ?`,
+  return withWhy(buildMCStr(`${a}/${den} − ${b}/${den} = ?`,
     `${a-b}/${den}`,
-    [`${a-b}/${den*2}`, `${a-b+1}/${den}`, `${a-b-1}/${den}`, `${a/b}/${den}`, `${a-b}/${den-1}`]);
+    [`${a-b}/${den*2}`, `${a-b+1}/${den}`, `${a-b-1}/${den}`, `${a/b}/${den}`, `${a-b}/${den-1}`]),
+    `Both fractions count pieces of size 1/${den}, so subtract the numerators: ${a} − ${b} = ${a - b}. The denominator stays ${den} because the size of the pieces does not change: ${a - b}/${den}.`,
+    'The denominators match, so the pieces are the same size. Which part do you subtract?');
 }
 
 // Decimal-fraction equivalence
@@ -4362,17 +4816,32 @@ const DEC_FRAC = [
   { dec: '0.6',  frac: '3/5', wrongs: ['6/10','1/2','3/4','6/100','3/10'] },
   { dec: '0.8',  frac: '4/5', wrongs: ['8/10','1/2','3/4','4/10','8/100'] },
 ];
+// 0.25 → { num: 25, den: 100 }: the decimal read as tenths or hundredths.
+function decAsFraction(dec) {
+  const den = dec.split('.')[1].length === 1 ? 10 : 100;
+  return { num: Math.round(parseFloat(dec) * den), den };
+}
 
 function g4DecToFrac() {
   const c = DEC_FRAC[randInt(0, DEC_FRAC.length-1)];
-  return buildMCStr(`${c.dec} as a simplified fraction?`, c.frac, c.wrongs);
+  const { num, den } = decAsFraction(c.dec), g = gcd(num, den);
+  return withWhy(buildMCStr(`${c.dec} as a simplified fraction?`, c.frac, c.wrongs),
+    g === 1
+      ? `${c.dec} is read as ${num}/${den}, and that is already in simplest form.`
+      : `${c.dec} is read as ${num}/${den}. Divide the top and bottom by ${g} to simplify: ${c.frac}.`,
+    'Read the decimal as tenths or hundredths, write that fraction, then simplify.');
 }
 
 function g4FracToDec() {
   const c = DEC_FRAC[randInt(0, DEC_FRAC.length-1)];
-  return buildMCStr(`${c.frac} as a decimal?`,
+  const { num, den } = decAsFraction(c.dec);
+  return withWhy(buildMCStr(`${c.frac} as a decimal?`,
     c.dec,
-    shuffle([c.dec.replace('.','').length > 1 ? `0.0${c.dec.slice(2)}` : '0.1', '0.01', '0.5', '1.0', '0.15'].filter(x => x !== c.dec)));
+    shuffle([c.dec.replace('.','').length > 1 ? `0.0${c.dec.slice(2)}` : '0.1', '0.01', '0.5', '1.0', '0.15'].filter(x => x !== c.dec))),
+    c.frac === `${num}/${den}`
+      ? `${c.frac} is ${num} ${den === 10 ? 'tenth' : 'hundredth'}${num === 1 ? '' : 's'}, which is written ${c.dec}.`
+      : `Make an equivalent fraction over ${den}: ${c.frac} = ${num}/${den}. ${num} ${den === 10 ? 'tenths' : 'hundredths'} is written ${c.dec}.`,
+    'Make an equivalent fraction with 10 or 100 as the denominator.');
 }
 
 // Compare decimals
@@ -4384,19 +4853,37 @@ function g4CompareDec() {
   const aR = Math.round(a * 100) / 100;
   const bR = Math.round(b * 100) / 100;
   if (aR === bR) return g4CompareDec();
-  const greater = Math.max(aR, bR);
-  return buildMCStr(`Which is greater: ${aR.toFixed(2)} or ${bR.toFixed(2)}?`,
-    greater.toFixed(2), [aR.toFixed(2), bR.toFixed(2), "Equal", "Cannot tell"]);
+  // Both round within [whole, whole+1]; one can land exactly on whole+1
+  // (9.997 → 10.00), so the whole-number parts are compared first.
+  const greater = Math.max(aR, bR), smaller = Math.min(aR, bR);
+  const sg = greater.toFixed(2), ss = smaller.toFixed(2);
+  let why;
+  if (Math.floor(greater) !== Math.floor(smaller)) {
+    why = `Compare the whole numbers first: ${Math.floor(greater)} is more than ${Math.floor(smaller)}, so ${sg} is greater.`;
+  } else if (sg[sg.length - 2] !== ss[ss.length - 2]) {
+    const g = sg[sg.length - 2], l = ss[ss.length - 2];
+    why = `The ones match, so compare tenths: ${g} tenth${g === '1' ? '' : 's'} is more than ${l} tenth${l === '1' ? '' : 's'}, so ${sg} is greater.`;
+  } else {
+    const g = sg[sg.length - 1], l = ss[ss.length - 1];
+    why = `The ones and tenths match, so compare hundredths: ${g} hundredth${g === '1' ? '' : 's'} is more than ${l} hundredth${l === '1' ? '' : 's'}, so ${sg} is greater.`;
+  }
+  return withWhy(buildMCStr(`Which is greater: ${aR.toFixed(2)} or ${bR.toFixed(2)}?`,
+    greater.toFixed(2), [aR.toFixed(2), bR.toFixed(2), "Equal", "Cannot tell"]),
+    `Line up the decimal points and compare from the left. ${why}`,
+    'Line up the decimal points and compare the digits from left to right.');
 }
 
 // Decimal addition
 function g4AddDec() {
-  const a = randInt(10, 99) / 100;
-  const b = randInt(10, 99) / 100;
-  const ans = Math.round((a + b) * 100) / 100;
-  return buildMCStr(`${a.toFixed(2)} + ${b.toFixed(2)} = ?`,
+  const ai = randInt(10, 99), bi = randInt(10, 99);
+  const a = ai / 100;
+  const b = bi / 100;
+  const ans = (ai + bi) / 100;
+  return withWhy(buildMCStr(`${a.toFixed(2)} + ${b.toFixed(2)} = ?`,
     ans.toFixed(2),
-    [(ans+0.1).toFixed(2), (ans-0.1).toFixed(2), (ans+0.01).toFixed(2), (ans-0.01).toFixed(2), (ans*10).toFixed(2)]);
+    [(ans+0.1).toFixed(2), (ans-0.1).toFixed(2), (ans+0.01).toFixed(2), (ans-0.01).toFixed(2), (ans*10).toFixed(2)]),
+    `Think in hundredths: ${ai} hundredths + ${bi} hundredths = ${ai + bi} hundredths, which is written ${ans.toFixed(2)}.`,
+    'Line up the decimal points, then add the way you add whole numbers.');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -5116,13 +5603,15 @@ const G4_NONMC_BANKS = {
 function prekTypedAdd() {
   const a = randInt(1, 5);
   const b = randInt(1, 5);
-  return { type:'typed', text:`${a} + ${b} = ?  (type the number)`, acceptedAnswers:[String(a+b)] };
+  return withWhy({ type:'typed', text:`${a} + ${b} = ?  (type the number)`, acceptedAnswers:[String(a+b)] },
+    whyAddK(a, b), `Hold up ${a} fingers, then ${b} more. Count them all.`);
 }
 
 function prekTypedSub() {
   const a = randInt(3, 10);
   const b = randInt(1, a);
-  return { type:'typed', text:`${a} - ${b} = ?  (type the number)`, acceptedAnswers:[String(a-b)] };
+  return withWhy({ type:'typed', text:`${a} - ${b} = ?  (type the number)`, acceptedAnswers:[String(a-b)] },
+    whySubK(a, b), `Hold up ${a} fingers. Put down ${b}. How many are still up?`);
 }
 
 function prekTfCount() {
@@ -5130,7 +5619,8 @@ function prekTfCount() {
   const b = randInt(1, 8);
   const sum = a + b;
   const claimed = Math.random() < 0.5 ? sum : (Math.random() < 0.5 ? sum + 1 : sum - 1);
-  return { type:'tf', statement:`${a} + ${b} = ${claimed}`, answer: (claimed === sum) };
+  return withWhy({ type:'tf', statement:`${a} + ${b} = ${claimed}`, answer: (claimed === sum) },
+    claimed === sum ? `True. ${a} plus ${b} is ${sum}.` : `False. ${a} plus ${b} is ${sum}, not ${claimed}.`);
 }
 
 function prekTfCompare() {
@@ -5141,7 +5631,9 @@ function prekTfCompare() {
   const claimed = Math.random() < 0.5 ? actualBigger : !actualBigger;
   const verb = claimed ? "bigger than" : "smaller than";
   const statedTruth = claimed ? actualBigger : !actualBigger;
-  return { type:'tf', statement:`${a} is ${verb} ${b}.`, answer: statedTruth };
+  const big = Math.max(a, b), small = Math.min(a, b);
+  return withWhy({ type:'tf', statement:`${a} is ${verb} ${b}.`, answer: statedTruth },
+    `${statedTruth ? 'True' : 'False'}. ${big} is bigger than ${small}. When you count, you say ${small} first and ${big} later.`);
 }
 
 // ───────────────────────────────────────────────────────
@@ -5150,13 +5642,15 @@ function prekTfCompare() {
 function g2TypedAdd() {
   const a = randInt(5, 50);
   const b = randInt(5, 50);
-  return { type:'typed', text:`${a} + ${b} = ?`, acceptedAnswers:[String(a+b)] };
+  return withWhy({ type:'typed', text:`${a} + ${b} = ?`, acceptedAnswers:[String(a+b)] },
+    whyAddTensOnes(a, b), 'Add the tens, then the ones, then put the two together.');
 }
 
 function g2TypedSub() {
   const a = randInt(20, 99);
   const b = randInt(5, a - 1);
-  return { type:'typed', text:`${a} - ${b} = ?`, acceptedAnswers:[String(a-b)] };
+  return withWhy({ type:'typed', text:`${a} - ${b} = ?`, acceptedAnswers:[String(a-b)] },
+    whySubTensOnes(a, b), 'Take away the tens first, then the ones. Check by adding back.');
 }
 
 function g2TfMath() {
@@ -5164,7 +5658,8 @@ function g2TfMath() {
   const b = randInt(2, 15);
   const sum = a + b;
   const claimed = Math.random() < 0.5 ? sum : sum + (Math.random() < 0.5 ? 1 : -1);
-  return { type:'tf', statement:`${a} + ${b} = ${claimed}`, answer: (claimed === sum) };
+  return withWhy({ type:'tf', statement:`${a} + ${b} = ${claimed}`, answer: (claimed === sum) },
+    claimed === sum ? `True. ${a} + ${b} = ${sum}.` : `False. ${a} + ${b} = ${sum}, not ${claimed}. Being off by one is the most common slip — count on carefully.`);
 }
 
 function g2TfPlaceValue() {
@@ -5175,7 +5670,9 @@ function g2TfPlaceValue() {
   // Sometimes state the correct number, sometimes a swapped version
   const swap = Math.random() < 0.5;
   const claimed = swap ? (t*100 + h*10 + o) : actual;
-  return { type:'tf', statement:`${h} hundreds + ${t} tens + ${o} ones equals ${claimed}.`, answer: (claimed === actual) };
+  return withWhy({ type:'tf', statement:`${h} hundreds + ${t} tens + ${o} ones equals ${claimed}.`, answer: (claimed === actual) },
+    `${claimed === actual ? 'True' : 'False'}. ${h} hundreds + ${t} tens + ${o} ones is ${h * 100} + ${t * 10} + ${o} = ${actual}.` +
+    (claimed === actual ? '' : ` ${claimed} mixes up the hundreds and the tens.`));
 }
 
 // Show-your-work: word problem requiring multiple steps
@@ -5186,12 +5683,13 @@ function g2ShowWorkAdd() {
   const t = things[randInt(0, things.length-1)];
   const start = randInt(15, 50);
   const added = randInt(8, 30);
-  return {
+  return withWhy({
     type:'showwork',
     text:`${n} has ${start} ${t}. They get ${added} more ${t}. How many ${t} do they have now? <br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
     acceptedAnswers:[String(start + added)],
     workPrompt:`Word problem: ${n}, ${t}, start=${start}, added=${added}`
-  };
+  }, `${n} gets MORE, so add. ${whyAddTensOnes(start, added)}`,
+     'Did the amount go up or down? Pick the operation, then work it out on paper.');
 }
 
 function g2ShowWorkSub() {
@@ -5201,23 +5699,25 @@ function g2ShowWorkSub() {
   const t = things[randInt(0, things.length-1)];
   const start = randInt(40, 99);
   const taken = randInt(10, start - 5);
-  return {
+  return withWhy({
     type:'showwork',
     text:`${n} had ${start} ${t}. They gave away ${taken}. How many ${t} do they have left? <br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
     acceptedAnswers:[String(start - taken)],
     workPrompt:`Word problem: ${n}, ${t}, start=${start}, taken=${taken}`
-  };
+  }, `Giving some away makes the amount smaller, so subtract: ${start} − ${taken} = ${start - taken}. Check: ${start - taken} + ${taken} = ${start}.`,
+     'Did the amount go up or down? Pick the operation, then work it out on paper.');
 }
 
 function g2ShowWorkMoney() {
   const price = randInt(15, 85);
   const paid = 100;
-  return {
+  return withWhy({
     type:'showwork',
     text:`You bought a toy that costs ${price}¢. You paid with a $1 bill. How much change (in cents) do you get back? <br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
     acceptedAnswers:[String(paid - price)],
     workPrompt:`Money problem: cost=${price}¢, paid=$1, change=?`
-  };
+  }, `$1 is 100 cents. Change is what you paid minus the price: 100 − ${price} = ${100 - price}. Check: ${price} + ${100 - price} = 100.`,
+     'A dollar is 100 cents. Count up from the price to 100.');
 }
 
 function g2ShowWorkComparison() {
@@ -5226,14 +5726,18 @@ function g2ShowWorkComparison() {
   let b = names[randInt(0, names.length-1)];
   while (b === a) b = names[randInt(0, names.length-1)];
   const aAmount = randInt(25, 60);
-  const bAmount = randInt(25, 60);
+  let bAmount = randInt(25, 60);
+  // Equal amounts would make "the bigger reader" meaningless.
+  while (bAmount === aAmount) bAmount = randInt(25, 60);
   const diff = Math.abs(aAmount - bAmount);
-  return {
+  const big = Math.max(aAmount, bAmount), small = Math.min(aAmount, bAmount);
+  return withWhy({
     type:'showwork',
     text:`${a} read ${aAmount} pages. ${b} read ${bAmount} pages. How many MORE pages did the bigger reader read? <br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
     acceptedAnswers:[String(diff)],
     workPrompt:`Comparison: ${a}=${aAmount}, ${b}=${bAmount}, diff=?`
-  };
+  }, `"How many more" asks for the difference, so subtract the smaller from the bigger: ${big} − ${small} = ${diff}. Check: ${small} + ${diff} = ${big}.`,
+     '"How many more" is a comparing question. Which operation finds the difference?');
 }
 
 // ───────────────────────────────────────────────────────
@@ -5242,14 +5746,17 @@ function g2ShowWorkComparison() {
 function g4TypedMult() {
   const a = randInt(12, 50);
   const b = randInt(3, 9);
-  return { type:'typed', text:`${a} × ${b} = ?`, acceptedAnswers:[String(a*b)] };
+  return withWhy({ type:'typed', text:`${a} × ${b} = ?`, acceptedAnswers:[String(a*b)] },
+    whyMultPartial(a, b), 'Split the two-digit number into tens and ones. Multiply each part, then add.');
 }
 
 function g4TypedDiv() {
   const b = randInt(3, 12);
   const quotient = randInt(5, 25);
   const a = b * quotient;
-  return { type:'typed', text:`${a} ÷ ${b} = ?`, acceptedAnswers:[String(quotient)] };
+  return withWhy({ type:'typed', text:`${a} ÷ ${b} = ?`, acceptedAnswers:[String(quotient)] },
+    `${b} × ${quotient} = ${a}, so ${a} ÷ ${b} = ${quotient}. Division asks how many groups of ${b} make ${a}.`,
+    `Think multiplication: ${b} times what number equals ${a}?`);
 }
 
 function g4TypedFrac() {
@@ -5268,7 +5775,9 @@ function g4TypedFrac() {
     { q: 'Simplify 6/10', a: ['3/5'] },
   ];
   const c = cases[randInt(0, cases.length-1)];
-  return { type:'typed', text:`${c.q} (type as n/d)`, acceptedAnswers:c.a };
+  return withWhy({ type:'typed', text:`${c.q} (type as n/d)`, acceptedAnswers:c.a },
+    whySimplify(c.q.replace('Simplify ', '')),
+    'Find the largest number that divides evenly into both the numerator and the denominator.');
 }
 
 function g4TfMath() {
@@ -5276,70 +5785,72 @@ function g4TfMath() {
   const b = randInt(3, 12);
   const actual = a * b;
   const claimed = Math.random() < 0.5 ? actual : actual + (randInt(1, 20) * (Math.random() < 0.5 ? 1 : -1));
-  return { type:'tf', statement:`${a} × ${b} = ${claimed}`, answer: (claimed === actual) };
+  return withWhy({ type:'tf', statement:`${a} × ${b} = ${claimed}`, answer: (claimed === actual) },
+    claimed === actual ? `True. ${whyMultPartial(a, b)}` : `False. ${a} × ${b} = ${actual}, not ${claimed}. ${whyMultPartial(a, b)}`);
 }
 
 function g4TfFrac() {
   const pairs = [
-    { statement:'1/2 is equivalent to 2/4.', answer:true },
-    { statement:'1/2 is equivalent to 3/6.', answer:true },
-    { statement:'1/2 is equivalent to 4/6.', answer:false },
-    { statement:'2/3 is equivalent to 4/6.', answer:true },
-    { statement:'2/3 is equivalent to 6/8.', answer:false },
-    { statement:'3/4 is equivalent to 6/8.', answer:true },
-    { statement:'3/4 is equivalent to 9/12.', answer:true },
-    { statement:'1/4 is equivalent to 2/8.', answer:true },
-    { statement:'1/4 is equivalent to 3/8.', answer:false },
-    { statement:'5/6 is GREATER than 1/2.', answer:true },
-    { statement:'1/3 is GREATER than 1/2.', answer:false },
-    { statement:'3/4 is GREATER than 1/2.', answer:true },
-    { statement:'2/5 is LESS than 1/2.', answer:true },
-    { statement:'0.5 equals 1/2.', answer:true },
-    { statement:'0.25 equals 1/4.', answer:true },
-    { statement:'0.75 equals 3/4.', answer:true },
-    { statement:'0.3 equals 1/3.', answer:false },
-    { statement:'0.4 equals 2/5.', answer:true },
-    { statement:'0.1 equals 1/10.', answer:true },
-    { statement:'1/4 + 1/4 = 1/2.', answer:true },
-    { statement:'1/4 + 1/4 = 2/8.', answer:false },
-    { statement:'2/5 + 1/5 = 3/5.', answer:true },
-    { statement:'2/5 + 1/5 = 3/10.', answer:false },
-    { statement:'3/4 − 1/4 = 1/2.', answer:true },
-    { statement:'6/8 simplifies to 3/4.', answer:true },
-    { statement:'6/8 simplifies to 2/4.', answer:false },
+    { statement:'1/2 is equivalent to 2/4.', answer:true,  why:'True. Multiply the top and bottom of 1/2 by 2 and you get 2/4 — the same amount cut into smaller pieces.' },
+    { statement:'1/2 is equivalent to 3/6.', answer:true,  why:'True. Multiply the top and bottom of 1/2 by 3 and you get 3/6.' },
+    { statement:'1/2 is equivalent to 4/6.', answer:false, why:'False. Half of 6 is 3, so 1/2 = 3/6. 4/6 is more than half — it simplifies to 2/3.' },
+    { statement:'2/3 is equivalent to 4/6.', answer:true,  why:'True. Multiply the top and bottom of 2/3 by 2 and you get 4/6.' },
+    { statement:'2/3 is equivalent to 6/8.', answer:false, why:'False. 6/8 simplifies to 3/4, and 3/4 is bigger than 2/3. To get from 3 to 8 you cannot multiply by a whole number.' },
+    { statement:'3/4 is equivalent to 6/8.', answer:true,  why:'True. Multiply the top and bottom of 3/4 by 2 and you get 6/8.' },
+    { statement:'3/4 is equivalent to 9/12.', answer:true, why:'True. Multiply the top and bottom of 3/4 by 3 and you get 9/12.' },
+    { statement:'1/4 is equivalent to 2/8.', answer:true,  why:'True. Multiply the top and bottom of 1/4 by 2 and you get 2/8.' },
+    { statement:'1/4 is equivalent to 3/8.', answer:false, why:'False. 1/4 = 2/8, because both parts are multiplied by 2. 3/8 is one eighth more.' },
+    { statement:'5/6 is GREATER than 1/2.', answer:true,  why:'True. 1/2 = 3/6, and 5/6 is more than 3/6.' },
+    { statement:'1/3 is GREATER than 1/2.', answer:false, why:'False. With the same numerator, the bigger denominator means smaller pieces. Thirds are smaller than halves, so 1/3 < 1/2.' },
+    { statement:'3/4 is GREATER than 1/2.', answer:true,  why:'True. 1/2 = 2/4, and 3/4 is more than 2/4.' },
+    { statement:'2/5 is LESS than 1/2.', answer:true,     why:'True. Half of 5 is 2.5, so 1/2 = 2.5/5. 2/5 is a little less than that.' },
+    { statement:'0.5 equals 1/2.', answer:true,           why:'True. 0.5 is 5 tenths, 5/10, which simplifies to 1/2.' },
+    { statement:'0.25 equals 1/4.', answer:true,          why:'True. 0.25 is 25 hundredths, 25/100, which simplifies to 1/4 — like 25 cents is a quarter of a dollar.' },
+    { statement:'0.75 equals 3/4.', answer:true,          why:'True. 0.75 is 75/100, which simplifies to 3/4 — like 75 cents is three quarters.' },
+    { statement:'0.3 equals 1/3.', answer:false,          why:'False. 0.3 is 3/10. One third is 0.333… — a little more than 0.3.' },
+    { statement:'0.4 equals 2/5.', answer:true,           why:'True. 0.4 is 4/10, and dividing the top and bottom by 2 gives 2/5.' },
+    { statement:'0.1 equals 1/10.', answer:true,          why:'True. The first place after the decimal point is tenths, so 0.1 is one tenth.' },
+    { statement:'1/4 + 1/4 = 1/2.', answer:true,          why:'True. 1/4 + 1/4 = 2/4, and 2/4 simplifies to 1/2.' },
+    { statement:'1/4 + 1/4 = 2/8.', answer:false,         why:'False. You add the numerators but keep the denominator: 1/4 + 1/4 = 2/4. Adding the denominators is a common mistake.' },
+    { statement:'2/5 + 1/5 = 3/5.', answer:true,          why:'True. The pieces are fifths, so add the numerators: 2 + 1 = 3 fifths.' },
+    { statement:'2/5 + 1/5 = 3/10.', answer:false,        why:'False. The pieces stay fifths, so the answer is 3/5. Adding the denominators would make the pieces smaller, which makes no sense.' },
+    { statement:'3/4 − 1/4 = 1/2.', answer:true,          why:'True. 3/4 − 1/4 = 2/4, and 2/4 simplifies to 1/2.' },
+    { statement:'6/8 simplifies to 3/4.', answer:true,    why:'True. Divide the top and bottom of 6/8 by 2 and you get 3/4.' },
+    { statement:'6/8 simplifies to 2/4.', answer:false,   why:'False. 2/4 is only half. Divide the top and bottom of 6/8 by 2 to get 3/4.' },
   ];
   const picked = pairs[randInt(0, pairs.length-1)];
-  return { type:'tf', statement: picked.statement, answer: picked.answer };
+  return { type:'tf', statement: picked.statement, answer: picked.answer, why: picked.why };
 }
 
 function g4TfDecimal() {
   const pairs = [
-    { statement:'0.7 is greater than 0.65.', answer:true },
-    { statement:'0.65 is greater than 0.7.', answer:false },
-    { statement:'2.5 is greater than 2.45.', answer:true },
-    { statement:'0.4 is greater than 0.04.', answer:true },
-    { statement:'0.04 is greater than 0.4.', answer:false },
-    { statement:'0.5 is equal to 0.50.', answer:true },
-    { statement:'0.3 + 0.4 = 0.7.', answer:true },
-    { statement:'0.3 + 0.4 = 0.07.', answer:false },
-    { statement:'In 3.47, the 4 is in the tenths place.', answer:true },
-    { statement:'In 3.47, the 7 is in the hundredths place.', answer:true },
-    { statement:'In 3.47, the 4 is in the hundredths place.', answer:false },
+    { statement:'0.7 is greater than 0.65.', answer:true,  why:'True. Compare tenths first: 0.7 has 7 tenths and 0.65 has only 6 tenths. Think 0.70 vs 0.65.' },
+    { statement:'0.65 is greater than 0.7.', answer:false, why:'False. 0.7 is the same as 0.70, and 70 hundredths is more than 65 hundredths. More digits does not mean bigger.' },
+    { statement:'2.5 is greater than 2.45.', answer:true,  why:'True. Both have 2 ones. Then 5 tenths beats 4 tenths. Think 2.50 vs 2.45.' },
+    { statement:'0.4 is greater than 0.04.', answer:true,  why:'True. 0.4 is 4 tenths; 0.04 is only 4 hundredths, ten times smaller.' },
+    { statement:'0.04 is greater than 0.4.', answer:false, why:'False. 0.04 is 4 hundredths and 0.4 is 4 tenths. Tenths are ten times bigger than hundredths.' },
+    { statement:'0.5 is equal to 0.50.', answer:true,      why:'True. 5 tenths is the same as 50 hundredths. A zero on the end after the decimal does not change the value.' },
+    { statement:'0.3 + 0.4 = 0.7.', answer:true,           why:'True. 3 tenths + 4 tenths = 7 tenths, which is 0.7.' },
+    { statement:'0.3 + 0.4 = 0.07.', answer:false,         why:'False. 3 tenths + 4 tenths = 7 tenths, which is 0.7. 0.07 would be 7 hundredths.' },
+    { statement:'In 3.47, the 4 is in the tenths place.', answer:true,     why:'True. The first digit after the decimal point is the tenths place.' },
+    { statement:'In 3.47, the 7 is in the hundredths place.', answer:true, why:'True. The second digit after the decimal point is the hundredths place.' },
+    { statement:'In 3.47, the 4 is in the hundredths place.', answer:false, why:'False. The 4 is the first digit after the decimal point, so it is in the tenths place. The 7 is in the hundredths.' },
   ];
   const picked = pairs[randInt(0, pairs.length-1)];
-  return { type:'tf', statement: picked.statement, answer: picked.answer };
+  return { type:'tf', statement: picked.statement, answer: picked.answer, why: picked.why };
 }
 
 // Show-your-work problems for 4th grade
 function g4ShowWorkMult() {
   const a = randInt(15, 65);
   const b = randInt(12, 45);
-  return {
+  return withWhy({
     type:'showwork',
     text:`Multiply using the area model or standard algorithm: <strong>${a} × ${b} = ?</strong><br><br><em>✏️ Show all your work on paper (set up the problem, multiply by ones, multiply by tens, add). Then type the final answer.</em>`,
     acceptedAnswers:[String(a*b)],
     workPrompt:`Multiplication: ${a} × ${b}`
-  };
+  }, whyMultPartial(a, b),
+     'Multiply by the ones, then by the tens, then add the partial products. Does your answer match an estimate?');
 }
 
 function g4ShowWorkDiv() {
@@ -5349,12 +5860,15 @@ function g4ShowWorkDiv() {
   const a = b * quotient + rem;
   const answerStr = rem === 0 ? String(quotient) : `${quotient} r ${rem}`;
   const altAnswer = rem === 0 ? String(quotient) : `${quotient}r${rem}`;
-  return {
+  return withWhy({
     type:'showwork',
     text:`Divide using long division: <strong>${a} ÷ ${b} = ?</strong><br><br><em>✏️ Show all your work on paper (divide, multiply, subtract, bring down, repeat). Then type the quotient with remainder if any (e.g. "12 r 3" or just "12").</em>`,
     acceptedAnswers:[answerStr, altAnswer, String(quotient) + ' R ' + rem, String(quotient) + ' remainder ' + rem],
     workPrompt:`Long division: ${a} ÷ ${b}`
-  };
+  }, rem === 0
+       ? `${b} × ${quotient} = ${a} exactly, so ${a} ÷ ${b} = ${quotient} with nothing left over.`
+       : `${b} × ${quotient} = ${b * quotient}, and ${a} − ${b * quotient} = ${rem} left over. ${rem} is less than ${b}, so it is ${answerStr}. Check: ${b} × ${quotient} + ${rem} = ${a}.`,
+     'Check your paper: quotient × divisor + remainder should equal the number you started with.');
 }
 
 function g4ShowWorkWordProblem() {
@@ -5365,7 +5879,9 @@ function g4ShowWorkWordProblem() {
       return {
         text: `A team has ${kids} players. Each player needs ${perBag} water bottles for a game. How many water bottles total does the team need? <br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
         answer: String(kids * perBag),
-        prompt: `${kids} players × ${perBag} bottles`
+        prompt: `${kids} players × ${perBag} bottles`,
+        why: `${kids} players each need ${perBag}, so it is ${kids} equal groups of ${perBag}: ${kids} × ${perBag} = ${kids * perBag}.`,
+        hint: 'Every player needs the same number. Which operation puts equal groups together?'
       };
     },
     () => {
@@ -5376,7 +5892,11 @@ function g4ShowWorkWordProblem() {
       return {
         text: `Coach brought ${totalCookies} cookies. They need to be shared equally among ${kids} kids. How many cookies does each kid get?<br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
         answer: String(per),
-        prompt: `${totalCookies} ÷ ${kids} (remainder: ${rem})`
+        prompt: `${totalCookies} ÷ ${kids} (remainder: ${rem})`,
+        why: rem === 0
+          ? `Sharing equally means dividing: ${totalCookies} ÷ ${kids} = ${per}. Check: ${kids} × ${per} = ${totalCookies}.`
+          : `Sharing equally means dividing: ${totalCookies} ÷ ${kids} = ${per} r ${rem}. Each kid gets ${per} whole cookies, and ${rem} are left over.`,
+        hint: 'Sharing equally is a division problem. How many does each kid get before you run out?'
       };
     },
     () => {
@@ -5385,7 +5905,9 @@ function g4ShowWorkWordProblem() {
       return {
         text: `The team ordered ${pizzas} pizzas. Each pizza has ${slicesEach} slices. How many slices total?<br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
         answer: String(pizzas * slicesEach),
-        prompt: `${pizzas} pizzas × ${slicesEach} slices`
+        prompt: `${pizzas} pizzas × ${slicesEach} slices`,
+        why: `${pizzas} pizzas with ${slicesEach} slices each is ${pizzas} equal groups: ${pizzas} × ${slicesEach} = ${pizzas * slicesEach}.`,
+        hint: 'Every pizza has the same number of slices. Which operation puts equal groups together?'
       };
     },
     () => {
@@ -5394,7 +5916,9 @@ function g4ShowWorkWordProblem() {
       return {
         text: `A store had ${total} baseball cards. They sold ${taken} cards. How many cards are left?<br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
         answer: String(total - taken),
-        prompt: `${total} - ${taken}`
+        prompt: `${total} - ${taken}`,
+        why: `Sold cards are gone, so subtract: ${total} − ${taken} = ${total - taken}. Check: ${total - taken} + ${taken} = ${total}.`,
+        hint: 'Did the number of cards go up or down? Pick the operation, then check by working backward.'
       };
     },
     () => {
@@ -5404,7 +5928,9 @@ function g4ShowWorkWordProblem() {
       return {
         text: `Three friends ran races: ${a} meters, ${b} meters, ${c} meters. How many meters did they run in total?<br><br><em>✏️ Show your work on paper, then type the answer.</em>`,
         answer: String(a + b + c),
-        prompt: `${a} + ${b} + ${c}`
+        prompt: `${a} + ${b} + ${c}`,
+        why: `"In total" means put all three together: ${a} + ${b} = ${a + b}, then ${a + b} + ${c} = ${a + b + c}.`,
+        hint: '"In total" means combine everything. Add two of the distances first, then the third.'
       };
     },
   ];
@@ -5413,31 +5939,47 @@ function g4ShowWorkWordProblem() {
     type:'showwork',
     text: t.text,
     acceptedAnswers: [t.answer],
-    workPrompt: t.prompt
+    workPrompt: t.prompt,
+    why: t.why,
+    hint: t.hint
   };
 }
 
 function g4ShowWorkFrac() {
   const cases = [
-    { text: 'Add: 1/4 + 2/4 = ?  (type as n/d simplified)', answers: ['3/4'], prompt: '1/4 + 2/4' },
-    { text: 'Add: 2/5 + 1/5 = ?  (type as n/d)', answers: ['3/5'], prompt: '2/5 + 1/5' },
-    { text: 'Add: 3/8 + 2/8 = ?  (type as n/d)', answers: ['5/8'], prompt: '3/8 + 2/8' },
-    { text: 'Subtract: 5/6 - 2/6 = ?  (type simplified)', answers: ['1/2','3/6'], prompt: '5/6 - 2/6' },
-    { text: 'Subtract: 7/10 - 3/10 = ?  (type simplified)', answers: ['2/5','4/10'], prompt: '7/10 - 3/10' },
-    { text: 'Multiply: 1/2 × 6 = ?  (type whole number)', answers: ['3'], prompt: '1/2 × 6' },
-    { text: 'Multiply: 1/4 × 8 = ?  (type whole number)', answers: ['2'], prompt: '1/4 × 8' },
-    { text: 'Multiply: 2/3 × 9 = ?  (type whole number)', answers: ['6'], prompt: '2/3 × 9' },
-    { text: 'Convert 3/4 to a decimal.', answers: ['0.75','.75'], prompt: '3/4 = ? decimal' },
-    { text: 'Convert 1/4 to a decimal.', answers: ['0.25','.25'], prompt: '1/4 = ? decimal' },
-    { text: 'Convert 2/5 to a decimal.', answers: ['0.4','.4','0.40'], prompt: '2/5 = ? decimal' },
-    { text: 'Convert 0.6 to a fraction in simplest form. (type as n/d)', answers: ['3/5'], prompt: '0.6 = ? fraction' },
+    { text: 'Add: 1/4 + 2/4 = ?  (type as n/d simplified)', answers: ['3/4'], prompt: '1/4 + 2/4',
+      why: 'The pieces are fourths, so add the numerators: 1 + 2 = 3. The answer is 3/4.', hint: 'Same denominator means same-size pieces. Add the numerators only.' },
+    { text: 'Add: 2/5 + 1/5 = ?  (type as n/d)', answers: ['3/5'], prompt: '2/5 + 1/5',
+      why: 'The pieces are fifths, so add the numerators: 2 + 1 = 3. The answer is 3/5.', hint: 'Same denominator means same-size pieces. Add the numerators only.' },
+    { text: 'Add: 3/8 + 2/8 = ?  (type as n/d)', answers: ['5/8'], prompt: '3/8 + 2/8',
+      why: 'The pieces are eighths, so add the numerators: 3 + 2 = 5. The answer is 5/8.', hint: 'Same denominator means same-size pieces. Add the numerators only.' },
+    { text: 'Subtract: 5/6 - 2/6 = ?  (type simplified)', answers: ['1/2','3/6'], prompt: '5/6 - 2/6',
+      why: '5/6 − 2/6 = 3/6, because 5 − 2 = 3 sixths. Divide the top and bottom by 3 to simplify: 1/2.', hint: 'Subtract the numerators, keep the denominator, then simplify.' },
+    { text: 'Subtract: 7/10 - 3/10 = ?  (type simplified)', answers: ['2/5','4/10'], prompt: '7/10 - 3/10',
+      why: '7/10 − 3/10 = 4/10, because 7 − 3 = 4 tenths. Divide the top and bottom by 2 to simplify: 2/5.', hint: 'Subtract the numerators, keep the denominator, then simplify.' },
+    { text: 'Multiply: 1/2 × 6 = ?  (type whole number)', answers: ['3'], prompt: '1/2 × 6',
+      why: '1/2 × 6 means half of 6, which is 3. Or: 1 × 6 = 6 halves, and 6/2 = 3.', hint: 'One half times a number means half OF that number.' },
+    { text: 'Multiply: 1/4 × 8 = ?  (type whole number)', answers: ['2'], prompt: '1/4 × 8',
+      why: '1/4 × 8 means one fourth of 8. Split 8 into 4 equal groups: each group is 2.', hint: 'One fourth of a number means split it into 4 equal groups.' },
+    { text: 'Multiply: 2/3 × 9 = ?  (type whole number)', answers: ['6'], prompt: '2/3 × 9',
+      why: 'One third of 9 is 3, so two thirds of 9 is 2 × 3 = 6. Or: 2 × 9 = 18, and 18/3 = 6.', hint: 'Find one third of 9 first. Then how many thirds do you need?' },
+    { text: 'Convert 3/4 to a decimal.', answers: ['0.75','.75'], prompt: '3/4 = ? decimal',
+      why: 'Multiply the top and bottom by 25: 3/4 = 75/100, which is 0.75 — like three quarters is 75 cents.', hint: 'Make an equivalent fraction with 100 on the bottom. Think about quarters and a dollar.' },
+    { text: 'Convert 1/4 to a decimal.', answers: ['0.25','.25'], prompt: '1/4 = ? decimal',
+      why: 'Multiply the top and bottom by 25: 1/4 = 25/100, which is 0.25 — like one quarter is 25 cents.', hint: 'Make an equivalent fraction with 100 on the bottom. Think about a quarter and a dollar.' },
+    { text: 'Convert 2/5 to a decimal.', answers: ['0.4','.4','0.40'], prompt: '2/5 = ? decimal',
+      why: 'Multiply the top and bottom by 2: 2/5 = 4/10, which is 0.4.', hint: 'Make an equivalent fraction with 10 on the bottom.' },
+    { text: 'Convert 0.6 to a fraction in simplest form. (type as n/d)', answers: ['3/5'], prompt: '0.6 = ? fraction',
+      why: '0.6 is 6 tenths, 6/10. Divide the top and bottom by 2 to simplify: 3/5.', hint: 'Read the decimal as tenths, write that fraction, then simplify.' },
   ];
   const c = cases[randInt(0, cases.length-1)];
   return {
     type:'showwork',
     text: `<strong>${c.text}</strong><br><br><em>✏️ Show your steps on paper, then type the answer.</em>`,
     acceptedAnswers: c.answers,
-    workPrompt: c.prompt
+    workPrompt: c.prompt,
+    why: c.why,
+    hint: c.hint
   };
 }
 
@@ -18758,6 +19300,11 @@ let bestStreak = 0;
 let locked = false;
 let reviewItems = []; // {question, typedAnswer, timestamp}
 let roundLog = [];    // per-question answer log for parent reports
+// Thinking it through: one wrong try earns a hint and a second chance.
+let tries = 0;          // wrong attempts already made on this question (0 or 1)
+let firstWrong = null;  // what the child chose the first time, for the round log
+let fixedCount = 0;     // answers put right after a hint, this round
+let qState = null;      // widget state for order / sort / multi / twopart
 
 // Each September the kids move up a grade and the profile keys move with
 // them. A save written last year is keyed by last year's grades, so it is
@@ -18792,6 +19339,7 @@ function loadState() {
       }
       if (!parsed.parent) parsed.parent = { reportRequired: true };
       if (typeof parsed.parent.reportRequired !== 'boolean') parsed.parent.reportRequired = true;
+      if (typeof parsed.parent.secondChance !== 'boolean') parsed.parent.secondChance = true;
       return parsed;
     }
   } catch(e) {}
@@ -18801,7 +19349,7 @@ function loadState() {
       g3: newProfile(),
       g5: newProfile(),
     },
-    parent: { reportRequired: true }
+    parent: { reportRequired: true, secondChance: true }
   };
 }
 
@@ -18843,6 +19391,9 @@ const TROPHIES = [
   { id:'sci_ace',      emoji:'🔬', name:'SCIENCE STAR',note:'Ace 3 science packs' },
   { id:'typer',        emoji:'⌨️', name:'TYPER',      note:'Get 10 typed answers right' },
   { id:'showwork',     emoji:'✏️', name:'WORK SHOWN', note:'Complete 5 show-your-work' },
+  { id:'big_thinker',  emoji:'🧠', name:'BIG THINKER', note:'Solve 10 puzzle questions' },
+  { id:'comeback',     emoji:'🛠️', name:'COMEBACK KID', note:'Fix 5 answers after a hint' },
+  { id:'prove_it',     emoji:'🔎', name:'PROVE IT',   note:'Answer and prove 5 two-part questions' },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -19113,6 +19664,13 @@ Object.entries(PACKS).forEach(([profileId, list]) => list.forEach(pk => {
     pk.desc = pk.desc.replace(GRADE_PREFIX, '');
     pk.desc = pk.desc.charAt(0).toUpperCase() + pk.desc.slice(1);
   }
+}));
+
+// The Big Thinker Challenge: a round made only of puzzle questions, drawn
+// from every one of this year's packs. It sits at the top of each hub.
+Object.keys(PACKS).forEach(pid => PACKS[pid].push({
+  id:'think_mix', title:'Big Thinker Challenge', icon:'🧠', subject:'think', tier:'think',
+  desc:'Puzzles from every subject: put it in order, sort it, prove it.',
 }));
 
 // Fixed subject order for the MY GRADE section of the hub.
@@ -35070,6 +35628,20 @@ const MISA_G5 = [
 // `typeof X !== 'undefined'` guard — eight blocks, and adding one pack meant
 // editing two places and forgetting the second. This is that list, once.
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// THE WHY, AND THINKING IT THROUGH
+//   PACK_WHY      pack id → why this topic matters, in the child's words.
+//                 Shown on the briefing card before every round.
+//   THINK_ITEMS   pack id → puzzle questions for that pack: put in order,
+//                 sort into groups, pick all that apply, and two-part
+//                 "answer it, then prove it" — the item styles Maryland's
+//                 MSTAR test uses beside plain multiple choice. Two land in
+//                 each round of the pack; all of them feed the Big Thinker
+//                 Challenge.
+// ═══════════════════════════════════════════════════════════════
+const PACK_WHY = {};
+const THINK_ITEMS = {};
+
 const BANKS = {
   BRIDGE_G3_ADDSUB,
   BRIDGE_G3_FRACTIONS,
@@ -35264,7 +35836,61 @@ function resolvePackBank(pack) {
   return null;
 }
 
+// The question types beyond the original five. Each needs its options or
+// items shuffled per round, the way multiple choice always has been.
+const PUZZLE_TYPES = new Set(['order', 'sort', 'multi', 'twopart']);
+
+function shufflePart(part) {
+  const order = shuffleArr(part.options.map((_, i) => i));
+  return { ...part, options: order.map(i => part.options[i]), correct: order.indexOf(part.correct) };
+}
+
+// Returns a per-round copy of a question with its choices shuffled.
+function prepareQuestion(q) {
+  const type = q.type || 'mc';
+  if (type === 'mc') return shuffleMcAnswers(q);
+  if (type === 'multi') {
+    const order = shuffleArr(q.options.map((_, i) => i));
+    return { ...q, options: order.map(i => q.options[i]),
+             correct: q.correct.map(c => order.indexOf(c)).sort((a, b) => a - b) };
+  }
+  if (type === 'twopart') return { ...q, partA: shufflePart(q.partA), partB: shufflePart(q.partB) };
+  if (type === 'order') {
+    // Never hand the child the answer by shuffling it back into order.
+    let s;
+    do { s = shuffleArr(q.items.map((_, i) => i)); } while (s.every((v, i) => v === i));
+    return { ...q, _shuffle: s };
+  }
+  if (type === 'sort') return { ...q, _shuffle: shuffleArr(q.items.map((_, i) => i)) };
+  return q;
+}
+
+// This year's packs whose puzzles feed the Big Thinker Challenge.
+function thinkPacksFor(profileId) {
+  return PACKS[profileId].filter(pk => (pk.tier === 'now' || pk.tier === 'misa') && (THINK_ITEMS[pk.id] || []).length);
+}
+
 function getQuestions(pack, profileId) {
+  // A mode such as a boss battle builds its own round.
+  if (typeof pack.getQuestions === 'function') return pack.getQuestions(profileId).map(q => q._prepared ? q : prepareQuestion(q));
+  if (pack.id === 'think_mix') {
+    const pool = [];
+    thinkPacksFor(profileId).forEach(pk => THINK_ITEMS[pk.id].forEach(q => pool.push({ ...q, _from: pk.icon + ' ' + pk.title })));
+    return shuffleArr(pool).slice(0, 10).map(prepareQuestion);
+  }
+  const base = getBaseQuestions(pack, profileId);
+  const extra = THINK_ITEMS[pack.id];
+  // Reading Quest rounds keep a passage's questions together and in order,
+  // so puzzles are not spliced into them.
+  if (!extra || !extra.length || pack.quest || !base.length) return base;
+  const picks = shuffleArr(extra).slice(0, 2).map(prepareQuestion);
+  const round = base.slice(0, 10 - picks.length);
+  // Puzzles land after a warm-up of plain questions, never first.
+  picks.forEach(p => round.splice(randInt(Math.min(3, round.length), round.length), 0, p));
+  return round;
+}
+
+function getBaseQuestions(pack, profileId) {
   // K Bridge packs (kindergarten preview): pull from K_BANKS, already mixed
   if (pack.kBankKey && typeof K_BANKS !== 'undefined' && K_BANKS[pack.kBankKey]) {
     const source = K_BANKS[pack.kBankKey];
@@ -35325,6 +35951,246 @@ function getQuestions(pack, profileId) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// FUN LAYER — shared plumbing for the engagement features
+// The buddy, missions, stickers, boss battles, sprints and family goal
+// are separate modules below. None of them edits the round engine; they
+// listen for its events and contribute HTML at fixed places on screen:
+//
+//   events (FUN.on / FUN.emit)       data
+//     roundStart                     { profileId, pack }
+//     answer                         { profileId, pack, q, isRight, fixed, parts, streak }
+//     roundEnd                       { profileId, pack, score, total, fixed, xpEarned, bestStreak, perfect }
+//     retry                          { profileId, pack, q }   (wrong first try; hint shown)
+//     roundExit                      { profileId, pack }
+//     speak                          { profileId }            (a 🔊 button was tapped)
+//
+//   slots (FUN.slot / FUN.html)      where it appears
+//     titleExtra   { }                     title screen, under the three kids
+//     hubHeader    { profile }             hub header, beside the child's name
+//     hubTop       { profile }             hub, above MY GRADE THIS YEAR
+//     quizBar      { profile, pack, q }    quiz top bar, before the 🔇 AUTO button
+//     quizTop      { profile, pack, q }    above the question card
+//     completeExtra{ summary }             round complete, under the scores
+//     parentExtra  { }                     parent dashboard, after the settings
+//
+// A module that throws is logged and skipped — a broken sticker must never
+// stop a child finishing a round.
+// ═══════════════════════════════════════════════════════════════
+const FUN = {
+  events: {},
+  slots: {},
+  trophyChecks: {},
+  on(evt, fn) { (this.events[evt] = this.events[evt] || []).push(fn); },
+  emit(evt, data) {
+    for (const fn of this.events[evt] || []) {
+      try { fn(data); } catch (e) { console.warn('[fun] ' + evt, e); }
+    }
+  },
+  // order: lower renders first, so the layout does not depend on file order.
+  slot(name, fn, order) { (this.slots[name] = this.slots[name] || []).push({ fn, order: order || 50 }); },
+  html(name, data) {
+    return (this.slots[name] || []).slice().sort((a, b) => a.order - b.order).map(s => {
+      try { return s.fn(data || {}) || ''; } catch (e) { console.warn('[fun] slot ' + name, e); return ''; }
+    }).join('');
+  },
+  // Per-child storage for a module, saved with the rest of the profile.
+  store(profileId, key) {
+    const d = state.profiles[profileId];
+    if (!d.fun) d.fun = {};
+    if (!d.fun[key]) d.fun[key] = {};
+    return d.fun[key];
+  },
+  // A trophy owned by a module: shown in the hub and checked like the rest.
+  trophy(t, check) {
+    if (!TROPHIES.some(x => x.id === t.id)) TROPHIES.push(t);
+    this.trophyChecks[t.id] = check;
+  },
+  // Local calendar day, so a mission done at 7pm counts for today.
+  today(offsetDays) {
+    const d = new Date();
+    if (offsetDays) d.setDate(d.getDate() + offsetDays);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  },
+  // Monday-based week key, for weekly goals.
+  week() {
+    const d = new Date();
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  },
+  reducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  },
+  // Deterministic pseudo-random from a string, so "today's missions" are the
+  // same all day on every device without storing them first.
+  seeded(seedStr) {
+    let h = 2166136261;
+    for (let i = 0; i < seedStr.length; i++) { h ^= seedStr.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return () => {
+      h += 0x6D2B79F5;
+      let t = h;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  },
+};
+
+// ─── Sound ───
+// Every sound is synthesized with the Web Audio API — no audio files, so
+// the app stays one file. iOS only lets audio start inside a user gesture,
+// so the context is created on the first tap and resumed on later ones.
+let __funAudio = null;
+function funAudio() {
+  if (!__funAudio) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    try { __funAudio = new AC(); } catch (e) { return null; }
+  }
+  if (__funAudio.state === 'suspended') { try { __funAudio.resume(); } catch (e) {} }
+  return __funAudio;
+}
+(function unlockAudioOnFirstGesture() {
+  const unlock = () => {
+    const ctx = funAudio();
+    if (ctx) {
+      // A silent blip is what actually unlocks iOS.
+      try { const o = ctx.createOscillator(), g = ctx.createGain(); g.gain.value = 0; o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.01); } catch (e) {}
+    }
+    document.removeEventListener('touchend', unlock, true);
+    document.removeEventListener('click', unlock, true);
+  };
+  document.addEventListener('touchend', unlock, true);
+  document.addEventListener('click', unlock, true);
+})();
+
+function funSoundOn() {
+  if (state.parent && state.parent.sound === false) return false;
+  if (!currentProfile) return true;
+  const d = state.profiles[currentProfile.id];
+  return !(d.fun && d.fun.soundOff);
+}
+
+// notes: [freq Hz, start s, length s, type?, volume?]
+const FUN_SOUNDS = {
+  tap:     [[660, 0, 0.05, 'sine', 0.08]],
+  right:   [[784, 0, 0.12, 'triangle'], [1047, 0.1, 0.18, 'triangle']],
+  fixed:   [[587, 0, 0.12, 'triangle'], [784, 0.1, 0.12, 'triangle'], [988, 0.2, 0.2, 'triangle']],
+  wrong:   [[220, 0, 0.18, 'sine', 0.12], [196, 0.14, 0.22, 'sine', 0.1]],
+  think:   [[440, 0, 0.1, 'sine', 0.1], [494, 0.12, 0.14, 'sine', 0.1]],
+  streak:  [[659, 0, 0.08, 'square', 0.06], [784, 0.08, 0.08, 'square', 0.06], [1047, 0.16, 0.16, 'square', 0.06]],
+  levelup: [[523, 0, 0.12, 'triangle'], [659, 0.12, 0.12, 'triangle'], [784, 0.24, 0.12, 'triangle'], [1047, 0.36, 0.35, 'triangle']],
+  sticker: [[880, 0, 0.08, 'sine'], [1175, 0.08, 0.08, 'sine'], [1568, 0.16, 0.2, 'sine']],
+  hit:     [[180, 0, 0.08, 'square', 0.09], [120, 0.05, 0.12, 'sawtooth', 0.07]],
+  hurt:    [[300, 0, 0.1, 'sawtooth', 0.06], [200, 0.1, 0.18, 'sawtooth', 0.06]],
+  win:     [[523, 0, 0.1, 'triangle'], [659, 0.1, 0.1, 'triangle'], [784, 0.2, 0.1, 'triangle'], [1047, 0.3, 0.12, 'triangle'], [784, 0.42, 0.1, 'triangle'], [1047, 0.52, 0.4, 'triangle']],
+  tick:    [[1200, 0, 0.03, 'square', 0.04]],
+  buzz:    [[110, 0, 0.3, 'sawtooth', 0.07]],
+};
+function funSound(name) {
+  if (!funSoundOn()) return;
+  const notes = FUN_SOUNDS[name];
+  const ctx = notes && funAudio();
+  if (!ctx) return;
+  try {
+    const t0 = ctx.currentTime + 0.01;
+    for (const [f, start, len, type, vol] of notes) {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || 'sine';
+      o.frequency.value = f;
+      const v = vol === undefined ? 0.14 : vol;
+      g.gain.setValueAtTime(0.0001, t0 + start);
+      g.gain.exponentialRampToValueAtTime(v, t0 + start + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + start + len);
+      o.connect(g).connect(ctx.destination);
+      o.start(t0 + start);
+      o.stop(t0 + start + len + 0.05);
+    }
+  } catch (e) {}
+}
+
+// ─── Confetti ───
+// DOM particles rather than a canvas: no sizing to manage on rotation,
+// and nothing to clean up if the screen changes mid-burst.
+function funConfetti(opts) {
+  opts = opts || {};
+  if (FUN.reducedMotion()) return;
+  const n = opts.count || 70;
+  const colors = opts.colors || ['#ff5e87', '#0096c7', '#ff8800', '#2a9d8f', '#f4a261', '#6c5ce7'];
+  const layer = document.createElement('div');
+  layer.className = 'fun-confetti';
+  layer.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement('span');
+    const emoji = opts.emoji && Math.random() < 0.35;
+    p.className = 'fun-confetti-bit' + (emoji ? ' emoji' : '');
+    if (emoji) p.textContent = opts.emoji[Math.floor(Math.random() * opts.emoji.length)];
+    else p.style.background = colors[i % colors.length];
+    p.style.left = (Math.random() * 100) + 'vw';
+    p.style.setProperty('--drift', ((Math.random() - 0.5) * 40) + 'vw');
+    p.style.setProperty('--spin', (Math.random() * 720 - 360) + 'deg');
+    p.style.animationDelay = (Math.random() * 0.35) + 's';
+    p.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
+    layer.appendChild(p);
+  }
+  document.body.appendChild(layer);
+  setTimeout(() => layer.remove(), 3400);
+}
+
+// ─── Toast ───
+// A short celebration banner; stacks under any trophy pop already showing.
+function funToast(html, ms) {
+  const t = document.createElement('div');
+  t.className = 'fun-toast';
+  t.setAttribute('role', 'status');
+  t.innerHTML = html;
+  const existing = document.querySelectorAll('.fun-toast').length;
+  t.style.setProperty('--stack', existing);
+  t.style.setProperty('--toast-ms', Math.max(800, (ms || 3200) - 400) + 'ms');
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), ms || 3200);
+}
+
+// A tappable card for the hub's play zone. Modules share it so the zone
+// reads as one row of tiles rather than seven different designs.
+function funCard(o) {
+  const tap = o.onclick ? ` role="button" tabindex="0" onclick="${o.onclick}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();${o.onclick}}"` : '';
+  return `
+    <div class="fun-card${o.onclick ? ' tappable' : ''}${o.cls ? ' ' + o.cls : ''}" style="--fun-accent:${o.accent || 'var(--user-color)'}"${tap}>
+      <div class="fun-card-top"><span class="fun-card-icon">${o.icon || ''}</span><span class="fun-card-title">${o.title || ''}</span>${o.badge ? `<span class="fun-card-badge">${o.badge}</span>` : ''}</div>
+      <div class="fun-card-body">${o.body || ''}</div>
+    </div>`;
+}
+
+// Sound on/off for this child, from the hub header.
+function funToggleSound() {
+  if (!currentProfile) return;
+  const d = state.profiles[currentProfile.id];
+  if (!d.fun) d.fun = {};
+  d.fun.soundOff = !d.fun.soundOff;
+  saveState();
+  if (!d.fun.soundOff) funSound('right');
+  renderHub();
+}
+FUN.slot('hubHeader', () => {
+  const d = state.profiles[currentProfile.id];
+  const off = d.fun && d.fun.soundOff;
+  return `<button class="switch-btn fun-sound-btn" onclick="funToggleSound()" aria-pressed="${!off}" title="Sounds on or off">${off ? '🔇 SOUND' : '🔊 SOUND'}</button>`;
+}, 90);
+
+// The core sounds of a round. Modules add their own on top.
+FUN.on('answer', e => {
+  if (e.parts && !e.isRight) funSound(e.parts.some(Boolean) ? 'think' : 'wrong');
+  else funSound(e.fixed ? 'fixed' : e.isRight ? 'right' : 'wrong');
+  if (e.isRight && !e.fixed && (e.streak === 5 || e.streak === 10)) setTimeout(() => funSound('streak'), 250);
+});
+FUN.on('retry', () => funSound('think'));
+FUN.on('roundEnd', s => {
+  if (s.perfect) { funSound('win'); funConfetti({ emoji: ['⭐', '💯', '🎉'] }); }
+});
+
+/* ═══ FUN MODULES ═══ */
+
+// ═══════════════════════════════════════════════════════════════
 // RENDERING
 // ═══════════════════════════════════════════════════════════════
 
@@ -35365,6 +36231,7 @@ function renderProfileSelect() {
       <div class="brand-v">🏆 COOLEST KIDS EVER · FAMILY EDITION 🏆</div>
       <div class="brand-tag">MC · True/False · Typed · Show Work</div>
       <div class="profiles">${cards}</div>
+      ${FUN.html('titleExtra', {})}
     </div>
   `);
 }
@@ -35393,6 +36260,7 @@ function renderHub() {
     if (pk.tier === 'ahead') badge = `<div class="pack-badge bridge-badge">🚀 NEXT YEAR</div>`;
     if (pk.tier === 'misa') badge = `<div class="pack-badge k-badge">🔬 ON MISA</div>`;
     if (pk.tier === 'warmup') badge = `<div class="pack-badge">🌤️ WARM-UP</div>`;
+    if (pk.tier === 'think') badge = `<div class="pack-badge think-badge">🧩 PUZZLES</div>`;
     if (done && done.best === 10) badge = `<div class="pack-badge star">★ ACED</div>`;
     else if (done) badge = `<div class="pack-badge">BEST ${done.best}/10</div>`;
     const roundText = rounds > 0 ? `<span class="round-counter">R${rounds}</span>` : '';
@@ -35403,7 +36271,7 @@ function renderHub() {
         <div class="pack-title">${pk.title}${roundText}</div>
         <div class="pack-desc">${pk.desc}</div>
         <div class="pack-meta">
-          <span class="qc">50/50 mixed · 10 per round</span>
+          <span class="qc">${pk.tier === 'think' ? 'all puzzles · 10 per round' : 'mixed · 10 per round'}</span>
           <span class="xp">+${10 * p.xpPer} XP</span>
         </div>
       </div>
@@ -35420,6 +36288,8 @@ function renderHub() {
   const misaPacks   = packs.filter(pk => pk.tier === 'misa');
   const reviewPacks = packs.filter(pk => pk.tier === 'review');
   const aheadPacks  = packs.filter(pk => pk.tier === 'ahead');
+  // The challenge only appears once this year's packs have puzzles in them.
+  const thinkPacks  = thinkPacksFor(p.id).length ? packs.filter(pk => pk.tier === 'think') : [];
 
   const grid = list => `<div class="packs-grid">${list.map(renderPackCard).join('')}</div>`;
 
@@ -35430,6 +36300,9 @@ function renderHub() {
       <div class="section-head bridge-section">🎓 ${p.grade} — MY GRADE THIS YEAR</div>
       <p class="section-tagline">${SUBJECT_TAGLINE[p.id] || ''}</p>
     `;
+    if (thinkPacks.length) {
+      packsHtml += `<div class="section-head sub-head think-section">🧠 THINK IT THROUGH</div>` + grid(thinkPacks);
+    }
     // Subjects appear in a fixed order so the hub does not reshuffle
     // itself as packs are added; any subject with no packs is skipped.
     SUBJECT_SECTIONS.forEach(sec => {
@@ -35501,11 +36374,13 @@ function renderHub() {
           <div class="stat-pill"><div class="stat-pill-value">${accuracy}%</div><div class="stat-pill-label">Acc</div></div>
           <div class="stat-pill"><div class="stat-pill-value">${d.bestStreak}</div><div class="stat-pill-label">Streak</div></div>
           <button class="switch-btn" style="background:var(--gold);" onclick="renderProgress()">📈 PROGRESS</button>
+          ${FUN.html('hubHeader', { profile: p })}
           <button class="switch-btn" onclick="renderProfileSelect()">← SWITCH</button>
         </div>
       </div>
 
       ${reviewAlert}
+      ${(() => { const zone = FUN.html('hubTop', { profile: p }); return zone ? `<div class="fun-zone">${zone}</div>` : ''; })()}
 
       ${packsHtml}
 
@@ -35532,7 +36407,56 @@ function startPack(packId) {
   locked = false;
   reviewItems = [];
   roundLog = [];
-  renderQuestion();
+  tries = 0;
+  firstWrong = null;
+  fixedCount = 0;
+  qState = null;
+  FUN.emit('roundStart', { profileId: currentProfile.id, pack: currentPack });
+  renderBriefing();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// THE BRIEFING — why this matters, before every round
+// One card, one tap: what the topic is FOR in the child's own life, read
+// aloud automatically for the kindergartener. A pack without a written
+// why goes straight to its first question.
+// ═══════════════════════════════════════════════════════════════
+function renderBriefing() {
+  // The Big Thinker pack is on every hub, so its why is worded per child.
+  const why = PACK_WHY[currentPack.id + ':' + currentProfile.id] || PACK_WHY[currentPack.id];
+  if (!why) { renderQuestion(); return; }
+  const d = state.profiles[currentProfile.id];
+  const played = (d.rounds && d.rounds[currentPack.id]) || 0;
+  const puzzles = currentPack.id === 'think_mix' || (THINK_ITEMS[currentPack.id] || []).length > 0;
+  const second = !(state.parent && state.parent.secondChance === false);
+  render(`
+    <div class="quiz profile-${currentProfile.id}">
+      <div class="quiz-top">
+        <button class="exit-btn" onclick="exitToHub()">← BACK</button>
+      </div>
+      <div class="briefing">
+        <div class="briefing-top">
+          <span class="briefing-icon">${currentPack.icon}</span>
+          <div>
+            <div class="briefing-kicker">${played ? 'ROUND ' + (played + 1) : 'NEW MISSION'}</div>
+            <h2 class="briefing-title">${currentPack.title}</h2>
+          </div>
+        </div>
+        <div class="why-box why-matters">
+          <div class="why-head"><span>💡 WHY THIS MATTERS</span>${speakBtn(why, false)}</div>
+          <div class="why-text">${why}</div>
+        </div>
+        <ul class="briefing-rules">
+          <li><span>🎯</span><span>10 questions</span></li>
+          <li><span>💡</span><span>Every answer shows you <strong>why</strong></span></li>
+          ${second ? '<li><span>🤔</span><span>Miss one? You get a hint and one more try</span></li>' : ''}
+          ${puzzles ? '<li><span>🧩</span><span>Watch for puzzles: put in order, sort, prove it</span></li>' : ''}
+        </ul>
+        <button class="next-btn briefing-go" onclick="renderQuestion()">LET'S GO →</button>
+      </div>
+    </div>
+  `);
+  if (d.autoRead) setTimeout(() => speakText('Why this matters. ' + why), 350);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -35657,17 +36581,49 @@ function numpadUseKeyboard() {
   input.focus();
 }
 
+// A read-aloud button. Uses a data attribute rather than an inline onclick
+// so apostrophes and quotes in the text need no escaping; the delegated
+// handler at the bottom of the file picks these up.
+function speakBtn(text, big) {
+  const cls = big ? 'voice-btn voice-btn-big' : 'voice-btn voice-btn-sm';
+  const label = big ? '🔊 Read it' : '🔊';
+  return `<button type="button" class="${cls} js-speak" data-speak-text="${ccEscapeForAttr(text)}" aria-label="Read aloud" title="Read aloud">${label}</button>`;
+}
+
+const plainText = s => String(s == null ? '' : s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const isK = () => currentProfile && currentProfile.id === 'k';
+const NUMBER_WORDS = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'];
+
+// What the 🔊 Read it button and auto-read say for a question.
+function spokenQuestion(q) {
+  const t = q.type || 'mc';
+  if (t === 'tf') return 'True or false: ' + plainText(q.statement);
+  if (t === 'mc') return plainText(q.text) + '. ' + q.options.map((o, i) =>
+    (isK() ? 'Choice ' + (i + 1) : 'Choice ' + String.fromCharCode(65 + i)) + ': ' + plainText(o)).join('. ');
+  if (t === 'multi') return plainText(q.text) + '. Pick ' + NUMBER_WORDS[q.correct.length].toLowerCase() + '. ' +
+    q.options.map(o => plainText(o)).join('. ');
+  if (t === 'order') return plainText(q.text) + '. The pieces are: ' + q._shuffle.map(i => plainText(q.items[i])).join('. ');
+  if (t === 'sort') return plainText(q.text) + '. The groups are ' + q.groups.join(' and ') + '. ' +
+    q._shuffle.map(i => plainText(q.items[i].t)).join('. ');
+  if (t === 'twopart') return 'Part A. ' + plainText(q.partA.text) + '. ' + q.partA.options.map(o => plainText(o)).join('. ');
+  return plainText(q.text);
+}
+
 function renderQuestion() {
   const q = questions[qIdx];
   const total = questions.length;
   const progress = (qIdx / total) * 100;
+  tries = 0;
+  firstWrong = null;
+  qState = null;
 
   const passage = q.passage
     ? `<div class="passage">${q.passage}</div>`
     : '';
 
   const cls = `profile-${currentProfile.id}`;
-  const typeLabels = { mc:'MC', tf:'TRUE/FALSE', typed:'TYPE IT', fib:'FILL IN', showwork:'SHOW WORK' };
+  const typeLabels = { mc:'MC', tf:'TRUE/FALSE', typed:'TYPE IT', fib:'FILL IN', showwork:'SHOW WORK',
+                       order:'🧩 PUT IN ORDER', sort:'🧩 SORT IT', multi:'🧩 PICK ALL', twopart:'🔎 PROVE IT' };
 
   // Help button eligibility: G2/G4 math packs OR K Preview packs (any subject) on the prek profile
   const hasTutorial = TUTORIALS[currentPack.id];
@@ -35678,28 +36634,19 @@ function renderQuestion() {
        </button>`
     : '';
 
-  // Voice helpers — only show on the K Bridge profile (prek)
-  const showVoice = true;
   // K gets a speaker on every choice; the readers get one on the question.
-  const perChoiceVoice = (currentProfile.id === 'k');
-  function vBtn(text, big) {
-    if (!showVoice) return '';
-    // Use data-text attribute instead of inline onclick to avoid
-    // escaping issues with apostrophes/quotes in the text. A delegated
-    // click handler on document picks these up reliably.
-    const safe = ccEscapeForAttr(text);
-    const cls = big ? 'voice-btn voice-btn-big' : 'voice-btn voice-btn-sm';
-    const label = big ? '🔊 Read it' : '🔊';
-    return `<button type="button" class="${cls} js-speak" data-speak-text="${safe}" aria-label="Read aloud" title="Read aloud">${label}</button>`;
-  }
+  const perChoiceVoice = isK();
+  const vBtn = (text, big) => speakBtn(text, big);
+  const questionHead = (html, spoken) => `
+      <div class="question-with-voice">
+        <div class="question-text">${html}</div>
+        ${vBtn(spoken, true)}
+      </div>`;
 
   let questionBody = '';
   if (q.type === 'mc' || !q.type) {
     questionBody = `
-      <div class="question-with-voice">
-        <div class="question-text">${q.text}</div>
-        ${vBtn(perChoiceVoice ? q.text : q.text + '. ' + q.options.map((o, i) => 'Choice ' + String.fromCharCode(65 + i) + ': ' + String(o).replace(/<[^>]+>/g, ' ')).join('. '), true)}
-      </div>
+      ${questionHead(q.text, perChoiceVoice ? q.text : spokenQuestion(q))}
       <div class="choices${q.options.some(o => String(o).replace(/<[^>]+>/g,'').length > 18) ? ' choices-long' : ''}">
         ${q.options.map((opt, i) => `
           <div class="choice" data-idx="${i}" role="button" tabindex="0" onclick="pickMc(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickMc(${i})}">
@@ -35731,10 +36678,7 @@ function renderQuestion() {
     `;
   } else if (q.type === 'typed' || q.type === 'fib') {
     questionBody = `
-      <div class="question-with-voice">
-        <div class="question-text">${q.text}</div>
-        ${vBtn(q.text, true)}
-      </div>
+      ${questionHead(q.text, q.text)}
       ${typedAnswerHtml(q, 'submitTyped')}
     `;
   } else if (q.type === 'showwork') {
@@ -35743,10 +36687,7 @@ function renderQuestion() {
         <span class="sw-icon">✏️📝</span>
         SHOW YOUR WORK ON PAPER
       </div>
-      <div class="question-with-voice">
-        <div class="question-text">${q.text}</div>
-        ${vBtn(q.text, true)}
-      </div>
+      ${questionHead(q.text, q.text)}
       <div class="showwork-checkbox-wrap">
         <label>
           <input type="checkbox" id="workDone" onchange="toggleShowWorkSubmit()">
@@ -35755,13 +36696,35 @@ function renderQuestion() {
       </div>
       ${typedAnswerHtml(q, 'submitShowWork', { startDisabled: true, submitId: 'swSubmit', submitLabel: 'SUBMIT (FLAG FOR PARENT REVIEW)' })}
     `;
+  } else if (q.type === 'order') {
+    qState = { slots: q.items.map(() => null), locked: q.items.map(() => false), done: false };
+    questionBody = `${questionHead(q.text, spokenQuestion(q))}<div class="puzzle" id="puzzle">${orderWidgetHtml(q)}</div>`;
+  } else if (q.type === 'sort') {
+    qState = { assign: q.items.map(() => null), locked: q.items.map(() => false), marks: null, done: false };
+    questionBody = `${questionHead(q.text, spokenQuestion(q))}<div class="puzzle" id="puzzle">${sortWidgetHtml(q)}</div>`;
+  } else if (q.type === 'multi') {
+    qState = { sel: new Set(), done: false };
+    const n = q.correct.length;
+    questionBody = `
+      ${questionHead(q.text, spokenQuestion(q))}
+      <div class="puzzle-instruction">Pick <strong>${NUMBER_WORDS[n] || n}</strong> answers, then tap CHECK.</div>
+      <div class="puzzle" id="puzzle">${multiWidgetHtml(q)}</div>`;
+  } else if (q.type === 'twopart') {
+    qState = { aPick: null, aRight: null, bPick: null, done: false };
+    questionBody = `
+      <div class="part-block" id="partA">
+        <div class="part-label">PART A</div>
+        ${questionHead(q.partA.text, spokenQuestion(q))}
+        ${partChoicesHtml(q.partA, 'A')}
+      </div>
+      <div id="partB"></div>`;
   }
 
-  // Auto-read toggle: only for the K Bridge (prek) profile
   const dState = state.profiles[currentProfile.id];
-  const autoReadBtn = true
-    ? `<button class="autoread-btn ${dState.autoRead ? 'on' : ''}" onclick="toggleAutoRead()" title="Read each question aloud automatically">${dState.autoRead ? '🔊 AUTO ON' : '🔇 AUTO'}</button>`
-    : '';
+  const autoReadBtn = `<button class="autoread-btn ${dState.autoRead ? 'on' : ''}" onclick="toggleAutoRead()" title="Read each question aloud automatically">${dState.autoRead ? '🔊 AUTO ON' : '🔇 AUTO'}</button>`;
+
+  // In the Big Thinker Challenge, each puzzle says which pack it came from.
+  const tag = q._from || `${currentPack.icon} ${currentPack.title}`;
 
   render(`
     <div class="quiz ${cls}">
@@ -35771,14 +36734,16 @@ function renderQuestion() {
           <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
           <div class="progress-count">${qIdx + 1} / ${total}</div>
         </div>
+        ${FUN.html('quizBar', { profile: currentProfile, pack: currentPack, q })}
         ${autoReadBtn}
         <button class="scratch-btn" onclick="openScratchPad()" title="Open scratch pad — draw with Apple Pencil or finger">✏️</button>
         <div class="xp-count">+${xpEarned}</div>
       </div>
+      ${FUN.html('quizTop', { profile: currentProfile, pack: currentPack, q })}
 
       <div class="question-frame${q.passage ? ' has-passage' : ''}">
         <div class="qf-tags">
-          <span class="question-tag">${currentPack.icon} ${currentPack.title}</span>
+          <span class="question-tag">${tag}</span>
           <span class="q-type-tag ${q.type || 'mc'}">${typeLabels[q.type] || 'MC'}</span>
         </div>
         ${passage}
@@ -35791,19 +36756,272 @@ function renderQuestion() {
     </div>
   `);
 
-  // Auto-read: speak the question (and MC choices) when it appears.
-  // Only for the K Bridge profile with the toggle ON. Slight delay so the
-  // render settles first.
+  // Auto-read: speak the question (and its choices) when it appears.
+  // Slight delay so the render settles first.
   if (dState.autoRead) {
-    const parts = [];
-    if (q.type === 'tf') parts.push('True or false: ' + (q.statement || ''));
-    else parts.push(q.text || '');
-    if (q.type === 'mc' && Array.isArray(q.options)) {
-      q.options.forEach((opt, i) => parts.push('Choice ' + (i + 1) + ': ' + opt));
-    }
-    const spoken = parts.join('. ');
-    setTimeout(() => speakText(spoken), 350);
+    setTimeout(() => speakText(spokenQuestion(q)), 350);
   }
+}
+
+// ─── PUT IN ORDER ───
+// Numbered slots fill from the top as the child taps pieces; tapping a
+// filled slot sends that piece back. After a wrong first check the pieces
+// already in the right place lock green and the rest return to the pool.
+function orderWidgetHtml(q) {
+  const s = qState;
+  const slots = s.slots.map((it, pos) => {
+    const look = s.locked[pos] ? ' locked' : (s.final ? (s.final[pos] ? ' right' : ' wrong') : '');
+    const filled = it === null ? ' empty' : ' filled';
+    const tap = (it !== null && !s.locked[pos] && !s.done)
+      ? ` role="button" tabindex="0" onclick="orderUnplace(${pos})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();orderUnplace(${pos})}" aria-label="Remove ${ccEscapeForAttr(plainText(q.items[it]))} from spot ${pos + 1}"`
+      : '';
+    return `<div class="order-slot${filled}${look}"${tap}>
+        <span class="slot-num">${pos + 1}</span>
+        <span class="slot-content">${it === null ? '' : q.items[it]}</span>
+        ${s.locked[pos] || (s.final && s.final[pos]) ? '<span class="slot-mark">✓</span>' : (s.final ? '<span class="slot-mark">✗</span>' : '')}
+      </div>`;
+  }).join('');
+  const pool = q._shuffle.filter(i => !s.slots.includes(i));
+  const poolHtml = pool.map(i => `
+      <div class="order-item" role="button" tabindex="0" onclick="orderPlace(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();orderPlace(${i})}">
+        <span class="order-item-text">${q.items[i]}</span>${isK() ? speakBtn(q.items[i], false) : ''}
+      </div>`).join('');
+  const full = !s.slots.includes(null);
+  return `
+    <div class="order-slots">${slots}</div>
+    ${pool.length && !s.done ? `<div class="puzzle-instruction">${s.slots.every(x => x === null) ? 'Tap the piece that goes FIRST.' : 'Tap the piece that goes next.'}${s.slots.some(x => x !== null) ? ' Tap a numbered spot to take a piece back.' : ''}</div>
+    <div class="order-pool">${poolHtml}</div>` : ''}
+    ${s.done ? '' : `<button class="typed-submit puzzle-check" ${full ? '' : 'disabled'} onclick="checkOrder()">CHECK MY ORDER</button>`}`;
+}
+
+function refreshPuzzle(html) {
+  const el = document.getElementById('puzzle');
+  if (el) el.innerHTML = html;
+}
+
+function orderPlace(i) {
+  if (!qState || qState.done) return;
+  const pos = qState.slots.indexOf(null);
+  if (pos < 0) return;
+  qState.slots[pos] = i;
+  refreshPuzzle(orderWidgetHtml(questions[qIdx]));
+}
+
+function orderUnplace(pos) {
+  if (!qState || qState.done || qState.locked[pos]) return;
+  qState.slots[pos] = null;
+  refreshPuzzle(orderWidgetHtml(questions[qIdx]));
+}
+
+function checkOrder() {
+  if (!qState || qState.done || qState.slots.includes(null)) return;
+  const q = questions[qIdx];
+  const right = qState.slots.map((it, pos) => it === pos);
+  const given = qState.slots.map(i => plainText(q.items[i])).join(' → ');
+  const answer = q.items.map(plainText).join(' → ');
+  if (right.every(Boolean)) {
+    qState.done = true;
+    qState.final = right;
+    refreshPuzzle(orderWidgetHtml(q));
+    handleAnswer(true, answer, given);
+    return;
+  }
+  if (canRetry(q)) {
+    tries++;
+    firstWrong = given;
+    streak = 0;
+    right.forEach((ok, pos) => { if (ok) qState.locked[pos] = true; else qState.slots[pos] = null; });
+    refreshPuzzle(orderWidgetHtml(q));
+    const n = right.filter(Boolean).length;
+    showThink(q, n ? `${n} of them ${n === 1 ? 'is' : 'are'} already in the right spot — they stay green.` : 'None are in the right spot yet.');
+    return;
+  }
+  qState.done = true;
+  qState.final = right;
+  refreshPuzzle(orderWidgetHtml(q));
+  handleAnswer(false, answer, given);
+}
+
+// ─── SORT IT ───
+// One row per item with a button per group — tap targets stay big on an
+// iPad, and it works the same with a mouse or the keyboard.
+function sortWidgetHtml(q) {
+  const s = qState;
+  const rows = q._shuffle.map(i => {
+    const item = q.items[i];
+    const mark = s.locked[i] ? ' locked' : (s.marks ? (s.marks[i] === true ? ' right' : s.marks[i] === false ? ' wrong' : '') : '');
+    const btns = q.groups.map((g, gi) => `
+        <button type="button" class="sort-btn sg${gi}${s.assign[i] === gi ? ' on' : ''}" ${s.locked[i] || s.done ? 'disabled' : ''}
+          aria-pressed="${s.assign[i] === gi}" onclick="sortAssign(${i},${gi})">${g}</button>`).join('');
+    const fix = s.done && s.marks && s.marks[i] === false ? `<div class="sort-fix">belongs in: <strong>${q.groups[item.g]}</strong></div>` : '';
+    return `<div class="sort-row${mark}">
+        <div class="sort-item"><span>${item.t}</span>${isK() ? speakBtn(item.t, false) : ''}</div>
+        <div class="sort-btns">${btns}</div>
+        ${fix}
+      </div>`;
+  }).join('');
+  const full = !s.assign.includes(null);
+  return `<div class="sort-list">${rows}</div>
+    ${s.done ? '' : `<button class="typed-submit puzzle-check" ${full ? '' : 'disabled'} onclick="checkSort()">CHECK MY SORTING</button>`}`;
+}
+
+function sortAssign(i, g) {
+  if (!qState || qState.done || qState.locked[i]) return;
+  qState.assign[i] = g;
+  if (qState.marks) qState.marks[i] = null;
+  refreshPuzzle(sortWidgetHtml(questions[qIdx]));
+}
+
+function checkSort() {
+  if (!qState || qState.done || qState.assign.includes(null)) return;
+  const q = questions[qIdx];
+  const right = q.items.map((it, i) => qState.assign[i] === it.g);
+  const describe = assign => q.groups.map((g, gi) =>
+    g + ': ' + (q.items.filter((it, i) => assign[i] === gi).map(it => plainText(it.t)).join(', ') || '—')).join(' | ');
+  const given = describe(qState.assign);
+  const answer = describe(q.items.map(it => it.g));
+  if (right.every(Boolean)) {
+    qState.done = true;
+    qState.marks = right;
+    refreshPuzzle(sortWidgetHtml(q));
+    handleAnswer(true, answer, given);
+    return;
+  }
+  if (canRetry(q)) {
+    tries++;
+    firstWrong = given;
+    streak = 0;
+    qState.marks = right.map(ok => ok ? true : false);
+    right.forEach((ok, i) => { if (ok) qState.locked[i] = true; else qState.assign[i] = null; });
+    refreshPuzzle(sortWidgetHtml(q));
+    const wrong = right.filter(x => !x).length;
+    showThink(q, `${wrong} ${wrong === 1 ? 'is' : 'are'} in the wrong group. The green ones are right — sort the others again.`);
+    return;
+  }
+  qState.done = true;
+  qState.marks = right;
+  refreshPuzzle(sortWidgetHtml(q));
+  handleAnswer(false, answer, given);
+}
+
+// ─── PICK ALL THAT ARE RIGHT ───
+function multiWidgetHtml(q) {
+  const s = qState;
+  const n = q.correct.length;
+  const choices = q.options.map((opt, i) => {
+    const picked = s.sel.has(i);
+    let mark = '';
+    if (s.done) {
+      const isKey = q.correct.includes(i);
+      mark = picked ? (isKey ? ' right' : ' wrong') : (isKey ? ' revealed' : '');
+    }
+    return `
+      <div class="choice multi-choice${picked ? ' picked' : ''}${mark}${s.done ? ' disabled' : ''}" role="checkbox" aria-checked="${picked}" tabindex="0"
+        onclick="multiToggle(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();multiToggle(${i})}">
+        <span class="choice-letter">${picked ? '✓' : ''}</span>
+        <span class="choice-content">${opt}</span>
+        ${isK() ? speakBtn(opt, false) : ''}
+      </div>`;
+  }).join('');
+  return `<div class="choices${q.options.some(o => plainText(o).length > 18) ? ' choices-long' : ''}">${choices}</div>
+    ${s.done ? '' : `<button class="typed-submit puzzle-check" ${s.sel.size === n ? '' : 'disabled'} onclick="checkMulti()">CHECK (${s.sel.size} of ${n} picked)</button>`}`;
+}
+
+function multiToggle(i) {
+  if (!qState || qState.done) return;
+  const q = questions[qIdx];
+  if (qState.sel.has(i)) qState.sel.delete(i);
+  else if (qState.sel.size < q.correct.length) qState.sel.add(i);
+  refreshPuzzle(multiWidgetHtml(q));
+}
+
+function checkMulti() {
+  const q = questions[qIdx];
+  if (!qState || qState.done || qState.sel.size !== q.correct.length) return;
+  const picks = [...qState.sel].sort((a, b) => a - b);
+  const hits = picks.filter(i => q.correct.includes(i)).length;
+  const given = picks.map(i => plainText(q.options[i])).join(' + ');
+  const answer = q.correct.map(i => plainText(q.options[i])).join(' + ');
+  if (hits === q.correct.length) {
+    qState.done = true;
+    refreshPuzzle(multiWidgetHtml(q));
+    handleAnswer(true, answer, given);
+    return;
+  }
+  if (canRetry(q)) {
+    tries++;
+    firstWrong = given;
+    streak = 0;
+    showThink(q, `${hits} of your ${q.correct.length} picks ${hits === 1 ? 'is' : 'are'} right. Swap the one${q.correct.length - hits === 1 ? '' : 's'} you are not sure about.`);
+    return;
+  }
+  qState.done = true;
+  refreshPuzzle(multiWidgetHtml(q));
+  handleAnswer(false, answer, given);
+}
+
+// ─── ANSWER IT, THEN PROVE IT ───
+// Part A is the claim; Part B asks for the evidence or the reason. Part B
+// appears once Part A is answered. If Part A was wrong the child is shown
+// the right answer and still asked to find what proves it — that search is
+// the point of the question.
+function partChoicesHtml(part, which) {
+  return `<div class="choices${part.options.some(o => plainText(o).length > 18) ? ' choices-long' : ''}">
+    ${part.options.map((opt, i) => `
+      <div class="choice part-choice" data-part="${which}" data-idx="${i}" role="button" tabindex="0" onclick="pickPart('${which}',${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickPart('${which}',${i})}">
+        <span class="choice-letter">${String.fromCharCode(65 + i)}</span>
+        <span class="choice-content">${opt}</span>
+        ${isK() ? speakBtn(opt, false) : ''}
+      </div>`).join('')}
+  </div>`;
+}
+
+function markPart(which, chosen, correct) {
+  document.querySelectorAll(`.part-choice[data-part="${which}"]`).forEach(b => {
+    const i = Number(b.dataset.idx);
+    b.classList.add('disabled');
+    if (i === chosen) b.classList.add(chosen === correct ? 'right' : 'wrong');
+    else if (i === correct && chosen !== correct) setTimeout(() => b.classList.add('revealed'), 400);
+  });
+}
+
+function pickPart(which, i) {
+  if (!qState || qState.done || locked) return;
+  const q = questions[qIdx];
+  if (which === 'A') {
+    if (qState.aPick !== null) return;
+    qState.aPick = i;
+    qState.aRight = i === q.partA.correct;
+    markPart('A', i, q.partA.correct);
+    const lead = qState.aRight
+      ? '✓ Right. Now PROVE it.'
+      : `The answer to Part A is <strong>${q.partA.options[q.partA.correct]}</strong>. Now find what proves it.`;
+    const wrap = document.getElementById('partB');
+    wrap.innerHTML = `
+      <div class="part-block part-b">
+        <div class="part-note ${qState.aRight ? 'ok' : 'no'}">${lead}</div>
+        <div class="part-label">PART B — PROVE IT</div>
+        <div class="question-with-voice">
+          <div class="question-text">${q.partB.text}</div>
+          ${speakBtn(plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(o)).join('. '), true)}
+        </div>
+        ${partChoicesHtml(q.partB, 'B')}
+      </div>`;
+    wrap.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (state.profiles[currentProfile.id].autoRead) {
+      setTimeout(() => speakText(plainText(lead) + ' Part B. ' + plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(o)).join('. ')), 450);
+    }
+    return;
+  }
+  if (qState.aPick === null || qState.bPick !== null) return;
+  qState.bPick = i;
+  qState.done = true;
+  locked = true;
+  const bRight = i === q.partB.correct;
+  markPart('B', i, q.partB.correct);
+  const answer = plainText(q.partA.options[q.partA.correct]) + ' / ' + plainText(q.partB.options[q.partB.correct]);
+  const given = plainText(q.partA.options[qState.aPick]) + ' / ' + plainText(q.partB.options[i]);
+  handleAnswer(qState.aRight && bRight, answer, given, { parts: [qState.aRight, bRight] });
 }
 
 function toggleAutoRead() {
@@ -36028,14 +37246,75 @@ function toggleShowWorkSubmit() {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// ANSWERING — with one second chance
+// A wrong first answer does not end the question. The wrong choice greys
+// out, a hint appears, and the child tries again. Right on the second try
+// earns half the XP and counts as "fixed", not as first-try correct, so
+// accuracy, ACED and PERFECT still mean right the first time. True/false
+// skips it (a second try is a coin flip), and so does a two-part question,
+// whose Part B already asks the child to prove their answer.
+// ═══════════════════════════════════════════════════════════════
+
+function canRetry(q) {
+  const t = q.type || 'mc';
+  if (tries > 0) return false;
+  if (state.parent && state.parent.secondChance === false) return false;
+  return t !== 'tf' && t !== 'twopart';
+}
+
+function hintFor(q) {
+  if (q.hint) return q.hint;
+  if (isK()) return 'Listen again and think about each choice.';
+  const t = q.type || 'mc';
+  if (t === 'typed' || t === 'fib') return 'Check your spelling and your math, then try again.';
+  if (t === 'showwork') return 'Look back over your work on paper. Check each step.';
+  return 'Read it again slowly. Which choices can you rule out, and why?';
+}
+
+// The 🤔 THINK AGAIN panel, shown after a wrong first try.
+function showThink(q, note) {
+  FUN.emit('retry', { profileId: currentProfile.id, pack: currentPack, q });
+  const fb = document.getElementById('fb');
+  const hint = hintFor(q);
+  fb.innerHTML = `
+    <div class="think-box" role="status">
+      <div class="think-head"><span>🤔 THINK AGAIN</span>${speakBtn((note ? plainText(note) + ' ' : '') + hint, false)}</div>
+      ${note ? `<div class="think-note">${note}</div>` : ''}
+      <div class="think-text">${hint}</div>
+      <div class="think-sub">One more try — you've got this.</div>
+    </div>`;
+  fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  if (state.profiles[currentProfile.id].autoRead) {
+    setTimeout(() => speakText('Not quite. Think again. ' + (note ? plainText(note) + ' ' : '') + hint), 300);
+  }
+}
+
+function clearThink() {
+  const fb = document.getElementById('fb');
+  if (fb) fb.innerHTML = '';
+}
+
 function pickMc(chosen) {
   if (locked) return;
-  locked = true;
-
   const q = questions[qIdx];
-  const isRight = chosen === q.correct;
   const btns = document.querySelectorAll('.choice');
+  if (btns[chosen] && btns[chosen].classList.contains('eliminated')) return;
+  const isRight = chosen === q.correct;
 
+  if (!isRight && canRetry(q)) {
+    tries++;
+    firstWrong = q.options[chosen];
+    streak = 0;
+    const b = btns[chosen];
+    b.classList.add('wrong-once');
+    setTimeout(() => { b.classList.remove('wrong-once'); b.classList.add('eliminated'); b.setAttribute('aria-disabled', 'true'); }, 350);
+    showThink(q);
+    return;
+  }
+
+  locked = true;
+  clearThink();
   btns.forEach((b, i) => {
     b.classList.add('disabled');
     if (i === chosen) {
@@ -36067,19 +37346,32 @@ function pickTf(chosen) {
   handleAnswer(isRight, q.answer ? 'TRUE' : 'FALSE', chosen ? 'TRUE' : 'FALSE');
 }
 
+const normAnswer = a => String(a).toLowerCase().trim().replace(/\s+/g, ' ');
+
+// A wrong typed answer gets a hint and stays editable for one more go.
+function typedRetry(q, input, raw) {
+  tries++;
+  firstWrong = raw;
+  streak = 0;
+  input.classList.add('wrong-once');
+  setTimeout(() => input.classList.remove('wrong-once'), 400);
+  if (input.classList.contains('padmode')) input.value = '';
+  else { try { input.select(); } catch (e) {} }
+  showThink(q);
+}
+
 function submitTyped() {
   if (locked) return;
   const input = document.getElementById('typedInput');
   const raw = input.value.trim();
   if (!raw) return;
-  locked = true;
 
   const q = questions[qIdx];
-  // Normalize: lowercase, trim, remove extra spaces
-  const userAns = raw.toLowerCase().trim().replace(/\s+/g, ' ');
-  const accepted = q.acceptedAnswers.map(a => String(a).toLowerCase().trim().replace(/\s+/g, ' '));
-  const isRight = accepted.includes(userAns);
+  const isRight = q.acceptedAnswers.map(normAnswer).includes(normAnswer(raw));
+  if (!isRight && canRetry(q)) { typedRetry(q, input, raw); return; }
 
+  locked = true;
+  clearThink();
   input.disabled = true;
   input.classList.add(isRight ? 'right' : 'wrong');
 
@@ -36091,14 +37383,14 @@ function submitShowWork() {
   const input = document.getElementById('typedInput');
   const raw = input.value.trim();
   if (!raw) return;
-  locked = true;
 
   const q = questions[qIdx];
   // Auto-check final answer like typed, but also add to review
-  const userAns = raw.toLowerCase().trim().replace(/\s+/g, ' ');
-  const accepted = q.acceptedAnswers.map(a => String(a).toLowerCase().trim().replace(/\s+/g, ' '));
-  const isRight = accepted.includes(userAns);
+  const isRight = q.acceptedAnswers.map(normAnswer).includes(normAnswer(raw));
+  if (!isRight && canRetry(q)) { typedRetry(q, input, raw); return; }
 
+  locked = true;
+  clearThink();
   input.disabled = true;
   input.classList.add(isRight ? 'right' : 'wrong');
 
@@ -36112,7 +37404,7 @@ function submitShowWork() {
     packTitle: currentPack.title,
     questionText: q.text.replace(/<[^>]+>/g, '').replace(/\s+/g,' ').trim(),
     workPrompt: q.workPrompt || '',
-    userAnswer: raw,
+    userAnswer: firstWrong ? `${firstWrong} → ${raw}` : raw,
     correctAnswer: q.acceptedAnswers[0],
     autoGraded: isRight ? 'correct' : 'incorrect',
     status: 'pending'
@@ -36121,39 +37413,45 @@ function submitShowWork() {
   handleShowWorkAnswer(isRight, q.acceptedAnswers[0], raw);
 }
 
-function handleAnswer(isRight, correctAnswer, givenAnswer) {
+// Records the final outcome of a question — exactly once per question.
+//   opts.parts  [partA right, partB right] for a two-part question
+function handleAnswer(isRight, correctAnswer, givenAnswer, opts) {
+  opts = opts || {};
   const d = state.profiles[currentProfile.id];
+  const qNow = questions[qIdx];
+  const fixed = isRight && tries > 0;
   d.attempts++;
 
-  // Log this answer for the round report (question text, what they
-  // answered, what was correct). Strip HTML for clean text output.
-  const qNow = questions[qIdx];
-  const qLogText = String(qNow.text || qNow.statement || '')
-    .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  // Log this answer for the round report and the end-of-round look back.
+  const qLogText = plainText(qNow.text || qNow.statement || (qNow.partA && qNow.partA.text) || '');
   roundLog.push({
     n: qIdx + 1,
     q: qLogText.length > 110 ? qLogText.slice(0, 107) + '...' : qLogText,
-    given: String(givenAnswer !== undefined ? givenAnswer : (isRight ? correctAnswer : '—')),
-    correct: String(correctAnswer),
-    right: !!isRight
+    given: (firstWrong !== null ? plainText(firstWrong) + ' → ' : '') +
+           plainText(givenAnswer !== undefined ? givenAnswer : (isRight ? correctAnswer : '—')),
+    correct: plainText(correctAnswer),
+    right: !!isRight && !fixed,
+    fixed,
+    why: qNow.why || ''
   });
 
-  if (isRight) {
-    d.correct++;
-    score++;
-    streak++;
-    if (streak > bestStreak) bestStreak = streak;
-    if (streak > d.bestStreak) d.bestStreak = streak;
-
-    const xp = currentProfile.xpPer;
+  const xpPop = xp => {
     xpEarned += xp;
     d.xp += xp;
-
     const pop = document.createElement('div');
     pop.className = 'xp-pop';
     pop.textContent = `+${xp}`;
     document.body.appendChild(pop);
     setTimeout(() => pop.remove(), 1100);
+  };
+
+  if (isRight && !fixed) {
+    d.correct++;
+    score++;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    if (streak > d.bestStreak) d.bestStreak = streak;
+    xpPop(currentProfile.xpPer);
 
     if (streak === 3 || streak === 5 || streak === 7 || streak === 10) {
       setTimeout(() => {
@@ -36164,18 +37462,28 @@ function handleAnswer(isRight, correctAnswer, givenAnswer) {
         setTimeout(() => s.remove(), 3100);
       }, 400);
     }
+  } else if (fixed) {
+    // Thought it through and fixed it: half the XP, and it counts toward
+    // COMEBACK KID, but the streak was already broken by the first miss.
+    fixedCount++;
+    d.fixedCount = (d.fixedCount || 0) + 1;
+    xpPop(Math.ceil(currentProfile.xpPer / 2));
   } else {
     streak = 0;
+    // Half of a two-part question still earns half the XP.
+    if (opts.parts && opts.parts.some(Boolean)) xpPop(Math.ceil(currentProfile.xpPer / 2));
   }
 
-  // Track typed-right count for trophy
-  const q = questions[qIdx];
-  if ((q.type === 'typed' || q.type === 'fib') && isRight) {
+  const t = qNow.type || 'mc';
+  if ((t === 'typed' || t === 'fib') && isRight) {
     d.typedRightCount = (d.typedRightCount || 0) + 1;
   }
+  if (PUZZLE_TYPES.has(t) && isRight) d.puzzleRight = (d.puzzleRight || 0) + 1;
+  if (t === 'twopart' && isRight) d.provedCount = (d.provedCount || 0) + 1;
 
+  FUN.emit('answer', { profileId: currentProfile.id, pack: currentPack, q: qNow, isRight, fixed, parts: opts.parts, streak });
   saveState();
-  showFeedback(isRight, correctAnswer);
+  showFeedback(isRight, correctAnswer, { fixed, parts: opts.parts });
 }
 
 function handleShowWorkAnswer(isRight, correctAnswer, givenAnswer) {
@@ -36185,39 +37493,68 @@ function handleShowWorkAnswer(isRight, correctAnswer, givenAnswer) {
   handleAnswer(isRight, correctAnswer, givenAnswer);
 }
 
-function showFeedback(isRight, correctAnswer) {
+function showFeedback(isRight, correctAnswer, opts) {
+  opts = opts || {};
   const q = questions[qIdx];
   const fb = document.getElementById('fb');
   const isLast = qIdx >= questions.length - 1;
+  const t = q.type || 'mc';
+  const pick = list => list[Math.floor(Math.random() * list.length)];
+  // Puzzle answers are already shown in place (green slots, marked rows),
+  // so the banner does not repeat a long "a → b → c" string.
+  const showsOwnAnswer = t === 'order' || t === 'sort' || t === 'multi' || t === 'twopart';
 
-  let head, msg, fbClass;
-  if (q.type === 'showwork') {
+  let head, msg = '', fbClass;
+  if (t === 'showwork') {
     fbClass = isRight ? 'yes' : 'no';
-    head = isRight ? '⚡ LOOKS RIGHT! (parent will verify)' : 'CHECK AGAIN';
+    head = isRight ? (opts.fixed ? '🛠️ FIXED IT! (parent will verify)' : '⚡ LOOKS RIGHT! (parent will verify)') : 'CHECK AGAIN';
     msg = isRight
       ? `Expected answer: <strong>${correctAnswer}</strong>. Your work has been saved for parent review.`
       : `Expected answer: <strong>${correctAnswer}</strong>. Your work was saved for parent review anyway — sometimes your work is right even if the final number is off.`;
+  } else if (opts.parts) {
+    const [a, b] = opts.parts;
+    fbClass = a && b ? 'yes' : 'no';
+    head = a && b ? '🔎 ANSWERED AND PROVED!' : a ? 'RIGHT ANSWER — CHECK THE PROOF' : b ? 'GOOD PROOF — CHECK PART A' : 'NOT QUITE';
+    msg = a && b ? 'You got the answer AND found what proves it.' : 'The right choices are marked in green.';
+  } else if (opts.fixed) {
+    fbClass = 'yes';
+    head = '🛠️ FIXED IT!';
+    msg = 'You thought it through and got it on the second try.';
   } else if (isRight) {
     fbClass = 'yes';
-    const heads = ['⚡ NICE!', '✨ BOOM!', '🎯 CORRECT!', '🔥 YES!', '💯 LOCKED IN!'];
-    head = heads[Math.floor(Math.random()*heads.length)];
-    msg = 'Keep it up!';
+    head = pick(['⚡ NICE!', '✨ BOOM!', '🎯 CORRECT!', '🔥 YES!', '💯 LOCKED IN!']);
+    msg = q.why ? '' : 'Keep it up!';
   } else {
     fbClass = 'no';
-    const heads = ['NOT QUITE', 'TRY AGAIN', 'NO WORRIES', 'KEEP GOING'];
-    head = heads[Math.floor(Math.random()*heads.length)];
-    msg = `The correct answer was <strong>${correctAnswer}</strong>.`;
+    head = pick(['NOT QUITE', 'GOOD TRY', 'NO WORRIES', 'KEEP GOING']);
+    msg = showsOwnAnswer ? 'The right answer is marked in green.' : `The answer is <strong>${correctAnswer}</strong>.`;
   }
+
+  const whyBox = q.why ? `
+    <div class="why-box">
+      <div class="why-head"><span>💡 HERE'S WHY</span>${speakBtn(q.why, false)}</div>
+      <div class="why-text">${q.why}</div>
+    </div>` : '';
 
   fb.innerHTML = `
     <div class="feedback ${fbClass}">
       <div class="feedback-head">${head}</div>
       ${msg}
     </div>
+    ${whyBox}
     <button class="next-btn" onclick="${isLast ? 'finishPack()' : 'nextQ()'}">
       ${isLast ? 'FINISH ROUND →' : 'NEXT →'}
     </button>
   `;
+  fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+  // Auto-read (on by default for the kindergartener) says the verdict and
+  // then the why, so a child who cannot read yet still hears the reason.
+  if (state.profiles[currentProfile.id].autoRead) {
+    const verdict = plainText(head).replace(/[^A-Za-z0-9 '!—-]/g, '').trim();
+    const said = [verdict + '.', plainText(msg), q.why ? "Here's why. " + q.why : ''].filter(Boolean).join(' ');
+    setTimeout(() => speakText(said), 450);
+  }
 
   checkTrophies();
 }
@@ -36252,18 +37589,39 @@ function finishPack() {
   });
   if (d.history.length > 300) d.history = d.history.slice(-300); // cap storage
 
+  const summary = { profileId: currentProfile.id, pack: currentPack, score, total, fixed: fixedCount,
+                   xpEarned, bestStreak, perfect: score === total };
+  FUN.emit('roundEnd', summary);
   saveState();
   checkTrophies();
 
-  const pct = Math.round((score / total) * 100);
+  // An answer fixed after a hint is half a win: the child reasoned it out.
+  const ratingPct = Math.round(((score + fixedCount / 2) / total) * 100);
   let rating, ratingEmoji;
-  if (pct === 100) { rating = 'LEGENDARY!'; ratingEmoji = '💯'; }
-  else if (pct >= 80) { rating = 'SO GOOD!'; ratingEmoji = '🌟'; }
-  else if (pct >= 60) { rating = 'NICE WORK!'; ratingEmoji = '👏'; }
+  if (score === total) { rating = 'LEGENDARY!'; ratingEmoji = '💯'; }
+  else if (ratingPct >= 80) { rating = 'SO GOOD!'; ratingEmoji = '🌟'; }
+  else if (ratingPct >= 60) { rating = 'NICE WORK!'; ratingEmoji = '👏'; }
+  else if (fixedCount >= 3) { rating = 'GREAT COMEBACKS!'; ratingEmoji = '🛠️'; }
   else { rating = 'KEEP PRACTICING!'; ratingEmoji = '💪'; }
 
   const roundNum = d.rounds[currentPack.id];
   const pendingReviews = (d.reviews || []).filter(r => r.status === 'pending').length;
+
+  // ─── Look back: every question missed or fixed, with its why ───
+  // The moment right after a round is when a child is most willing to
+  // look at what tripped them up, so the explanations come back here.
+  const missed = roundLog.filter(e => !e.right);
+  const lookback = !missed.length
+    ? `<div class="lookback lookback-clean">💯 Every answer right the first time. That is real understanding.</div>`
+    : `<div class="lookback">
+        <div class="lookback-head">🔍 LOOK BACK — ${missed.length === 1 ? 'ONE TO REMEMBER' : missed.length + ' TO REMEMBER'}</div>
+        ${missed.map(e => `
+          <div class="lookback-item${e.fixed ? ' fixed' : ''}">
+            <div class="lb-q"><span class="lb-n">Q${e.n}</span> ${e.q}</div>
+            <div class="lb-a">${e.fixed ? '🛠️ Fixed it: ' : 'Answer: '}<strong>${e.correct}</strong>${e.fixed ? '' : ` <span class="lb-you">(you said ${e.given})</span>`}</div>
+            ${e.why ? `<div class="lb-why"><span>💡 ${e.why}</span>${speakBtn(e.why, false)}</div>` : ''}
+          </div>`).join('')}
+      </div>`;
   const reviewNotice = pendingReviews > 0
     ? `<div class="review-notice"><strong>✏️ ${pendingReviews} SHOW-YOUR-WORK NEEDS REVIEW</strong>Parent can check the work paper in the parent dashboard.</div>`
     : '';
@@ -36300,13 +37658,15 @@ function finishPack() {
         <div class="complete-rating">${rating}</div>
 
         <div class="result-grid">
-          <div class="result-stat"><div class="result-big">${score}/${total}</div><div class="result-small">Score</div></div>
-          <div class="result-stat"><div class="result-big">${pct}%</div><div class="result-small">Accuracy</div></div>
+          <div class="result-stat"><div class="result-big">${score}/${total}</div><div class="result-small">First try</div></div>
+          <div class="result-stat"><div class="result-big">${fixedCount}</div><div class="result-small">Fixed with a hint</div></div>
           <div class="result-stat"><div class="result-big">+${xpEarned}</div><div class="result-small">XP Earned</div></div>
         </div>
 
         ${bestStreak >= 3 ? `<div class="result-stat" style="margin-bottom:1rem;"><div class="result-big" style="color:var(--gold)">🔥 ${bestStreak}</div><div class="result-small">Best Streak</div></div>` : ''}
 
+        ${FUN.html('completeExtra', { summary })}
+        ${lookback}
         ${reviewNotice}
         ${reportSection}
 
@@ -36346,6 +37706,8 @@ function buildRoundReport() {
   roundLog.forEach(e => {
     if (e.right) {
       lines.push('Q' + e.n + ' [CORRECT] ' + e.q + ' -> "' + e.given + '"');
+    } else if (e.fixed) {
+      lines.push('Q' + e.n + ' [FIXED AFTER HINT] ' + e.q + ' -> "' + e.given + '"');
     } else {
       lines.push('Q' + e.n + ' [WRONG] ' + e.q + ' -> answered "' + e.given + '", correct was "' + e.correct + '"');
     }
@@ -36488,6 +37850,7 @@ function renderProgress() {
 }
 
 function exitToHub() {
+  if (currentProfile && currentPack) FUN.emit('roundExit', { profileId: currentProfile.id, pack: currentPack });
   // Clean exit from a pack mid-round. XP earned is already saved
   // question-by-question via saveState() in handleAnswer(), so we
   // just need to reset transient quiz state and any leftover DOM.
@@ -36499,6 +37862,10 @@ function exitToHub() {
   locked = false;
   reviewItems = [];
   roundLog = [];
+  tries = 0;
+  firstWrong = null;
+  fixedCount = 0;
+  qState = null;
   currentPack = null;
   questions = [];
 
@@ -36620,14 +37987,18 @@ function checkTrophies() {
     xp_200: () => d.xp >= 200,
     xp_600: () => d.xp >= 600,
     xp_1200: () => d.xp >= 1200,
-    all_packs: () => packs.every(p => d.packs[p.id]),
+    all_packs: () => packs.filter(p => !p.hidden).every(p => d.packs[p.id]),
     math_ace: () => packs.filter(p => p.subject==='math').map(p => p.id).filter(id => perfectIds.includes(id)).length >= 3,
     ela_ace: () => packs.filter(p => p.subject==='ela').map(p => p.id).filter(id => perfectIds.includes(id)).length >= 3,
     read_ace: () => packs.filter(p => p.subject==='reading').map(p => p.id).some(id => perfectIds.includes(id)),
     sci_ace: () => packs.filter(p => p.subject==='science').map(p => p.id).filter(id => perfectIds.includes(id)).length >= 3,
     typer: () => (d.typedRightCount || 0) >= 10,
     showwork: () => (d.showWorkCount || 0) >= 5,
+    big_thinker: () => (d.puzzleRight || 0) >= 10,
+    comeback: () => (d.fixedCount || 0) >= 5,
+    prove_it: () => (d.provedCount || 0) >= 5,
   };
+  for (const [id, fn] of Object.entries(FUN.trophyChecks)) checks[id] = () => fn(d, currentProfile.id);
 
   TROPHIES.forEach(t => {
     if (!d.trophies.includes(t.id) && checks[t.id] && checks[t.id]()) {
@@ -36693,7 +38064,7 @@ function renderParentDash() {
     const pending = reviews.filter(r => r.status === 'pending');
     const done = reviews.filter(r => r.status !== 'pending');
 
-    const packRows = packs.map(pk => {
+    const packRows = packs.filter(pk => !pk.hidden).map(pk => {
       const packDone = d.packs[pk.id];
       const rounds = (d.rounds && d.rounds[pk.id]) || 0;
       return `<div class="parent-row"><span>${pk.icon} ${pk.title}</span><span class="val">${packDone ? packDone.best+'/10' : '—'} · ${rounds}×</span></div>`;
@@ -36730,7 +38101,10 @@ function renderParentDash() {
         <div class="parent-row"><span>Best Streak</span><span class="val">🔥 ${d.bestStreak}</span></div>
         <div class="parent-row"><span>Typed Correct</span><span class="val">⌨️ ${d.typedRightCount || 0}</span></div>
         <div class="parent-row"><span>Show-Work Done</span><span class="val">✏️ ${d.showWorkCount || 0}</span></div>
-        <div class="parent-row"><span>Packs Completed</span><span class="val">${Object.keys(d.packs).length} / ${packs.length}</span></div>
+        <div class="parent-row"><span>Fixed After a Hint</span><span class="val">🛠️ ${d.fixedCount || 0}</span></div>
+        <div class="parent-row"><span>Puzzles Solved</span><span class="val">🧩 ${d.puzzleRight || 0}</span></div>
+        <div class="parent-row"><span>Answered and Proved (two-part)</span><span class="val">🔎 ${d.provedCount || 0}</span></div>
+        <div class="parent-row"><span>Packs Completed</span><span class="val">${packs.filter(pk => !pk.hidden && d.packs[pk.id]).length} / ${packs.filter(pk => !pk.hidden).length}</span></div>
         <div class="parent-row"><span>Trophies</span><span class="val">${d.trophies.length} / ${TROPHIES.length}</span></div>
         <div class="mini-label">Per pack (best score · rounds played):</div>
         ${packRows}
@@ -36752,21 +38126,39 @@ function renderParentDash() {
           Questions are written to what AACPS teaches: <strong>Amplify CKLA</strong> for
           reading (the packs match the real unit sequence for each grade),
           <strong>Reveal Math</strong> for math, <strong>NGSS</strong> for science, and the
-          Maryland social studies standards. Every pack mixes multiple choice, true/false,
-          typed answers and show-your-work.
+          Maryland social studies frameworks. Every pack opens with <strong>why the topic
+          matters</strong>, and every answer — right or wrong — is followed by
+          <strong>why</strong> it is right.
+        </p>
+        <p style="font-size:0.9rem;line-height:1.55;margin-top:0.75rem;">
+          <strong>This spring's tests:</strong> Maryland is replacing MCAP with
+          <strong>MSTAR</strong> for 3rd and 5th grade reading and math, testing
+          29 March – 28 May 2027. 5th grade science (MISA) is unchanged this year and covers
+          grades 3, 4 and 5. MSTAR mixes plain multiple choice with multiple-select,
+          two-part and drag-to-order items — the puzzle questions here practise exactly
+          those formats.
         </p>
         <p style="font-size:0.85rem;line-height:1.55;color:var(--muted);margin-top:0.75rem;">
-          <strong>Worth knowing:</strong> the research behind this could reach search
-          results but not the source documents themselves. The CKLA unit lists, the fact
-          that 5th grade science testing covers grades 3-5, and the 5th grade social
-          studies sequence all checked out. Maryland's revised 2025 math standards were
-          reported but the specific standard codes did not survive checking — so no
-          question here cites a standard code at all. They are written to the content.
-          Nothing specific to AACPS for 2026-2027 (new adoptions, calendar, marking
-          periods) could be researched. Full detail is in CURRICULUM-NOTES.md alongside
-          this file.
+          <strong>Worth knowing:</strong> rechecked October 2026 through search results
+          that quote MSDE and AACPS documents; the documents themselves could not be opened
+          from here. Maryland's revised math standards (domains NOS, AT, GR, DS) took effect
+          this year. No question cites a standard code — they are written to the content.
+          Full detail, including what is still unverified, is in CURRICULUM-NOTES.md
+          alongside this file.
         </p>
       </div>
+
+      <div class="kid-block" style="border-color:var(--showwork);">
+        <h3>🤔 Second Chances</h3>
+        <label class="parent-toggle">
+          <input type="checkbox" id="parent-second" ${pset.secondChance === false ? '' : 'checked'} onchange="saveSecondChance()">
+          <span>After a wrong answer, show a hint and allow one more try (half XP). Turn this off for
+          test-style practice, where the first answer is final.</span>
+        </label>
+        <div id="parent-second-saved" class="mini-label" style="margin-top:0.5rem;"></div>
+      </div>
+
+      ${FUN.html('parentExtra', {})}
 
       <div class="kid-block" style="border-color:var(--gold);">
         <h3>📮 Round Reports</h3>
@@ -36778,6 +38170,17 @@ function renderParentDash() {
       <button class="switch-btn" onclick="renderProfileSelect()" style="margin-top:1rem;">← BACK TO GAME</button>
     </div>
   `);
+}
+
+function saveSecondChance() {
+  if (!state.parent) state.parent = { reportRequired: true };
+  const el = document.getElementById('parent-second');
+  state.parent.secondChance = !!(el && el.checked);
+  saveState();
+  const note = document.getElementById('parent-second-saved');
+  if (note) note.textContent = state.parent.secondChance
+    ? '✓ Saved. A wrong answer gets a hint and one more try.'
+    : '✓ Saved. The first answer is final, like the state test.';
 }
 
 function saveParentSettings() {
@@ -36948,6 +38351,46 @@ function speakCurrentStep() {
   }, 50);
 }
 
+// ─── Saying math the way a teacher says it ───
+// The speech engine reads "3/4" as "three slash four" (or a date), "×" as
+// "x", and "____" as a string of underscores. A bare "<" also used to be
+// swallowed as the start of an HTML tag, taking the rest of the comparison
+// with it. This turns written math into spoken math before it is voiced.
+const SPOKEN_DENOMINATORS = {
+  2: ['half', 'halves'], 3: ['third', 'thirds'], 4: ['fourth', 'fourths'], 5: ['fifth', 'fifths'],
+  6: ['sixth', 'sixths'], 7: ['seventh', 'sevenths'], 8: ['eighth', 'eighths'], 9: ['ninth', 'ninths'],
+  10: ['tenth', 'tenths'], 12: ['twelfth', 'twelfths'], 100: ['hundredth', 'hundredths'],
+};
+function spokenFraction(n, d) {
+  const w = SPOKEN_DENOMINATORS[d];
+  if (!w || n === 0) return `${n} over ${d}`;
+  return n === 1 ? `one ${w[0]}` : `${n} ${w[1]}`;
+}
+function speechify(text) {
+  return String(text)
+    .replace(/<br\s*\/?>/gi, '. ')
+    .replace(/<\/?[a-zA-Z][^>]*>/g, ' ')            // real tags only: "<" + letter
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, ' and ')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&[a-z]+;/gi, ' ').replace(/&#\d+;/g, ' ')
+    .replace(/_{2,}/g, ' blank ')
+    .replace(/\b(\d+)\s+(\d+)\/(\d+)\b/g, (m, w, n, d) => `${w} and ${spokenFraction(+n, +d)}`)
+    .replace(/\b(\d+)\/(\d+)\b/g, (m, n, d) => spokenFraction(+n, +d))
+    .replace(/\s*×\s*/g, ' times ')
+    .replace(/\s*÷\s*/g, ' divided by ')
+    .replace(/\s*≠\s*/g, ' does not equal ')
+    .replace(/\s*≤\s*/g, ' is less than or equal to ')
+    .replace(/\s*≥\s*/g, ' is greater than or equal to ')
+    .replace(/\s+<\s+/g, ' is less than ')
+    .replace(/\s+>\s+/g, ' is greater than ')
+    .replace(/\s+=\s*/g, ' equals ')
+    .replace(/(\d)\s*[−–]\s*(\d)/g, '$1 minus $2')
+    .replace(/(\d)\s+-\s+(\d)/g, '$1 minus $2')
+    .replace(/\s*[→⇒]\s*/g, ', then ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 // ─── General-purpose speakText helper for question / answer voice buttons ───
 function speakText(text, evt) {
   // Stop click from propagating to parent button (so tapping voice
@@ -36963,8 +38406,8 @@ function speakText(text, evt) {
   }
   if (!text) return;
 
-  // Strip HTML tags for clean speech
-  const clean = String(text).replace(/<[^>]*>/g, ' ').replace(/&[a-z]+;/gi,' ').replace(/&#\d+;/g,' ').replace(/\s+/g, ' ').trim();
+  // Strip HTML tags and turn written math into spoken math
+  const clean = speechify(text);
   if (!clean) return;
 
   // If we're already speaking this exact text, don't restart it
@@ -37186,6 +38629,7 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
     if (!btn) return;
     const text = btn.getAttribute('data-speak-text') || '';
     speakText(text, evt);
+    if (currentProfile) FUN.emit('speak', { profileId: currentProfile.id });
   }
 
   // pointerdown: stop event propagation FIRST so the parent's click never
@@ -37295,7 +38739,7 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
 (function clearStraySelection() {
   document.addEventListener('pointerup', (e) => {
     if (!e.target || !e.target.closest) return;
-    if (!e.target.closest('.choice, .tf-btn, .pack-card, .profile-card, .numpad-key')) return;
+    if (!e.target.closest('.choice, .tf-btn, .pack-card, .profile-card, .numpad-key, .order-item, .order-slot, .sort-btn')) return;
     const sel = window.getSelection && window.getSelection();
     if (sel && !sel.isCollapsed) {
       try { sel.removeAllRanges(); } catch (err) {}

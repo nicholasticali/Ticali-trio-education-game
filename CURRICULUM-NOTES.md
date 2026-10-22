@@ -1,135 +1,136 @@
 # What this app is aligned to, and how confident that is
 
-Written September 2026, for the 2026-2027 school year, for one kindergartener, one
-third grader and one fifth grader in Anne Arundel County, Maryland.
+Written September 2026 and rechecked October 2026, for the 2026-2027 school year,
+for one kindergartener, one third grader and one fifth grader in Anne Arundel
+County, Maryland.
 
-Nine parallel research agents gathered this, and a second adversarial pass tried to
-refute each low-confidence claim. **The refutation pass killed a lot of it.** This
-document separates what survived from what did not, because a learning app that
-quietly asserts a wrong standard code is worse than one that says "I could not
-check this."
+## How this was researched — and the limit you should know about
 
-## The hard limitation you should know about
+**No primary document could be opened directly from the machine that built this.**
+Every fetch of `marylandpublicschools.org`, `aacps.org`, `news.maryland.gov` and
+similar hosts was blocked. What *was* available, in October 2026, was web search —
+and search results quote MSDE and AACPS documents closely. Everything below rests
+on those quotations, with the source documents named so you can open them yourself.
 
-**This session could not reach any primary source.** The network egress policy
-blocked every one of `marylandpublicschools.org`, `aacps.org`,
-`mdk12.msde.maryland.gov`, `amplify.com`, `mheducation.com`, `coreknowledge.org`,
-and even `wikipedia.org` and `google.com`. Search results were available; fetching
-the actual PDFs and district pages behind them was not.
+September's pass had only search snippets and an adversarial check, and that check
+**refuted some things that turn out to be true** (the new math domain codes). The
+October pass corrected it. Where a claim is still only one secondary source deep,
+it says so.
 
-So everything below rests on search-result summaries, not on a document anyone
-opened. One research dimension — *what is specifically new at AACPS for 2026-2027*
-— returned **nothing at all**, because the web-search budget was exhausted by its
-sibling agents and every direct fetch was blocked. That agent chose to return zero
-findings rather than invent plausible ones, which was the right call.
+## Confirmed
 
-## Confident enough to build on
-
-These held up under adversarial checking and are consistent across several
-independent researchers:
-
-- **AACPS uses Amplify CKLA for K-5 English language arts.** Piloted 2023-24,
-  district-wide from 2024-25, and named in AACPS's own press releases about
-  elementary assessment gains.
-- **AACPS uses McGraw Hill Reveal Math for K-5 mathematics.**
-- **Maryland adopted NGSS verbatim as the Maryland State Science Standards**
-  (unanimous State Board vote, 25 June 2013). COMAR 13A.04.09.01 requires every
-  local system to build its science curriculum on them.
-- **The grade 5 MISA science test covers the standards for grades 3, 4 AND 5.**
-  A fifth grader is accountable for three years of science in one test. This is
-  why last year's science packs sit in their own section for the fifth grader
-  rather than under "review".
-- **Grade 3 is the first state-tested year in Maryland.** Testing runs grades 3-8.
-- **The CKLA unit sequences.** The ELA researcher was able to recover the actual
-  Amplify-published unit lists, which is why the reading packs match the domains
-  the children will really meet:
+- **AACPS uses Amplify CKLA for K-5 English language arts** (piloted 2023-24,
+  district-wide from 2024-25) **and McGraw Hill Reveal Math for K-5 math.** Both
+  are named in AACPS releases through 2025-26; nothing found suggests a change for
+  2026-27, so "still current" is a strong inference rather than a quoted fact.
+- **The CKLA unit sequences** for each grade, which is why the reading packs match
+  the domains the children meet:
   - **Kindergarten** (12 Knowledge domains): Nursery Rhymes and Fables · The Five
     Senses · Stories · Plants · Farms · Native Americans · Kings and Queens ·
     Seasons and Weather · Columbus and the Pilgrims · Colonial Towns · Taking Care
-    of the Earth · Presidents and American Symbols. Plus a 10-unit Skills sequence
-    running from oral phonological awareness to the long vowel sounds.
-  - **Grade 3** (11 integrated units): Classic Tales: The Wind in the Willows ·
-    Classification of Animals · The Human Body · Ancient Rome · Light and Sound ·
-    The Vikings and Norse Mythology · Astronomy · Native Americans · European
-    Exploration of North America · Colonial America · Ecology.
+    of the Earth · Presidents and American Symbols. Plus a Skills sequence from
+    oral phonological awareness to the long vowel sounds.
+  - **Grade 3** (11 units): Classic Tales: The Wind in the Willows · Classification
+    of Animals · The Human Body · Ancient Rome · Light and Sound · The Vikings and
+    Norse Mythology · Astronomy · Native Americans · European Exploration of North
+    America · Colonial America · Ecology.
   - **Grade 5** (9 units): Personal Narratives · Early American Civilizations ·
     Poetry · The House on Mango Street · Don Quixote · Renaissance · Reformation ·
     A Midsummer Night's Dream · Native Americans.
-- **Maryland's social studies standards were revised (State Board, March 2025;
-  grade-level frameworks revised June 2025).** The structural finding that matters:
-  **grade 5 is not colonial America.** Grade 4 carries the pre-colonial and
-  colonial load through a Maryland lens; grade 5 opens on the origins and structure
-  of American government and the founding documents, then runs westward expansion →
-  the antebellum era → the Civil War → its aftermath → 1900 to today. The grade 5
-  social studies packs are built to that sequence.
-- **AACPS grade 3 carries a heavy environmental-literacy strand** through the Office
-  of Environmental Literacy and Outdoor Education at Arlington Echo, culminating in
-  a student Environmental Action Project. Hence the Chesapeake watershed pack.
+- **Maryland's revised math standards are real and in effect this year.** The
+  "Revised Maryland College and Career Ready Standards for Mathematics" were adopted
+  29 July 2025; MSDE's crosswalks read "Implementation: SY 2026-2027" for PreK-8.
+  They are no longer Common Core-shaped. Four domains run through elementary:
+  **NOS** (Number and Operation Sense), **AT** (Algebraic Thinking), **GR**
+  (Geometric Reasoning and Measurement), **DS** (Reasoning with Data and Statistics).
+  *(September's notes said these codes were refuted. That was wrong.)* What it
+  means for these three children:
+  - **Kindergarten:** counting backward from a number within 20 (K.NOS.A.3) and
+    repeating patterns (K.AT.B) are **genuinely new** kindergarten expectations —
+    both have their own packs. Fluency adding and subtracting within 5 stays. **Making
+    10 moves to grade 1** in the June 2025 draft (not rechecked against the adopted
+    text), and **subitizing is a PreK standard** — the "Ways to Make 10" and "See How
+    Many, Fast" packs are still good kindergarten math, just not new requirements.
+  - **Grade 3:** place value now extends to **10,000** (3.NOS.A.1; Common Core
+    stopped at 1,000) — the Place Value pack already works to 10,000. Fractions stay
+    limited to denominators 2, 3, 4, 6, 8.
+  - **Grade 5:** multi-digit and decimal operations (5.NOS.B), fraction operations
+    (5.NOS.C-D), numerical expressions (5.AT.A), volume (5.GR.C), data (5.DS.A).
+  No question in the app cites a standard code; every question is written to the
+  content, which is why the September mistake broke nothing.
+- **MSTAR replaces MCAP this spring for grades 3-8 reading and math.** MSDE:
+  "Beginning with the Spring 2027 assessment administration window (March 29-May 28),
+  Maryland will transition to MSTAR assessments for English Language Arts and
+  Mathematics in grades 3-8." It adapts in stages and is about 25% shorter. Grades
+  4-5 reading is 75-90% single-answer multiple choice; the rest is
+  **multiple-select, composite (very likely the two-part evidence item) and
+  technology-enhanced items**; math is 60-75% multiple choice/multiple select and
+  20-35% technology-enhanced, plus short constructed response. **The app's puzzle
+  questions — pick all, answer-then-prove, put in order, sort — practise exactly
+  these formats.**
+- **Grade 5 science stays MCAP MISA this year** (MSTAR science arrives 2027-28),
+  and **MISA covers grades 3, 4 and 5**: "The grade 5 MISA uses all the Performance
+  Expectations from the Maryland NGSS for grades 3 through 5." This is why the fifth
+  grader's 4th-grade science packs sit under *Also on the science test*, not review.
+- **Maryland adopted NGSS as its science standards** (State Board, 11-0, 25 June 2013).
+- **Maryland's social studies frameworks were revised June 2025.** Grade 5 runs from
+  founding documents and government through westward expansion, the antebellum
+  era, the Civil War, its aftermath ("Aftermath of the Civil War" covers the 13th-15th
+  Amendments, Jim Crow, the Freedmen's Bureau and Maryland HBCUs), to 1900-today;
+  the exact unit list was not retrieved. Grades 4 *and* 5 use Maryland as "a lens
+  into the national story", and grade 3's history unit includes colonial settlement.
+- **AACPS 2026-27 calendar** (adopted 3 December 2025): grades 1-5 start Monday
+  24 August; all kindergarten students attend from 31 August; marking period 1 ends
+  **Friday 23 October**; MP2 ends Friday 15 January 2027; MP3 ends about 25 March
+  (one source); last day Friday 11 June 2027 (tentative — shortened if snow days
+  are not used).
 
-## Reported, but NOT verified — treat with caution
+## Corrected since September
 
-- **A revised set of Maryland mathematics standards, adopted 29 July 2025, taking
-  effect in 2026-2027.** Two independent researchers reported this with high
-  confidence, and it is plausible. But the adversarial pass **refuted the specific
-  domain renaming** those researchers described (`K.NOS` / `K.AT` / `K.GR` / `K.DS`,
-  `3.NOS`, `3.GR`). The verifiers found no evidence those codes exist and noted that
-  Maryland's published grade 3 and kindergarten math domains are the familiar
-  Common Core ones — `K.CC`, `K.OA`, `K.NBT`, `K.MD`, `K.G` and `3.OA`, `3.NBT`,
-  `3.NF`, `3.MD`, `3.G`. Several verifiers were explicit that they could not confirm
-  *or* disconfirm, because the source PDFs were unreachable.
+- **Arlington Echo.** The notes said grade 3 carries a heavy environmental-literacy
+  strand ending in an Environmental Action Project. AACPS's own pages say **every
+  fourth-grade class** goes to Arlington Echo (canoeing, seining, stormwater
+  investigation), and **kindergarten** has a one-day field experience, *Trees are
+  Terrific*. Nothing supports the grade 3 claim. The third grader's Chesapeake
+  watershed pack is still good Anne Arundel content — and a preview of next year.
 
-  **What this app does about it:** nothing in any question bank cites a standard
-  code at all. Every question is written to the *content* — what a child must
-  actually be able to do — which is stable whichever code system is in force.
-  Counting backward within 20, subitizing, and repeating patterns got their own
-  kindergarten packs because they are good kindergarten mathematics, and the pack
-  descriptions no longer claim they are new requirements.
+## Still unverified — treat with caution
 
-- **MCAP being replaced by MSTAR (Maryland System of Testing Academic Readiness)
-  for grades 3-8 ELA and math, beginning with the spring 2027 window.** Reported
-  consistently by several researchers, but traced back partly to a test-prep
-  vendor's summary rather than to MSDE. Science (MISA) is reported to stay as-is
-  for 2026-2027 and move over in 2027-2028. The test-prep packs practise item
-  *formats and reasoning*, which is useful whichever name is on the test.
+- **AACPS's health scope and sequence for K, 3 and 5.** Not found. The health packs
+  are written to general elementary health content and deliberately omit
+  reproduction and family-life material, which is taught with parent notice and
+  opt-out (Maryland requires districts to offer opt-out and to begin that teaching
+  in or before grade 5). Note: Maryland adopted a revised Health Education Framework
+  on 24 February 2026, with full implementation by 2027-28.
+- **Reveal Math unit order at AACPS.** The sequence used came from McGraw Hill's
+  national pacing and another district's guide, not an AACPS pacing document, and
+  it is not known how AACPS is mapping Reveal onto the revised standards.
+- **Which reading screener AACPS uses this year**, and whether **Maryland's ELA
+  standards** are being revised (MSDE hosts files that suggest it; no adoption found).
+- **Coming next year:** AACPS issued an RFP for a new **K-5 science program for
+  2027-28** (from procurement listings; no award found).
 
-- **Reveal Math unit titles and ordering.** The sequence recovered
-  (Grade 5: Math Is… → Volume → Place Value → decimals → multiplication →
-  division → fractions → measurement → geometry → algebraic thinking) came from
-  McGraw Hill's national pacing guide and one out-of-state district's guide, not
-  from an AACPS pacing document. AACPS may reorder or compress. Treat unit numbers
-  as indicative; the content within them is right.
+## Worth an hour with an unblocked browser
 
-- **Everything AACPS-specific for 2026-2027**: new textbook adoptions, the Program
-  of Study, elementary grading and reporting policy, marking-period dates, and any
-  new elementary science, health or computer science curriculum. **Entirely
-  unresearched.** The health packs are therefore written to general elementary
-  health content of the kind Maryland schools teach, not to a verified AACPS scope
-  and sequence, and they deliberately omit human reproduction and family-life
-  content, which is taught with parent notification.
+1. Open the grade 3 and grade 5 MSTAR math blueprints and the grade 3 ELA blueprint
+   and confirm the item types.
+2. Check the adopted kindergarten crosswalk for where "make 10" landed.
+3. Pull the AACPS Reveal Math pacing for K, 3 and 5.
+4. Find AACPS's health scope and sequence for K, 3 and 5.
 
-## What to do with an hour and an unblocked browser
+## How the questions were built and checked
 
-In rough order of value:
-
-1. Open the MSDE mathematics standards page and settle the domain-code question.
-   If the revised standards are real and the domains genuinely renamed, nothing in
-   the banks breaks — but this document should say so plainly.
-2. Confirm MCAP → MSTAR and the spring 2027 window from MSDE directly.
-3. Pull the AACPS elementary pacing guides for Reveal Math K/3/5 and check the unit
-   order against the packs.
-4. Get the AACPS 2026-2027 calendar and marking-period end dates.
-5. Check the AACPS health education scope and sequence for grades K, 3 and 5.
-
-## How the questions were built
-
-Every bank was written by an agent working from a topic brief and a strict format
-contract, then read by a second agent told to assume defects exist and hunt
-specifically for wrong answer keys, ambiguous items, factual errors and format
-violations, then repaired by a third. On top of that, two mechanical gates run over
-every bank: one checks shape (four options per multiple choice, the answer index in
-range and pointing where intended, no duplicate questions, no emoji in a typed
-answer, no reference to a picture that does not exist), and one loads the whole app
-in a browser and confirms every pack returns a full, well-formed round of ten.
+Every bank was written from a topic brief and a strict format contract, read by a
+second pass told to assume defects exist, and repaired. In October 2026 every
+question also gained a written **why** (shown after any answer) and a **hint** (for
+the second try), written per child at that child's reading level — and writing
+them meant re-solving every question, which surfaced and fixed a further round of
+defects: wrong keys, duplicate answer choices, two defensible answers, and reading
+questions whose passage was missing or cut short. Two mechanical gates run over
+everything: one checks shape (four distinct options, keys in range, no references
+to pictures that do not exist, no option letters in explanations), and one loads
+the whole app in a browser and confirms every pack returns a full, well-formed,
+explained round.
 
 That catches a great deal. It does not make the content beyond question. If a child
 hits an item that seems wrong, it may well be wrong.

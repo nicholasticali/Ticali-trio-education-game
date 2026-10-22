@@ -1,6 +1,7 @@
 // The smoke test walks the child's path: title, hub, a round. These are the
 // screens it never opens — the parent dashboard, the progress chart, a
-// walkthrough modal, the scratch pad, and the on-screen number pad — audited
+// walkthrough modal, the scratch pad, the on-screen number pad, every puzzle
+// type, and each child's briefing card — audited
 // at the same viewports for overflow and tap-target size.
 const { chromium } = require('playwright');
 const path = require('path');
@@ -98,6 +99,7 @@ async function audit(page, label, out) {
     await page.goto(APP); await page.waitForTimeout(250);
     await page.locator('.profile-card').nth(1).click(); await page.waitForTimeout(200);
     await page.locator('.pack-card').first().click(); await page.waitForTimeout(250);
+    if (await page.locator('.briefing-go').count()) { await page.locator('.briefing-go').click(); await page.waitForTimeout(250); }
     await page.locator('.scratch-btn').click(); await page.waitForTimeout(300);
     if (!(await page.locator('#scratch-overlay').count())) out.push(`[${vp.name}] scratch pad did not open`);
     else {
@@ -171,6 +173,39 @@ async function audit(page, label, out) {
         const ro2 = await page.locator('#typedInput').getAttribute('readonly');
         if (ro2 !== null) out.push(`[${vp.name}] keyboard escape hatch left the input readonly`);
       }
+    }
+
+    // ─── Every puzzle type, rendered on its own ───
+    for (const pid of ['k', 'g5']) {
+      await page.goto(APP); await page.waitForTimeout(250);
+      const types = await page.evaluate(pid => {
+        pickProfile(pid);
+        const pool = [];
+        for (const pk of PACKS[pid]) for (const q of (THINK_ITEMS[pk.id] || [])) pool.push({ pk: pk.id, q });
+        const out = {};
+        for (const { pk, q } of pool) if (!out[q.type]) out[q.type] = pk;
+        return out;
+      }, pid);
+      if (!Object.keys(types).length) { out.push(`[${vp.name}] ${pid}: no puzzle items found`); continue; }
+      for (const [type, packId] of Object.entries(types)) {
+        await page.evaluate(({ pid, packId, type }) => {
+          currentPack = PACKS[pid].find(p => p.id === packId);
+          questions = [prepareQuestion(THINK_ITEMS[packId].find(q => q.type === type))];
+          qIdx = 0; score = 0; xpEarned = 0; streak = 0; locked = false; roundLog = []; reviewItems = [];
+          renderQuestion();
+        }, { pid, packId, type });
+        await page.waitForTimeout(250);
+        await audit(page, `${vp.name}/${pid} puzzle ${type}`, out);
+      }
+    }
+
+    // ─── Briefing card for every child ───
+    for (const i of [0, 1, 2]) {
+      await page.goto(APP); await page.waitForTimeout(250);
+      await page.locator('.profile-card').nth(i).click(); await page.waitForTimeout(200);
+      await page.locator('.pack-card').nth(2).click(); await page.waitForTimeout(250);
+      if (!(await page.locator('.briefing').count())) out.push(`[${vp.name}] profile ${i}: pack opened without a WHY THIS MATTERS briefing`);
+      else await audit(page, `${vp.name}/briefing ${i}`, out);
     }
 
     await ctx.close();

@@ -48,9 +48,9 @@ for (const file of files) {
   bank.forEach((q, i) => {
     const at = `#${i + 1}`;
     const type = q.type || 'mc';
-    const label = norm(q.text || q.statement || '(no text)').slice(0, 60);
+    const label = norm(q.text || q.statement || (q.partA && q.partA.text) || '(no text)').slice(0, 60);
 
-    if (!['mc', 'tf', 'typed', 'fib', 'showwork'].includes(type)) {
+    if (!['mc', 'tf', 'typed', 'fib', 'showwork', 'order', 'sort', 'multi', 'twopart'].includes(type)) {
       errs.push(`${at} unknown type "${type}"`);
       return;
     }
@@ -58,7 +58,7 @@ for (const file of files) {
     // Duplicate detection. A reading pack legitimately reuses a stem like
     // "What is the lesson of this fable?" across several different fables,
     // so the passage is part of the item's identity.
-    const key = type + '|' + norm(q.text || q.statement) + '|' + norm(q.passage || '');
+    const key = type + '|' + norm(q.text || q.statement || (q.partA && q.partA.text)) + '|' + norm(q.passage || '');
     if (seen.has(key)) errs.push(`${at} duplicates ${seen.get(key)}: "${label}"`);
     else seen.set(key, at);
 
@@ -125,6 +125,40 @@ for (const file of files) {
       if (all.length && !isNum(all[0]) && all.some(isNum)) {
         warns.push(`${at} lists a word before the numeral, so the number pad will not appear: ${JSON.stringify(all)}`);
       }
+    }
+
+    // Puzzle types (put in order, sort, pick all, answer-then-prove).
+    if (type === 'order') {
+      if (!Array.isArray(q.items) || q.items.length < 3) errs.push(`${at} order needs 3+ items, listed in the correct order`);
+      else if (new Set(q.items.map(norm)).size !== q.items.length) errs.push(`${at} order has duplicate items`);
+    }
+    if (type === 'sort') {
+      const g = q.groups || [];
+      if (g.length < 2) errs.push(`${at} sort needs 2+ groups`);
+      (q.items || []).forEach((it, j) => { if (!it || !Number.isInteger(it.g) || it.g < 0 || it.g >= g.length) errs.push(`${at} sort item ${j} points at no group`); });
+      g.forEach((lab, gi) => { if (!(q.items || []).some(it => it && it.g === gi)) errs.push(`${at} sort group "${lab}" is empty`); });
+    }
+    if (type === 'multi') {
+      const o = q.options || [], c = q.correct || [];
+      if (o.length < 4) errs.push(`${at} multi needs 4+ options`);
+      if (!Array.isArray(c) || c.length < 2 || new Set(c).size !== c.length || c.some(x => !Number.isInteger(x) || x < 0 || x >= o.length)) errs.push(`${at} multi correct must be 2+ distinct option indices`);
+      if (new Set(o.map(x => String(x).trim())).size !== o.length) errs.push(`${at} multi has duplicate options`);
+    }
+    if (type === 'twopart') {
+      for (const part of ['partA', 'partB']) {
+        const pt = q[part];
+        if (!pt || !Array.isArray(pt.options) || pt.options.length !== 4) errs.push(`${at} ${part} needs exactly 4 options`);
+        else if (!Number.isInteger(pt.correct) || pt.correct < 0 || pt.correct > 3) errs.push(`${at} ${part} correct out of range`);
+        else if (new Set(pt.options.map(x => String(x).trim())).size !== 4) errs.push(`${at} ${part} has duplicate options`);
+      }
+    }
+
+    // Every question explains itself after it is answered; every one the
+    // child can retry has a hint for the second try.
+    if (!q.why) warns.push(`${at} has no why (the HERE'S WHY panel will be empty)`);
+    if (!q.hint && !['tf', 'twopart'].includes(type)) warns.push(`${at} has no hint (the second try will use a generic one)`);
+    for (const f of ['why', 'hint']) {
+      if (q[f] && /\b(option|choice|answer)\s+[A-D]\b|\b[A-D]\)/.test(q[f])) errs.push(`${at} ${f} names an option by letter, but options are shuffled`);
     }
 
     // A passage that mentions a figure the child cannot see.

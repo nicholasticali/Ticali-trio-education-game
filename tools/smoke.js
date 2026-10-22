@@ -63,6 +63,89 @@ async function auditPage(page, label, results) {
   small.forEach(s => results.push(`small tap target ${s.sel} ${s.w}x${s.h}`));
 }
 
+
+// Answer whatever question is on screen. With `missFirst`, deliberately
+// pick a wrong answer where one exists (to trigger the hint and retry);
+// otherwise answer correctly. Returns false if nothing answerable was found.
+async function answerQuestion(page, missFirst) {
+  const q = await page.evaluate(() => {
+    const q = questions[qIdx];
+    return { type: q.type || 'mc', correct: q.correct, answer: q.answer, accepted: q.acceptedAnswers,
+             items: q.items, shuffle: q._shuffle, pa: q.partA, pb: q.partB,
+             eliminated: [...document.querySelectorAll('.choice')].map(c => c.classList.contains('eliminated')) };
+  });
+  const t = q.type;
+  if (t === 'mc' && await page.locator('.choice').count()) {
+    let pick = q.correct;
+    if (missFirst) pick = q.eliminated.findIndex((e, i) => !e && i !== q.correct);
+    if (pick < 0) pick = q.correct;
+    await page.locator('.choice').nth(pick).click();
+    await page.waitForTimeout(400);
+    return true;
+  }
+  if (t === 'tf') { await page.locator(q.answer === missFirst ? '.false-btn' : '.true-btn').click(); return true; }
+  if (t === 'typed' || t === 'fib' || t === 'showwork') {
+    if (t === 'showwork' && !(await page.locator('#workDone').isChecked())) await page.locator('#workDone').check();
+    const value = missFirst ? '0000' : String(q.accepted[0]);
+    if (await page.locator('.numpad-key').count() && /^[0-9.,:/$%()\- ]+$/.test(value)) {
+      await page.locator('.numpad-key.clear').click();
+      for (const ch of value) {
+        const key = page.locator('.numpad-key', { hasText: new RegExp('^\\' + ch + '$') }).first();
+        if (await key.count()) await key.click();
+      }
+    } else {
+      if (await page.locator('.numpad-toggle').count()) await page.locator('.numpad-toggle').click();
+      await page.locator('#typedInput').fill(value);
+    }
+    await page.locator('.typed-submit').click();
+    await page.waitForTimeout(350);
+    return true;
+  }
+  if (t === 'order') {
+    const slots = await page.locator('.order-slot').count();
+    for (let pos = 0; pos < slots; pos++) {
+      const locked = await page.locator('.order-slot').nth(pos).evaluate(el => el.classList.contains('locked') || el.classList.contains('filled'));
+      if (locked) continue;
+      const want = missFirst ? q.items[q.shuffle[pos]] : q.items[pos];
+      const item = page.locator('.order-item', { hasText: want }).first();
+      if (await item.count()) await item.click(); else await page.locator('.order-item').first().click();
+    }
+    await page.locator('.puzzle-check').click();
+    await page.waitForTimeout(350);
+    return true;
+  }
+  if (t === 'sort') {
+    const assign = await page.evaluate(() => { const q = questions[qIdx]; return q._shuffle.map(i => q.items[i].g); });
+    const rows = await page.locator('.sort-row').count();
+    for (let r = 0; r < rows; r++) {
+      const btns = page.locator('.sort-row').nth(r).locator('.sort-btn');
+      if (await btns.first().isDisabled()) continue;
+      const n = await btns.count();
+      await btns.nth(missFirst ? (assign[r] + 1) % n : assign[r]).click();
+    }
+    await page.locator('.puzzle-check').click();
+    await page.waitForTimeout(350);
+    return true;
+  }
+  if (t === 'multi') {
+    const want = missFirst ? q.correct.slice(0, -1).concat([[0, 1, 2, 3, 4, 5].find(i => !q.correct.includes(i))]) : q.correct;
+    const picked = await page.evaluate(() => [...qState.sel]);
+    for (const i of picked) if (!want.includes(i)) await page.locator('.choice').nth(i).click();
+    for (const i of want) if (!picked.includes(i)) await page.locator('.choice').nth(i).click();
+    await page.locator('.puzzle-check').click();
+    await page.waitForTimeout(350);
+    return true;
+  }
+  if (t === 'twopart') {
+    await page.locator('.part-choice[data-part="A"]').nth(q.pa.correct).click();
+    await page.waitForTimeout(300);
+    await page.locator('.part-choice[data-part="B"]').nth(missFirst ? (q.pb.correct + 1) % 4 : q.pb.correct).click();
+    await page.waitForTimeout(300);
+    return true;
+  }
+  return false;
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
   const results = [];
@@ -95,42 +178,33 @@ async function auditPage(page, label, results) {
       const name = (await page.locator('.hub-name-block h2').textContent().catch(() => '?')) || '?';
       await auditPage(page, `${vp.name} / hub ${name}`, results);
 
-      // 3. Play a full round of the first pack, answering every question.
+      // 3. Play a full round of the first pack. Each question is missed once
+      //    on purpose where the type allows it, so the THINK AGAIN hint and
+      //    the second try are audited too, then answered right.
       const packs = await page.locator('.pack-card').count();
       if (packs === 0) { results.push(`[${vp.name}] hub ${name}: no packs`); }
       else {
         await page.locator('.pack-card').first().click();
         await page.waitForTimeout(250);
+        if (await page.locator('.briefing').count()) {
+          await auditPage(page, `${vp.name} / ${name} briefing`, results);
+          await page.locator('.briefing-go').click();
+          await page.waitForTimeout(250);
+        }
         for (let q = 0; q < 12; q++) {
           if (await page.locator('.complete').count()) break;
           await auditPage(page, `${vp.name} / ${name} q${q + 1}`, results);
-
-          if (await page.locator('.choice').count()) {
-            await page.locator('.choice').first().click();
-          } else if (await page.locator('.tf-btn').count()) {
-            await page.locator('.tf-btn').first().click();
-          } else if (await page.locator('#workDone').count()) {
-            await page.locator('#workDone').check();
-            if (await page.locator('.numpad-key').count()) {
-              await page.locator('.numpad-key').first().click();
-            } else {
-              await page.locator('#typedInput').fill('x');
-            }
-            await page.locator('#swSubmit').click();
-          } else if (await page.locator('#typedInput').count()) {
-            if (await page.locator('.numpad-key').count()) {
-              await page.locator('.numpad-key').first().click();
-              const v = await page.locator('#typedInput').inputValue();
-              if (!v) results.push(`[${vp.name}] numpad key did not enter a digit`);
-            } else {
-              await page.locator('#typedInput').fill('x');
-            }
-            await page.locator('.typed-submit').click();
-          } else {
-            results.push(`[${vp.name}] ${name} q${q+1}: no answerable control found`);
-            break;
+          const ok = await answerQuestion(page, q % 2 === 0);
+          if (!ok) { results.push(`[${vp.name}] ${name} q${q+1}: no answerable control found`); break; }
+          if (await page.locator('.think-box').count() && !(await page.locator('.next-btn').count())) {
+            await auditPage(page, `${vp.name} / ${name} q${q + 1} think-again`, results);
+            await answerQuestion(page, false);
           }
-          await page.waitForTimeout(120);
+          await page.waitForTimeout(150);
+          if (!(await page.locator('.why-box').count()) && await page.locator('.next-btn').count()) {
+            const t = await page.evaluate(() => questions[qIdx] && (questions[qIdx].type || 'mc'));
+            results.push(`[${vp.name}] ${name} q${q + 1} (${t}): no HERE'S WHY panel`);
+          }
           const next = page.locator('.next-btn').first();
           if (await next.count()) { await next.click(); await page.waitForTimeout(150); }
         }
@@ -140,7 +214,7 @@ async function auditPage(page, label, results) {
           await auditPage(page, `${vp.name} / ${name} complete`, results);
         }
         // back to hub, then to profile select for the next kid
-        const back = page.locator('.next-btn').nth(1);
+        const back = page.locator('.next-btn', { hasText: 'BACK TO PACKS' });
         if (await back.count()) { await back.click(); await page.waitForTimeout(200); }
       }
 
