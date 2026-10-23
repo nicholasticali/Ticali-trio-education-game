@@ -567,6 +567,13 @@
   .passage p { margin-bottom: 0.75rem; }
   .passage p:last-child { margin-bottom: 0; }
   .passage-voice { margin-top: 0.85rem; }
+  /* A word for the child to read: shown big, never read aloud. */
+  .show-card {
+    display: inline-block; margin: 0 0 1rem; padding: 0.4rem 1.4rem;
+    background: white; border: 4px solid var(--ink); box-shadow: 5px 5px 0 var(--user-color, var(--ink));
+    font-family: 'Fraunces', 'Iowan Old Style', Georgia, 'Times New Roman', serif; font-weight: 700;
+    font-size: clamp(2.2rem, 7vw, 3.4rem); letter-spacing: 1px; line-height: 1.2;
+  }
   .sort-legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; margin-bottom: 0.9rem; }
   .sort-legend-item { display: inline-flex; align-items: center; gap: 0.45rem; }
   .sort-legend-name {
@@ -36818,19 +36825,29 @@ const EARLY_READER_GRADES = ['K', '1'];
 const earlyReader = () => isK() || !!(currentPack && EARLY_READER_GRADES.includes(currentPack.grade));
 const NUMBER_WORDS = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'];
 
+// What a 🔊 says for one piece of a question. A phonics question can map
+// what is shown to what is spoken (q.say), so the letter "m" is heard as
+// "mmm, like monkey" and a 🚢 picture as "ship". q.sayText replaces the
+// spoken question. q.show is a big card (a word to read) that is shown
+// but never read aloud, so decoding it stays the child's job.
+const sayFor = (q, shown) => (q && q.say && q.say[shown]) || shown;
+
 // What the 🔊 Read it button and auto-read say for a question.
 function spokenQuestion(q) {
   const t = q.type || 'mc';
-  if (t === 'tf') return 'True or false: ' + plainText(q.statement);
-  if (t === 'mc') return plainText(q.text) + '. ' + q.options.map((o, i) =>
-    (earlyReader() ? 'Choice ' + (i + 1) : 'Choice ' + String.fromCharCode(65 + i)) + ': ' + plainText(o)).join('. ');
-  if (t === 'multi') return plainText(q.text) + '. Pick ' + NUMBER_WORDS[q.correct.length].toLowerCase() + '. ' +
-    q.options.map(o => plainText(o)).join('. ');
-  if (t === 'order') return plainText(q.text) + '. The pieces are: ' + q._shuffle.map(i => plainText(q.items[i])).join('. ');
-  if (t === 'sort') return plainText(q.text) + '. The groups are ' + q.groups.join(' and ') + '. ' +
-    q._shuffle.map(i => plainText(q.items[i].t)).join('. ');
-  if (t === 'twopart') return 'Part A. ' + plainText(q.partA.text) + '. ' + q.partA.options.map(o => plainText(o)).join('. ');
-  return plainText(q.text);
+  const say = s => plainText(sayFor(q, s));
+  // The question, ending in one stop (keeping its "?") before what follows.
+  const lead = s => { const x = (q.sayText || plainText(s)).trim(); return /[.?!:]$/.test(x) ? x + ' ' : x + '. '; };
+  if (t === 'tf') return 'True or false: ' + (q.sayText || plainText(q.statement));
+  if (t === 'mc') return lead(q.text) + q.options.map((o, i) =>
+    (earlyReader() ? 'Choice ' + (i + 1) : 'Choice ' + String.fromCharCode(65 + i)) + ': ' + say(o)).join('. ');
+  if (t === 'multi') return lead(q.text) + 'Pick ' + NUMBER_WORDS[q.correct.length].toLowerCase() + '. ' +
+    q.options.map(say).join('. ');
+  if (t === 'order') return lead(q.text) + 'The pieces are: ' + q._shuffle.map(i => say(q.items[i])).join('. ');
+  if (t === 'sort') return lead(q.text) + 'The groups are ' + q.groups.map(say).join(' and ') + '. ' +
+    q._shuffle.map(i => say(q.items[i].t)).join('. ');
+  if (t === 'twopart') return 'Part A. ' + lead(q.partA.text) + q.partA.options.map(say).join('. ');
+  return q.sayText || plainText(q.text);
 }
 
 function renderQuestion() {
@@ -36869,13 +36886,13 @@ function renderQuestion() {
   let questionBody = '';
   if (q.type === 'mc' || !q.type) {
     questionBody = `
-      ${questionHead(q.text, perChoiceVoice ? q.text : spokenQuestion(q))}
+      ${questionHead(q.text, perChoiceVoice ? (q.sayText || q.text) : spokenQuestion(q))}
       <div class="choices${q.options.some(o => String(o).replace(/<[^>]+>/g,'').length > 18) ? ' choices-long' : ''}">
         ${q.options.map((opt, i) => `
           <div class="choice" data-idx="${i}" role="button" tabindex="0" onclick="pickMc(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickMc(${i})}">
             <span class="choice-letter">${String.fromCharCode(65+i)}</span>
             <span class="choice-content">${opt}</span>
-            ${perChoiceVoice ? vBtn(opt, false) : ''}
+            ${perChoiceVoice ? vBtn(sayFor(q, opt), false) : ''}
           </div>
         `).join('')}
       </div>
@@ -36884,7 +36901,7 @@ function renderQuestion() {
     questionBody = `
       <div class="question-with-voice tf-statement-wrap">
         <div class="tf-statement">${q.statement}</div>
-        ${vBtn(q.statement, true)}
+        ${vBtn(q.sayText || q.statement, true)}
       </div>
       <div class="tf-choices">
         <div class="tf-btn true-btn" role="button" tabindex="0" onclick="pickTf(true)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickTf(true)}">
@@ -36901,7 +36918,7 @@ function renderQuestion() {
     `;
   } else if (q.type === 'typed' || q.type === 'fib') {
     questionBody = `
-      ${questionHead(q.text, q.text)}
+      ${questionHead(q.text, q.sayText || q.text)}
       ${typedAnswerHtml(q, 'submitTyped')}
     `;
   } else if (q.type === 'showwork') {
@@ -36971,6 +36988,7 @@ function renderQuestion() {
         </div>
         ${passage}
         <div class="qf-main">
+          ${q.show ? `<div class="show-card">${q.show}</div>` : ''}
           ${questionBody}
           ${helpBtnHtml}
           <div id="fb"></div>
@@ -37013,7 +37031,7 @@ function orderWidgetHtml(q) {
       </div>`;
   // An early reader hears a piece from a 🔊 beside it, never inside it.
   const poolHtml = pool.map(i => earlyReader()
-    ? `<div class="order-pick">${pieceHtml(i)}${speakBtn(q.items[i], false)}</div>`
+    ? `<div class="order-pick">${pieceHtml(i)}${speakBtn(sayFor(q, q.items[i]), false)}</div>`
     : pieceHtml(i)).join('');
   const full = !s.slots.includes(null);
   return `
@@ -37084,7 +37102,7 @@ function sortWidgetHtml(q) {
           aria-pressed="${s.assign[i] === gi}" onclick="sortAssign(${i},${gi})">${g}</button>`).join('');
     const fix = s.done && s.marks && s.marks[i] === false ? `<div class="sort-fix">belongs in: <strong>${q.groups[item.g]}</strong></div>` : '';
     return `<div class="sort-row${mark}">
-        <div class="sort-item"><span>${item.t}</span>${earlyReader() ? speakBtn(item.t, false) : ''}</div>
+        <div class="sort-item"><span>${item.t}</span>${earlyReader() ? speakBtn(sayFor(q, item.t), false) : ''}</div>
         <div class="sort-btns">${btns}</div>
         ${fix}
       </div>`;
@@ -37092,7 +37110,7 @@ function sortWidgetHtml(q) {
   const full = !s.assign.includes(null);
   // The group names are on the buttons; an early reader can hear them here.
   const legend = earlyReader()
-    ? `<div class="sort-legend">${q.groups.map((g, gi) => `<span class="sort-legend-item"><span class="sort-legend-name sg${gi}">${g}</span>${speakBtn(g, false)}</span>`).join('')}</div>`
+    ? `<div class="sort-legend">${q.groups.map((g, gi) => `<span class="sort-legend-item"><span class="sort-legend-name sg${gi}">${g}</span>${speakBtn(sayFor(q, g), false)}</span>`).join('')}</div>`
     : '';
   return `${legend}<div class="sort-list">${rows}</div>
     ${s.done ? '' : `<button class="typed-submit puzzle-check" ${full ? '' : 'disabled'} onclick="checkSort()">CHECK MY SORTING</button>`}`;
@@ -37153,7 +37171,7 @@ function multiWidgetHtml(q) {
         onclick="multiToggle(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();multiToggle(${i})}">
         <span class="choice-letter">${picked ? '✓' : ''}</span>
         <span class="choice-content">${opt}</span>
-        ${earlyReader() ? speakBtn(opt, false) : ''}
+        ${earlyReader() ? speakBtn(sayFor(q, opt), false) : ''}
       </div>`;
   }).join('');
   return `<div class="choices${q.options.some(o => plainText(o).length > 18) ? ' choices-long' : ''}">${choices}</div>
@@ -37204,7 +37222,7 @@ function partChoicesHtml(part, which) {
       <div class="choice part-choice" data-part="${which}" data-idx="${i}" role="button" tabindex="0" onclick="pickPart('${which}',${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickPart('${which}',${i})}">
         <span class="choice-letter">${String.fromCharCode(65 + i)}</span>
         <span class="choice-content">${opt}</span>
-        ${earlyReader() ? speakBtn(opt, false) : ''}
+        ${earlyReader() ? speakBtn(sayFor(questions[qIdx], opt), false) : ''}
       </div>`).join('')}
   </div>`;
 }
@@ -37236,13 +37254,13 @@ function pickPart(which, i) {
         <div class="part-label">PART B — PROVE IT</div>
         <div class="question-with-voice">
           <div class="question-text">${q.partB.text}</div>
-          ${speakBtn(plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(o)).join('. '), true)}
+          ${speakBtn(plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(sayFor(q, o))).join('. '), true)}
         </div>
         ${partChoicesHtml(q.partB, 'B')}
       </div>`;
     wrap.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     if (state.profiles[currentProfile.id].autoRead) {
-      setTimeout(() => speakText(plainText(lead) + ' Part B. ' + plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(o)).join('. ')), 450);
+      setTimeout(() => speakText(plainText(lead) + ' Part B. ' + plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(sayFor(q, o))).join('. ')), 450);
     }
     return;
   }
