@@ -56168,7 +56168,24 @@ FUN.on('roundEnd', s => {
 
 const app = document.getElementById('app');
 
+// ─── One voice at a time ───
+// Leaving a screen stops what it was saying, and an auto-read that has not
+// started yet is dropped, so nothing talks over the next screen.
+let autoSayTimer = null;
+function stopSpeech() {
+  clearTimeout(autoSayTimer); autoSayTimer = null;
+  window.__currentSpokenText = null;
+  if (SPEECH_AVAILABLE) { try { window.speechSynthesis.cancel(); } catch (e) {} }
+}
+function autoSay(text, ms) {
+  clearTimeout(autoSayTimer);
+  autoSayTimer = setTimeout(() => { autoSayTimer = null; speakText(text); }, ms);
+}
+// A passage as it should sound: its title and paragraphs as sentences.
+const passageSpeech = html => plainText(String(html).replace(/<\/(strong|p|h\d)>/gi, '. '));
+
 function render(html) {
+  stopSpeech();
   app.innerHTML = html;
   app.scrollTop = 0;
 }
@@ -56496,7 +56513,7 @@ function renderBriefing() {
       </div>
     </div>
   `);
-  if (d.autoRead) setTimeout(() => speakText('Why this matters. ' + why), 350);
+  if (d.autoRead) autoSay('Why this matters. ' + why, 350);
   if (keyboardDriving || NO_TOUCH) focusFirst(['.briefing-go']);
 }
 
@@ -56626,6 +56643,7 @@ function numpadUseKeyboard() {
 // so apostrophes and quotes in the text need no escaping; the delegated
 // handler at the bottom of the file picks these up.
 function speakBtn(text, big, label) {
+  if (!speechify(plainText(text))) return '';
   const cls = big ? 'voice-btn voice-btn-big' : 'voice-btn voice-btn-sm';
   label = label || (big ? '🔊 Read it' : '🔊');
   return `<button type="button" class="${cls} js-speak" data-speak-text="${ccEscapeForAttr(text)}" aria-label="Read aloud" title="Read aloud">${label}</button>`;
@@ -56676,7 +56694,7 @@ function renderQuestion() {
 
   const passage = q.passage
     ? `<div class="passage">${q.passage}${earlyReader()
-        ? `<div class="passage-voice">${speakBtn(plainText(q.passage), true, '🔊 Read me the story')}</div>` : ''}</div>`
+        ? `<div class="passage-voice">${speakBtn(passageSpeech(q.passage), true, '🔊 Read me the story')}</div>` : ''}</div>`
     : '';
 
   const cls = `profile-${currentProfile.id}`;
@@ -56817,7 +56835,11 @@ function renderQuestion() {
   // Auto-read: speak the question (and its choices) when it appears.
   // Slight delay so the render settles first.
   if (dState.autoRead) {
-    setTimeout(() => speakText(spokenQuestion(q)), 350);
+    // An early reader hears the story before the first question about it;
+    // several questions in a row can share one story, so it is read once.
+    const prev = questions[qIdx - 1];
+    const story = q.passage && earlyReader() && !(prev && prev.passage === q.passage) ? passageSpeech(q.passage) + ' ' : '';
+    autoSay(story + spokenQuestion(q), 350);
   }
   focusAnswerArea(q);
 }
@@ -57009,6 +57031,7 @@ function checkMulti() {
   const hits = picks.filter(i => q.correct.includes(i)).length;
   const given = picks.map(i => plainText(q.options[i])).join(' + ');
   const answer = q.correct.map(i => plainText(q.options[i])).join(' + ');
+  if (tries > 0 && given === firstWrong) return;   // the same picks again: a double tap on CHECK
   if (hits === q.correct.length) {
     qState.done = true;
     refreshPuzzle(multiWidgetHtml(q));
@@ -57076,7 +57099,7 @@ function pickPart(which, i) {
       </div>`;
     wrap.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     if (state.profiles[currentProfile.id].autoRead) {
-      setTimeout(() => speakText(plainText(lead) + ' Part B. ' + plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(sayFor(q, o))).join('. ')), 450);
+      autoSay(plainText(lead) + ' Part B. ' + plainText(q.partB.text) + '. ' + q.partB.options.map(o => plainText(sayFor(q, o))).join('. '), 450);
     }
     return;
   }
@@ -57355,7 +57378,7 @@ function showThink(q, note) {
   // The wrong choice greys out after its shake; then focus the answers again.
   setTimeout(() => focusAnswerArea(q), 400);
   if (state.profiles[currentProfile.id].autoRead) {
-    setTimeout(() => speakText('Not quite. Think again. ' + (note ? plainText(note) + ' ' : '') + hint), 300);
+    autoSay('Not quite. Think again. ' + (note ? plainText(note) + ' ' : '') + hint, 300);
   }
 }
 
@@ -57368,7 +57391,9 @@ function pickMc(chosen) {
   if (locked) return;
   const q = questions[qIdx];
   const btns = document.querySelectorAll('.choice');
-  if (btns[chosen] && btns[chosen].classList.contains('eliminated')) return;
+  // A card already ruled out, or still shaking from that wrong first try:
+  // a second tap on it is the same tap twice, not a second answer.
+  if (btns[chosen] && (btns[chosen].classList.contains('eliminated') || btns[chosen].classList.contains('wrong-once'))) return;
   const isRight = chosen === q.correct;
 
   if (!isRight && canRetry(q)) {
@@ -57436,6 +57461,7 @@ function submitTyped() {
   if (!raw) return;
 
   const q = questions[qIdx];
+  if (tries > 0 && firstWrong !== null && normAnswer(raw) === normAnswer(firstWrong)) return;   // the same wrong answer again
   const isRight = q.acceptedAnswers.map(normAnswer).includes(normAnswer(raw));
   if (!isRight && canRetry(q)) { typedRetry(q, input, raw); return; }
 
@@ -57454,6 +57480,7 @@ function submitShowWork() {
   if (!raw) return;
 
   const q = questions[qIdx];
+  if (tries > 0 && firstWrong !== null && normAnswer(raw) === normAnswer(firstWrong)) return;   // the same wrong answer again
   // Auto-check final answer like typed, but also add to review
   const isRight = q.acceptedAnswers.map(normAnswer).includes(normAnswer(raw));
   if (!isRight && canRetry(q)) { typedRetry(q, input, raw); return; }
@@ -57623,7 +57650,7 @@ function showFeedback(isRight, correctAnswer, opts) {
   if (state.profiles[currentProfile.id].autoRead) {
     const verdict = plainText(head).replace(/[^A-Za-z0-9 '!—-]/g, '').trim();
     const said = [verdict + '.', plainText(msg), q.why ? "Here's why. " + q.why : ''].filter(Boolean).join(' ');
-    setTimeout(() => speakText(said), 450);
+    autoSay(said, 450);
   }
 
   checkTrophies();
@@ -58375,6 +58402,18 @@ function updateVoiceButton() {
   }
 }
 
+// The same American voice on every device. Voices are tried in this order;
+// a single pattern with find() takes whichever one the platform happens to
+// list first, and Apple lists Karen (Australian) ahead of Samantha. Online
+// voices come last: the game must work without a network.
+const VOICE_PREFERENCE = [/^Samantha/i, /^Microsoft Zira/i, /^Google US English/i];
+function pickVoice(voices) {
+  if (!voices || !voices.length) return null;
+  for (const re of VOICE_PREFERENCE) { const v = voices.find(x => re.test(x.name)); if (v) return v; }
+  const en = v => v.lang === 'en-US' || (v.lang && v.lang.startsWith('en'));
+  return voices.find(v => en(v) && v.localService) || voices.find(en) || voices[0];
+}
+
 function speakCurrentStep() {
   if (!SPEECH_AVAILABLE || !tutState.voiceOn || !tutState.active) return;
   const tut = TUTORIALS[tutState.packId];
@@ -58399,15 +58438,10 @@ function speakCurrentStep() {
       utter.pitch = 1.0;
       utter.volume = 0.9;
 
-      const v = window.speechSynthesis.getVoices();
-      if (v && v.length > 0) {
-        const preferred = v.find(x =>
-          /Google US English|Samantha|Karen|Microsoft Zira|Google UK English Female/i.test(x.name)
-        ) || v.find(x => x.lang && x.lang.startsWith('en')) || v[0];
-        if (preferred) {
-          utter.voice = preferred;
-          utter.lang = preferred.lang || 'en-US';
-        }
+      const preferred = pickVoice(window.speechSynthesis.getVoices());
+      if (preferred) {
+        utter.voice = preferred;
+        utter.lang = preferred.lang || 'en-US';
       } else {
         utter.lang = 'en-US';
       }
@@ -58438,8 +58472,25 @@ function spokenFraction(n, d) {
   if (!w || n === 0) return `${n} over ${d}`;
   return n === 1 ? `one ${w[0]}` : `${n} ${w[1]}`;
 }
+// A letter on its own in a sound-by-sound word ("c... a... t...") stands for
+// its SOUND. Read as letter names it becomes "see... ay... tee...", which no
+// child can blend, so say it the way the walkthroughs do.
+const LETTER_SOUND = { a: 'aaa', b: 'buh', c: 'kuh', d: 'duh', e: 'eh', f: 'fff', g: 'guh', h: 'huh', i: 'ih', j: 'juh',
+  k: 'kuh', l: 'lll', m: 'mmm', n: 'nnn', o: 'ah', p: 'puh', q: 'kwuh', r: 'rrr', s: 'sss', t: 'tuh', u: 'uh', v: 'vvv',
+  w: 'wuh', x: 'ks', y: 'yuh', z: 'zzz' };
+const SOUND_BY_SOUND = /\b[a-z](?:\.{3}|…)/gi;
+// Pictures are for the eyes. Apple's voices read an emoji's name ("red
+// apple", "dog face" seven times) and other voices skip it, so they are
+// dropped from speech to say the same thing on every device. A question
+// that needs a picture named says so through q.say or q.sayText.
+const PICTURE = /(?:\p{Extended_Pictographic}|[■-◿✓✗])(?:\uFE0F|\u20E3|\u200D\p{Extended_Pictographic}|[\u{1F3FB}-\u{1F3FF}])*/gu;
+
 function speechify(text) {
-  return String(text)
+  text = String(text);
+  if ((text.match(SOUND_BY_SOUND) || []).length >= 2) {
+    text = text.replace(/\b([a-z])(?:\.{3}|…)/gi, (m, l) => LETTER_SOUND[l.toLowerCase()] + ',');
+  }
+  return text
     .replace(/<br\s*\/?>/gi, '. ')
     .replace(/<\/?[a-zA-Z][^>]*>/g, ' ')            // real tags only: "<" + letter
     .replace(/&nbsp;/g, ' ').replace(/&amp;/g, ' and ')
@@ -58459,7 +58510,11 @@ function speechify(text) {
     .replace(/(\d)\s*[−–]\s*(\d)/g, '$1 minus $2')
     .replace(/(\d)\s+-\s+(\d)/g, '$1 minus $2')
     .replace(/\s*[→⇒]\s*/g, ', then ')
+    .replace(PICTURE, ' ')
+    .replace(/[\uFE0F\u20E3]/g, '')
+    .replace(/\s+([,.?!:])/g, '$1')
     .replace(/\s+/g, ' ')
+    .replace(/^[\s,.:;!?]+/, '')
     .trim();
 }
 
@@ -58516,16 +58571,10 @@ function doSpeak(clean, voicesArg) {
       utter.pitch = 1.05;
       utter.volume = 1.0;
 
-      const voices = voicesArg || window.speechSynthesis.getVoices();
-      if (voices && voices.length > 0) {
-        // Samantha is the iOS/macOS default American voice — great for kids.
-        const preferred = voices.find(v =>
-          /Samantha|Google US English|Karen|Microsoft Zira|Google UK English Female/i.test(v.name)
-        ) || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
-        if (preferred) {
-          utter.voice = preferred;
-          utter.lang = preferred.lang || 'en-US';
-        }
+      const preferred = pickVoice(voicesArg || window.speechSynthesis.getVoices());
+      if (preferred) {
+        utter.voice = preferred;
+        utter.lang = preferred.lang || 'en-US';
       } else {
         utter.lang = 'en-US';
       }
@@ -58811,6 +58860,7 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
 
   // Track touch so we don't fire speak twice (touchend + synthesized click)
   let lastTouchTime = 0;
+  let touchFrom = null;   // where a touch on a 🔊 began: a swipe is a scroll, not a press
 
   function handleSpeakInteraction(evt) {
     const btn = evt.target && evt.target.closest && evt.target.closest('.js-speak');
@@ -58825,12 +58875,21 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
   const stopOnSpeakBtn = (evt) => {
     const btn = evt.target && evt.target.closest && evt.target.closest('.js-speak');
     if (!btn) return;
+    if (evt.type === 'touchstart' && evt.touches && evt.touches[0]) touchFrom = { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
     evt.stopPropagation();
     if (evt.stopImmediatePropagation) evt.stopImmediatePropagation();
   };
   document.addEventListener('pointerdown', stopOnSpeakBtn, true);
   document.addEventListener('mousedown', stopOnSpeakBtn, true);
   document.addEventListener('touchstart', stopOnSpeakBtn, { capture: true, passive: false });
+  // Keyboard: Enter or Space on a 🔊 reads it, the same as a click or a tap.
+  // Stopped here, before the answer card around it, whose own Enter/Space
+  // handler would otherwise pick that answer; the button's own click still
+  // happens and is read by the click listener below.
+  document.addEventListener('keydown', (evt) => {
+    if ((evt.key !== 'Enter' && evt.key !== ' ') || evt.altKey || evt.ctrlKey || evt.metaKey) return;
+    if (evt.target && evt.target.closest && evt.target.closest('.js-speak')) evt.stopPropagation();
+  }, true);
 
   document.addEventListener('click', (evt) => {
     // Skip click if a touchend just fired (prevents double-trigger)
@@ -58841,6 +58900,9 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
   document.addEventListener('touchend', (evt) => {
     const btn = evt.target && evt.target.closest && evt.target.closest('.js-speak');
     if (!btn) return;
+    const t = evt.changedTouches && evt.changedTouches[0];
+    if (t && touchFrom && Math.hypot(t.clientX - touchFrom.x, t.clientY - touchFrom.y) > 10) { touchFrom = null; return; }
+    touchFrom = null;
     lastTouchTime = Date.now();
     handleSpeakInteraction(evt);
   }, { passive: false, capture: true });
