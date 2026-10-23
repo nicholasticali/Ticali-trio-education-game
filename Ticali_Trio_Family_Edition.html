@@ -1974,6 +1974,9 @@
   [role="button"]:focus-visible, [role="checkbox"]:focus-visible, [tabindex]:focus-visible {
     outline: 4px solid var(--gold); outline-offset: 3px;
   }
+  /* The screen and the question take focus only so the keys have somewhere
+     to go; they get no ring. */
+  #app:focus, #app:focus-visible, .question-frame:focus, .question-frame:focus-visible { outline: none; }
   .choice:focus-visible, .tf-btn:focus-visible, .pack-card:focus-visible, .profile-card:focus-visible {
     outline: 5px solid var(--gold); outline-offset: 4px;
   }
@@ -2317,8 +2320,8 @@
 </style>
 </head>
 <body>
-<div class="app" id="app"></div>
-<div class="parent-link" onclick="parentGate()">parent</div>
+<div class="app" id="app" tabindex="-1"></div>
+<div class="parent-link" role="button" tabindex="0" onclick="parentGate()">parent</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -56188,6 +56191,11 @@ function render(html) {
   stopSpeech();
   app.innerHTML = html;
   app.scrollTop = 0;
+  // If the focused control went with the old screen, focus the screen
+  // itself: the arrow keys, Page Down and Space then scroll it.
+  if (!document.activeElement || document.activeElement === document.body) {
+    try { app.focus({ preventScroll: true }); } catch (e) {}
+  }
 }
 
 function renderProfileSelect() {
@@ -56373,7 +56381,7 @@ function renderHub() {
   }).join('');
 
   const reviewAlert = pendingReviews > 0
-    ? `<div class="review-notice" style="margin-bottom:1.5rem;cursor:pointer;" onclick="parentGate()"><strong>✏️ ${pendingReviews} SHOW-YOUR-WORK TO REVIEW</strong>Tap "parent" at bottom right to review the work paper.</div>`
+    ? `<div class="review-notice" role="button" tabindex="0" style="margin-bottom:1.5rem;cursor:pointer;" onclick="parentGate()"><strong>✏️ ${pendingReviews} SHOW-YOUR-WORK TO REVIEW</strong>Tap "parent" at bottom right to review the work paper.</div>`
     : '';
 
   render(`
@@ -56582,7 +56590,10 @@ function typedAnswerHtml(q, submitFn, opts) {
   let pad = '';
   if (usePad) {
     const key = (label, cls, val) =>
-      '<button type="button" class="numpad-key' + (cls ? ' ' + cls : '') + '"' +
+      // tabindex -1 and no focus on press: Enter on the real keyboard then
+      // submits, instead of pressing the last pad key again. A keyboard child
+      // types digits directly.
+      '<button type="button" tabindex="-1" onmousedown="event.preventDefault()" class="numpad-key' + (cls ? ' ' + cls : '') + '"' +
       ' onclick="numpadPress(&quot;' + (val === undefined ? label : val) + '&quot;)"' +
       ' aria-label="' + (val === ' BACK' ? 'Delete' : (val === ' CLEAR' ? 'Clear' : label)) + '">' +
       label + '</button>';
@@ -56815,7 +56826,7 @@ function renderQuestion() {
       </div>
       ${FUN.html('quizTop', { profile: currentProfile, pack: currentPack, q })}
 
-      <div class="question-frame${q.passage ? ' has-passage' : ''}">
+      <div class="question-frame${q.passage ? ' has-passage' : ''}" tabindex="-1">
         <div class="qf-tags">
           <span class="question-tag">${tag}</span>
           <span class="q-type-tag ${q.type || 'mc'}">${typeLabels[q.type] || 'MC'}</span>
@@ -56881,7 +56892,17 @@ function orderWidgetHtml(q) {
 
 function refreshPuzzle(html) {
   const el = document.getElementById('puzzle');
-  if (el) el.innerHTML = html;
+  if (!el) return;
+  // Redrawing replaces the control that had focus. Put focus back on the
+  // same control (same handler), or the nearest one of its kind, so a
+  // keyboard child does not start again from the top.
+  const a = document.activeElement;
+  const had = a && el.contains(a) ? { cls: a.classList[0], call: a.getAttribute('onclick') } : null;
+  el.innerHTML = html;
+  if (!had || !keyboardDriving) return;
+  const same = had.call && [...el.querySelectorAll('[onclick]')].find(x => x.getAttribute('onclick') === had.call && !x.disabled);
+  const target = same || el.querySelector(`.${had.cls}:not([disabled])`) || el.querySelector('button:not([disabled]), [role="button"], [role="checkbox"]');
+  if (target) { try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); } }
 }
 
 function orderPlace(i) {
@@ -57147,6 +57168,7 @@ function openScratchPad() {
   // Don't stack multiple pads
   if (document.getElementById('scratch-overlay')) return;
 
+  const back = document.activeElement;   // focus returns here on DONE
   const overlay = document.createElement('div');
   overlay.id = 'scratch-overlay';
   overlay.innerHTML = `
@@ -57166,10 +57188,13 @@ function openScratchPad() {
     <canvas id="scratch-canvas"></canvas>
   `;
   document.body.appendChild(overlay);
+  // The question behind is out of reach while the pad is open.
+  app.inert = true;
+  if (keyboardDriving) focusFirst(['#scratch-close']);
 
   const canvas = document.getElementById('scratch-canvas');
   const ctx2d = canvas.getContext('2d');
-  if (!ctx2d) { overlay.remove(); return; }
+  if (!ctx2d) { overlay.remove(); app.inert = false; return; }
 
   // Every completed stroke, in CSS pixels:
   //   { color: '#rrggbb' | 'ERASER', pts: [{x, y, w}, ...] }
@@ -57314,6 +57339,8 @@ function openScratchPad() {
     window.removeEventListener('resize', debouncedResize);
     window.removeEventListener('orientationchange', debouncedResize);
     overlay.remove();
+    app.inert = false;
+    if (back && back.isConnected && back !== document.body) { try { back.focus({ preventScroll: true }); } catch (e) { back.focus(); } }
   });
 }
 function toggleShowWorkSubmit() {
@@ -57376,7 +57403,11 @@ function showThink(q, note) {
     </div>`;
   fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   // The wrong choice greys out after its shake; then focus the answers again.
-  setTimeout(() => focusAnswerArea(q), 400);
+  // Only if focus was lost (the wrong card greyed out under it).
+  setTimeout(() => {
+    const a = document.activeElement;
+    if (!a || a === document.body || a === app || a.classList.contains('eliminated') || !a.isConnected) focusAnswerArea(q);
+  }, 400);
   if (state.profiles[currentProfile.id].autoRead) {
     autoSay('Not quite. Think again. ' + (note ? plainText(note) + ' ' : '') + hint, 300);
   }
@@ -57643,7 +57674,10 @@ function showFeedback(isRight, correctAnswer, opts) {
     </button>
   `;
   fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  if (keyboardDriving) focusFirst(['#fb .next-btn']);
+  // From the keyboard, or when focus sits on an answer card that was just
+  // clicked (its own Enter handler would swallow the key): Enter goes to NEXT.
+  const onCard = document.activeElement && document.activeElement.closest && document.activeElement.closest('.question-frame');
+  if (keyboardDriving || onCard) focusFirst(['#fb .next-btn']);
 
   // Auto-read (on by default for the kindergartener) says the verdict and
   // then the why, so a child who cannot read yet still hears the reason.
@@ -58040,11 +58074,15 @@ function confirmExit() {
     </div>
   `;
   document.body.appendChild(modal);
+  const back = document.activeElement;
+  app.inert = true;
   focusFirst(['#exit-modal-stay']);
 
   const closeModal = () => {
     const m = document.getElementById('exit-modal-backdrop');
     if (m) m.remove();
+    app.inert = false;
+    if (back && back.isConnected && back !== document.body) { try { back.focus({ preventScroll: true }); } catch (e) { back.focus(); } }
   };
   // STAY button — close modal, return to question
   document.getElementById('exit-modal-stay').addEventListener('click', (e) => {
@@ -58054,20 +58092,16 @@ function confirmExit() {
   // EXIT button — clean up state and return to hub
   document.getElementById('exit-modal-exit').addEventListener('click', (e) => {
     e.stopPropagation();
+    app.inert = false;
     exitToHub();
   });
   // Tap outside the modal to dismiss (defaults to Stay)
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
-  // ESC key dismisses too (defaults to Stay)
-  const escHandler = (e) => {
-    if (e.key === 'Escape') {
-      closeModal();
-      document.removeEventListener('keydown', escHandler);
-    }
-  };
-  document.addEventListener('keydown', escHandler);
+  // Esc dismisses too (defaults to Stay); gameKeys presses STAY. A listener
+  // added here outlived the pop-up whenever STAY or EXIT closed it, and then
+  // removed the next pop-up the instant Esc opened it.
 }
 
 function checkTrophies() {
@@ -58354,6 +58388,10 @@ function closeTutorial() {
   tutState.active = false;
   const overlay = document.getElementById('tut-overlay');
   if (overlay) overlay.remove();
+  app.inert = false;
+  const back = tutState.back;
+  tutState.back = null;
+  if (back && back.isConnected && back !== document.body) { try { back.focus({ preventScroll: true }); } catch (e) { back.focus(); } }
 }
 
 function tutNext() {
@@ -58724,6 +58762,12 @@ function renderTutorial() {
     document.body.insertAdjacentHTML('beforeend', overlayHtml);
   }
 
+  // The question behind leaves the Tab order, and Enter presses NEXT, not
+  // the NEED HELP button that was focused under the overlay.
+  if (!tutState.back) tutState.back = document.activeElement;
+  app.inert = true;
+  focusFirst(['#tut-overlay .tut-ctrl-btn.primary']);
+
   // Fire narration after a small delay so it doesn't clash with the render
   setTimeout(speakCurrentStep, 100);
 }
@@ -58931,7 +58975,9 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
       // covers. On iPadOS the floating keyboard is short, so the 120px
       // floor keeps a mere toolbar from counting as "keyboard open".
       const covered = window.innerHeight - vv.height - vv.offsetTop;
-      const open = covered > 120;
+      // A pinch-zoom also shrinks the visual viewport; the keyboard does not
+      // change its scale.
+      const open = covered > 120 && vv.scale < 1.05;
       document.body.classList.toggle('keyboard-open', open);
       if (!open) return;
       const el = document.activeElement;
@@ -59049,12 +59095,14 @@ function focusFirst(selectors) {
   }
   return null;
 }
+const POINTER_FINE = !!(window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
 function focusAnswerArea(q) {
   const t = (q && q.type) || 'mc';
-  if ((t === 'typed' || t === 'fib') && NO_TOUCH) { if (focusFirst(['#typedInput'])) return; }
+  if ((t === 'typed' || t === 'fib') && (NO_TOUCH || POINTER_FINE)) { if (focusFirst(['#typedInput'])) return; }
   if (!keyboardDriving) return;
-  focusFirst(['.choice:not(.eliminated):not(.disabled)', '.tf-btn', '.order-item', '.sort-btn:not([disabled])',
-              '#workDone', '#typedInput:not([disabled])', '.part-choice']);
+  // The question, not its first answer: a doubled, held or stray Enter must
+  // never pick choice A. Letters and numbers still pick; Tab reaches each answer.
+  focusFirst(['#workDone', '#typedInput:not([disabled])', '.question-frame']);
 }
 
 // Enter or Space on a role="button" element presses it, as on a real
@@ -59068,6 +59116,27 @@ document.addEventListener('keydown', e => {
     t.click();
   }
 });
+
+// A held key repeats. Only its first press counts, so holding Enter or a
+// letter cannot run through answers; typing in a text box is untouched.
+document.addEventListener('keydown', e => {
+  if (!e.repeat || ['Tab', 'Backspace'].includes(e.key) || e.key.startsWith('Arrow')) return;
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && !t.readOnly && !['checkbox', 'radio'].includes(t.type)))) return;
+  e.preventDefault(); e.stopPropagation();
+}, true);
+
+// Safari on a Mac leaves <button>s out of the Tab order unless "Press Tab to
+// highlight each item" is turned on; an explicit tabindex keeps them in.
+(function buttonsInTabOrder() {
+  const mark = root => root.querySelectorAll && root.querySelectorAll('button:not([tabindex])').forEach(b => b.setAttribute('tabindex', '0'));
+  mark(document);
+  new MutationObserver(list => list.forEach(m => m.addedNodes.forEach(n => {
+    if (n.nodeType !== 1) return;
+    if (n.tagName === 'BUTTON' && !n.hasAttribute('tabindex')) n.setAttribute('tabindex', '0');
+    mark(n);
+  }))).observe(document.body, { childList: true, subtree: true });
+})();
 
 (function gameKeys() {
   const isTyping = el => el && (el.tagName === 'TEXTAREA' || el.isContentEditable ||
@@ -59099,7 +59168,11 @@ document.addEventListener('keydown', e => {
       if (key === 'Escape') { const done = document.getElementById('scratch-close'); if (done) { e.preventDefault(); done.click(); } }
       return;
     }
-    if (document.getElementById('exit-modal-backdrop')) return;   // it handles its own Esc
+    // Exit pop-up: Esc is STAY.
+    if (document.getElementById('exit-modal-backdrop')) {
+      if (key === 'Escape') { const stay = document.getElementById('exit-modal-stay'); if (stay) { e.preventDefault(); stay.click(); } }
+      return;
+    }
 
     if (key === 'Escape') {
       if (document.querySelector('.question-frame')) { e.preventDefault(); confirmExit(); }
@@ -59116,7 +59189,8 @@ document.addEventListener('keydown', e => {
     const type = q.type || 'mc';
     const next = document.querySelector('#fb .next-btn');
 
-    if (key === 'Enter' && !onControl(t)) {
+    // The "I showed my work" box takes Space; Enter on it submits, as anywhere.
+    if (key === 'Enter' && (!onControl(t) || (t && t.id === 'workDone'))) {
       if (next) { e.preventDefault(); next.click(); return; }
       const check = document.querySelector('.puzzle-check:not([disabled])') ||
                     document.querySelector('.typed-submit:not([disabled])');
@@ -59130,6 +59204,13 @@ document.addEventListener('keydown', e => {
     if (pad && pad.classList.contains('padmode') && !pad.disabled) {
       if (key === 'Backspace') { e.preventDefault(); numpadPress(' BACK'); return; }
       if (key.length === 1 && /[0-9.,:\/$%()\-]/.test(key)) { e.preventDefault(); numpadPress(key); return; }
+    }
+    // A word answer: a key typed while focus is elsewhere (after clicking
+    // 🔊 Read it) goes into the answer box instead of nowhere.
+    if (pad && !pad.classList.contains('padmode') && !pad.disabled && key.length === 1 && t !== pad &&
+        (type === 'typed' || type === 'fib' || type === 'showwork')) {
+      try { pad.focus({ preventScroll: true }); } catch (err) { pad.focus(); }
+      return;
     }
 
     if (type === 'tf') {
