@@ -29616,6 +29616,12 @@ if (typeof K_BRIDGE_TUTORIALS !== 'undefined' && typeof TUTORIALS !== 'undefined
 }
 
 const STORAGE_KEY = 'tapChampions_v3';
+// Last year's profile keys -> this year's. Declared before the first
+// loadState() call: a const read before its own line throws, and from
+// September 7 that error was swallowed by loadState, so every page load
+// started the children from zero and their next answer saved over their
+// real progress.
+const PROFILE_MIGRATIONS = { prek: 'k', g2: 'g3', g4: 'g5' };
 
 let state = loadState();
 let currentProfile = null;
@@ -29639,8 +29645,6 @@ let qState = null;      // widget state for order / sort / multi / twopart
 // them. A save written last year is keyed by last year's grades, so it is
 // re-keyed here rather than being silently abandoned — the XP, trophies and
 // round history a child earned last year are theirs to keep.
-const PROFILE_MIGRATIONS = { prek: 'k', g2: 'g3', g4: 'g5' };
-
 function migrateProfileKeys(parsed) {
   if (!parsed || !parsed.profiles) return parsed;
   for (const [oldId, newId] of Object.entries(PROFILE_MIGRATIONS)) {
@@ -29671,7 +29675,15 @@ function loadState() {
       if (typeof parsed.parent.secondChance !== 'boolean') parsed.parent.secondChance = true;
       return parsed;
     }
-  } catch(e) {}
+  } catch(e) {
+    // A save that cannot be read must never be silently overwritten by a
+    // fresh one: keep a copy of it before the game starts afresh.
+    console.warn('[save] could not load the saved game', e);
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw && !localStorage.getItem(STORAGE_KEY + '_unread')) localStorage.setItem(STORAGE_KEY + '_unread', raw);
+    } catch (_) {}
+  }
   return {
     profiles: {
       k:  newProfile(true),   // cannot read the questions yet — read them aloud
