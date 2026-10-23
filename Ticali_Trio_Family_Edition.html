@@ -1164,6 +1164,25 @@
   }
   .tut-flash { animation: flashIn 0.6s; }
 
+  /* SHOW ME HOW coach */
+  .coach-header { background: var(--user-color, var(--showwork)); }
+  .coach-kicker {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 0.35rem; opacity: 0.95;
+  }
+  .coach-modal .tut-body { min-height: 0; gap: 1rem; }
+  .coach-step { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 1.15rem; line-height: 1.5; }
+  .coach-step-text { flex: 1; }
+  .coach-modal.early .coach-step { font-size: 1.35rem; }
+  .coach-step.your-turn { background: var(--gold); }
+  .coach-example {
+    margin-top: 0.5rem; background: white; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    padding: 0.6rem 0.9rem; min-height: 44px; cursor: pointer;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.8rem;
+  }
+  .coach-controls { grid-template-columns: auto 1fr auto; }
+  /* Only the first card slides in; stepping does not replay it. */
+  .coach-overlay.stay, .coach-overlay.stay .tut-modal { animation: none; }
   .tut-highlight {
     background: var(--gold) !important;
     color: var(--ink) !important;
@@ -4385,9 +4404,10 @@ function buildMCStr(text, answerStr, wrongStrs) {
 // from: `why` is shown after the child answers, `hint` before a second try.
 // The pre-K generators feed the kindergartener's review packs, whose text is
 // read aloud — so their explanations say "plus", never "+".
-function withWhy(q, why, hint) {
+function withWhy(q, why, hint, how) {
   q.why = why;
   if (hint) q.hint = hint;
+  if (how) q.how = how;
   return q;
 }
 function countUp(from, to) { const out = []; for (let i = from; i <= to; i++) out.push(i); return out.join(', '); }
@@ -35765,6 +35785,9 @@ const MISA_G5 = [
 // ═══════════════════════════════════════════════════════════════
 const PACK_WHY = {};
 const THINK_ITEMS = {};
+// The method each pack's class uses ({ name, steps }), for the SHOW ME HOW
+// coach on a question that has no steps of its own.
+const PACK_HOW = {};
 
 const BANKS = {
   BRIDGE_G3_ADDSUB,
@@ -36827,14 +36850,12 @@ function renderQuestion() {
   const typeLabels = { mc:'MC', tf:'TRUE/FALSE', typed:'TYPE IT', fib:'FILL IN', showwork:'SHOW WORK',
                        order:'🧩 PUT IN ORDER', sort:'🧩 SORT IT', multi:'🧩 PICK ALL', twopart:'🔎 PROVE IT' };
 
-  // Help button eligibility: G2/G4 math packs OR K Preview packs (any subject) on the prek profile
-  const hasTutorial = TUTORIALS[currentPack.id];
-  const helpBtnHtml = hasTutorial
-    ? `<button class="help-btn" onclick="openTutorial('${currentPack.id}')">
+  // Every question has a coach. A pack with a whole worked example
+  // (TUTORIALS) links to it from the coach's last card.
+  const helpBtnHtml = `<button class="help-btn" onclick="openCoach()">
          <span class="help-btn-icon">💡</span>
          NEED HELP? SHOW ME HOW →
-       </button>`
-    : '';
+       </button>`;
 
   // Early readers get a speaker on every choice; the readers get one on the question.
   const perChoiceVoice = earlyReader();
@@ -38320,6 +38341,7 @@ function renderParentDash() {
         <div class="parent-row"><span>Fixed After a Hint</span><span class="val">🛠️ ${d.fixedCount || 0}</span></div>
         <div class="parent-row"><span>Puzzles Solved</span><span class="val">🧩 ${d.puzzleRight || 0}</span></div>
         <div class="parent-row"><span>Answered and Proved (two-part)</span><span class="val">🔎 ${d.provedCount || 0}</span></div>
+        <div class="parent-row"><span>Asked the coach to show how</span><span class="val">🦉 ${d.coachUsed || 0}</span></div>
         <div class="parent-row"><span>Packs Completed</span><span class="val">${packs.filter(pk => !pk.hidden && d.packs[pk.id]).length} / ${packs.filter(pk => !pk.hidden).length}</span></div>
         <div class="parent-row"><span>Trophies</span><span class="val">${d.trophies.length} / ${TROPHIES.length}</span></div>
         <div class="mini-label">Per pack (best score · rounds played):</div>
@@ -38823,6 +38845,119 @@ function renderTutorial() {
   setTimeout(speakCurrentStep, 100);
 }
 
+// ═══════════════════════════════════════════════════════════════
+// SHOW ME HOW — a coach on every question
+// Walks the child through THIS question one short step at a time, the way
+// their class solves it (Reveal Math, CKLA), and stops before the answer:
+// the last card is "your turn". Steps come from the question's own `how`
+// ({ name, steps }). A question without one gets its pack's method
+// (PACK_HOW) and its own hint, so no question is ever without help.
+// Asking for help costs nothing.
+// ═══════════════════════════════════════════════════════════════
+let coachState = null;
+
+function coachFor(q, pack) {
+  if (q.how && Array.isArray(q.how.steps) && q.how.steps.length) {
+    return { name: q.how.name || "Let's figure it out", steps: q.how.steps.slice() };
+  }
+  const base = pack && PACK_HOW[pack.id];
+  const t = q.type || 'mc';
+  const listen = earlyReader();
+  const generic = {
+    mc:       [listen ? 'Tap 🔊 and listen to the question again. What does it ask?' : 'Read the question again. What is it really asking?',
+               listen ? 'Listen to each choice. Which ones cannot be right?' : 'Look at every choice. Which ones can you rule out, and why?'],
+    tf:       [listen ? 'Listen to the sentence again, one part at a time.' : 'Read the sentence slowly, one part at a time.',
+               'Is every part of it true? One wrong part makes it false.'],
+    typed:    ['Read the question again. What does it want you to find?', 'Work it out step by step. The ✏️ scratch pad can help.'],
+    fib:      ['Read the whole sentence, and say "blank" where the missing part goes.', 'What would make the whole sentence true?'],
+    showwork: ['Write down what you know and what you need to find.', 'Solve it one step at a time on paper, then check each step.'],
+    order:    ['Find the piece that comes FIRST.', 'Then ask: what comes right after that? Keep going one at a time.'],
+    sort:     ['Say what each group means in your own words.', 'Take one item at a time and ask: which group does it belong in?'],
+    multi:    ['Decide about each choice on its own: yes or no?', 'More than one answer is right. Pick every one that fits.'],
+    twopart:  ['Answer Part A first.', 'Then find the clue that proves your Part A answer.'],
+  }[t] || [];
+  const steps = (base ? base.steps : generic).slice();
+  if (q.hint) steps.push('A clue for this one: ' + q.hint);
+  steps.push('Now you try it!');
+  return { name: base ? base.name : "Let's think it through", steps };
+}
+
+function openCoach() {
+  const q = questions[qIdx];
+  if (!q || !currentProfile) return;
+  const d = state.profiles[currentProfile.id];
+  coachState = { c: coachFor(q, currentPack), i: 0, back: document.activeElement,
+                 voice: earlyReader() || !!d.autoRead };
+  d.coachUsed = (d.coachUsed || 0) + 1;
+  saveState();
+  FUN.emit('coach', { profileId: currentProfile.id, pack: currentPack, q });
+  if (SPEECH_AVAILABLE) window.speechSynthesis.cancel();
+  renderCoach();
+}
+
+function renderCoach() {
+  if (!coachState) return;
+  const { c, i } = coachState;
+  const last = i === c.steps.length - 1;
+  const existing = document.getElementById('coach-overlay');
+  const dots = c.steps.map((_, k) => `<div class="tut-step-dot ${k === i ? 'active' : k < i ? 'visited' : ''}"></div>`).join('');
+  const example = last && currentPack && TUTORIALS[currentPack.id]
+    ? `<button class="coach-example" onclick="closeCoach(); openTutorial('${currentPack.id}')">📺 SEE A WHOLE EXAMPLE</button>` : '';
+  const html = `
+    <div class="tut-overlay coach-overlay${existing ? ' stay' : ''}" id="coach-overlay" role="dialog" aria-modal="true" aria-label="Show me how">
+      <div class="tut-modal coach-modal${earlyReader() ? ' early' : ''}">
+        <div class="tut-header coach-header">
+          <button class="tut-close" onclick="closeCoach()" aria-label="Close">✕</button>
+          <div class="coach-kicker">🦉 SHOW ME HOW</div>
+          <h3>${c.name}</h3>
+        </div>
+        <div class="tut-body">
+          <div>
+            <div class="tut-step-label">${last ? '🎯 Your turn!' : `Step ${i + 1} of ${c.steps.length - 1}`}</div>
+            <div class="tut-narration coach-step${last ? ' your-turn tut-flash' : ''}">
+              <span class="coach-step-text">${c.steps[i]}</span>
+              ${speakBtn(plainText(c.steps[i]), false)}
+            </div>
+            ${example}
+          </div>
+          <div class="tut-controls coach-controls">
+            <button class="tut-ctrl-btn" onclick="coachPrev()" ${i === 0 ? 'disabled' : ''}>← BACK</button>
+            <div class="tut-step-counter"><div class="tut-step-dots">${dots}</div></div>
+            <button class="tut-ctrl-btn primary" id="coach-next" onclick="coachNext()">${last ? "I'M READY ✓" : 'NEXT →'}</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  if (existing) existing.outerHTML = html;
+  else document.body.insertAdjacentHTML('beforeend', html);
+  // The question behind stays put and out of the Tab order until the coach closes.
+  app.inert = true;
+  focusFirst(['#coach-next']);
+  if (coachState.voice) setTimeout(() => { if (coachState && coachState.i === i) speakText(plainText(c.steps[i])); }, 150);
+}
+
+function coachNext() {
+  if (!coachState) return;
+  if (coachState.i < coachState.c.steps.length - 1) { coachState.i++; renderCoach(); }
+  else closeCoach();
+}
+
+function coachPrev() {
+  if (coachState && coachState.i > 0) { coachState.i--; renderCoach(); }
+}
+
+function closeCoach() {
+  if (SPEECH_AVAILABLE) window.speechSynthesis.cancel();
+  const el = document.getElementById('coach-overlay');
+  if (el) el.remove();
+  app.inert = false;
+  const back = coachState && coachState.back;
+  coachState = null;
+  if (back && back.isConnected && back !== document.body) {
+    try { back.focus({ preventScroll: true }); } catch (e) { back.focus(); }
+  }
+}
+
 // Preload voices (some browsers lazy-load them)
 if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
   window.speechSynthesis.getVoices();
@@ -39048,6 +39183,13 @@ document.addEventListener('keydown', e => {
     const key = e.key;
     const t = e.target;
 
+    // Coach: arrows step, Esc closes.
+    if (document.getElementById('coach-overlay')) {
+      if (key === 'ArrowRight') { e.preventDefault(); coachNext(); }
+      else if (key === 'ArrowLeft') { e.preventDefault(); coachPrev(); }
+      else if (key === 'Escape') { e.preventDefault(); closeCoach(); }
+      return;
+    }
     // Walkthrough: arrows step, Esc closes.
     if (document.getElementById('tut-overlay')) {
       if (key === 'ArrowRight') { e.preventDefault(); tutNext(); }
