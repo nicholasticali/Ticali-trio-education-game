@@ -566,6 +566,13 @@
   }
   .passage p { margin-bottom: 0.75rem; }
   .passage p:last-child { margin-bottom: 0; }
+  .passage-voice { margin-top: 0.85rem; }
+  .sort-legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; margin-bottom: 0.9rem; }
+  .sort-legend-item { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .sort-legend-name {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.85rem;
+    padding: 0.35rem 0.7rem; border: 3px solid var(--ink); background: white;
+  }
   .passage strong { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.1rem; display: block; margin-bottom: 0.5rem; }
   .passage em { font-style: italic; }
 
@@ -1760,6 +1767,9 @@
   .sort-btn.on.sg0 { background: var(--success); color: white; }
   .sort-btn.on.sg1 { background: var(--p-g2); color: white; }
   .sort-btn.on.sg2 { background: var(--showwork); color: white; }
+  .sort-legend-name.sg0 { border-color: var(--success); }
+  .sort-legend-name.sg1 { border-color: var(--p-g2); }
+  .sort-legend-name.sg2 { border-color: var(--showwork); }
   .sort-btn.on.sg3 { background: var(--p-g4); color: white; }
   .sort-btn.on { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
   .sort-btn:disabled { cursor: default; }
@@ -36769,14 +36779,20 @@ function numpadUseKeyboard() {
 // A read-aloud button. Uses a data attribute rather than an inline onclick
 // so apostrophes and quotes in the text need no escaping; the delegated
 // handler at the bottom of the file picks these up.
-function speakBtn(text, big) {
+function speakBtn(text, big, label) {
   const cls = big ? 'voice-btn voice-btn-big' : 'voice-btn voice-btn-sm';
-  const label = big ? '🔊 Read it' : '🔊';
+  label = label || (big ? '🔊 Read it' : '🔊');
   return `<button type="button" class="${cls} js-speak" data-speak-text="${ccEscapeForAttr(text)}" aria-label="Read aloud" title="Read aloud">${label}</button>`;
 }
 
 const plainText = s => String(s == null ? '' : s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const isK = () => currentProfile && currentProfile.id === 'k';
+// Kindergarten and 1st grade packs are for children still learning to
+// read, so every question, answer, puzzle piece, sort group and story in
+// them gets a 🔊, whoever is playing. The kindergartener gets them on
+// everything she plays.
+const EARLY_READER_GRADES = ['K', '1'];
+const earlyReader = () => isK() || !!(currentPack && EARLY_READER_GRADES.includes(currentPack.grade));
 const NUMBER_WORDS = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX'];
 
 // What the 🔊 Read it button and auto-read say for a question.
@@ -36784,7 +36800,7 @@ function spokenQuestion(q) {
   const t = q.type || 'mc';
   if (t === 'tf') return 'True or false: ' + plainText(q.statement);
   if (t === 'mc') return plainText(q.text) + '. ' + q.options.map((o, i) =>
-    (isK() ? 'Choice ' + (i + 1) : 'Choice ' + String.fromCharCode(65 + i)) + ': ' + plainText(o)).join('. ');
+    (earlyReader() ? 'Choice ' + (i + 1) : 'Choice ' + String.fromCharCode(65 + i)) + ': ' + plainText(o)).join('. ');
   if (t === 'multi') return plainText(q.text) + '. Pick ' + NUMBER_WORDS[q.correct.length].toLowerCase() + '. ' +
     q.options.map(o => plainText(o)).join('. ');
   if (t === 'order') return plainText(q.text) + '. The pieces are: ' + q._shuffle.map(i => plainText(q.items[i])).join('. ');
@@ -36803,7 +36819,8 @@ function renderQuestion() {
   qState = null;
 
   const passage = q.passage
-    ? `<div class="passage">${q.passage}</div>`
+    ? `<div class="passage">${q.passage}${earlyReader()
+        ? `<div class="passage-voice">${speakBtn(plainText(q.passage), true, '🔊 Read me the story')}</div>` : ''}</div>`
     : '';
 
   const cls = `profile-${currentProfile.id}`;
@@ -36819,8 +36836,8 @@ function renderQuestion() {
        </button>`
     : '';
 
-  // K gets a speaker on every choice; the readers get one on the question.
-  const perChoiceVoice = isK();
+  // Early readers get a speaker on every choice; the readers get one on the question.
+  const perChoiceVoice = earlyReader();
   const vBtn = (text, big) => speakBtn(text, big);
   const questionHead = (html, spoken) => `
       <div class="question-with-voice">
@@ -36973,8 +36990,8 @@ function orderWidgetHtml(q) {
       <div class="order-item" role="button" tabindex="0" onclick="orderPlace(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();orderPlace(${i})}">
         <span class="order-item-text">${q.items[i]}</span>
       </div>`;
-  // The kindergartener hears a piece from a 🔊 beside it, never inside it.
-  const poolHtml = pool.map(i => isK()
+  // An early reader hears a piece from a 🔊 beside it, never inside it.
+  const poolHtml = pool.map(i => earlyReader()
     ? `<div class="order-pick">${pieceHtml(i)}${speakBtn(q.items[i], false)}</div>`
     : pieceHtml(i)).join('');
   const full = !s.slots.includes(null);
@@ -37046,13 +37063,17 @@ function sortWidgetHtml(q) {
           aria-pressed="${s.assign[i] === gi}" onclick="sortAssign(${i},${gi})">${g}</button>`).join('');
     const fix = s.done && s.marks && s.marks[i] === false ? `<div class="sort-fix">belongs in: <strong>${q.groups[item.g]}</strong></div>` : '';
     return `<div class="sort-row${mark}">
-        <div class="sort-item"><span>${item.t}</span>${isK() ? speakBtn(item.t, false) : ''}</div>
+        <div class="sort-item"><span>${item.t}</span>${earlyReader() ? speakBtn(item.t, false) : ''}</div>
         <div class="sort-btns">${btns}</div>
         ${fix}
       </div>`;
   }).join('');
   const full = !s.assign.includes(null);
-  return `<div class="sort-list">${rows}</div>
+  // The group names are on the buttons; an early reader can hear them here.
+  const legend = earlyReader()
+    ? `<div class="sort-legend">${q.groups.map((g, gi) => `<span class="sort-legend-item"><span class="sort-legend-name sg${gi}">${g}</span>${speakBtn(g, false)}</span>`).join('')}</div>`
+    : '';
+  return `${legend}<div class="sort-list">${rows}</div>
     ${s.done ? '' : `<button class="typed-submit puzzle-check" ${full ? '' : 'disabled'} onclick="checkSort()">CHECK MY SORTING</button>`}`;
 }
 
@@ -37111,7 +37132,7 @@ function multiWidgetHtml(q) {
         onclick="multiToggle(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();multiToggle(${i})}">
         <span class="choice-letter">${picked ? '✓' : ''}</span>
         <span class="choice-content">${opt}</span>
-        ${isK() ? speakBtn(opt, false) : ''}
+        ${earlyReader() ? speakBtn(opt, false) : ''}
       </div>`;
   }).join('');
   return `<div class="choices${q.options.some(o => plainText(o).length > 18) ? ' choices-long' : ''}">${choices}</div>
@@ -37162,7 +37183,7 @@ function partChoicesHtml(part, which) {
       <div class="choice part-choice" data-part="${which}" data-idx="${i}" role="button" tabindex="0" onclick="pickPart('${which}',${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();pickPart('${which}',${i})}">
         <span class="choice-letter">${String.fromCharCode(65 + i)}</span>
         <span class="choice-content">${opt}</span>
-        ${isK() ? speakBtn(opt, false) : ''}
+        ${earlyReader() ? speakBtn(opt, false) : ''}
       </div>`).join('')}
   </div>`;
 }
@@ -37456,7 +37477,7 @@ function canRetry(q) {
 
 function hintFor(q) {
   if (q.hint) return q.hint;
-  if (isK()) return 'Listen again and think about each choice.';
+  if (earlyReader()) return 'Listen again and think about each choice.';
   const t = q.type || 'mc';
   if (t === 'typed' || t === 'fib') return 'Check your spelling and your math, then try again.';
   if (t === 'showwork') return 'Look back over your work on paper. Check each step.';
