@@ -38910,6 +38910,7 @@ function openCoach() {
   saveState();
   FUN.emit('coach', { profileId: currentProfile.id, pack: currentPack, q });
   if (SPEECH_AVAILABLE) window.speechSynthesis.cancel();
+  funSound('think');
   renderCoach();
 }
 
@@ -38956,7 +38957,7 @@ function renderCoach() {
 
 function coachNext() {
   if (!coachState) return;
-  if (coachState.i < coachState.c.steps.length - 1) { coachState.i++; renderCoach(); }
+  if (coachState.i < coachState.c.steps.length - 1) { coachState.i++; funSound('tap'); renderCoach(); }
   else closeCoach();
 }
 
