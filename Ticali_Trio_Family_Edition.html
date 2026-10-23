@@ -441,6 +441,7 @@
   }
   .pack-card:active { transform: translate(1px,1px); box-shadow: 4px 4px 0 var(--ink); }
 
+  .pack-voice { display: inline-block; vertical-align: top; margin-left: 0.6rem; }
   .pack-icon-box {
     display: inline-flex; width: 56px; height: 56px;
     border-radius: 12px; background: var(--user-color); border: 3px solid var(--ink);
@@ -62826,10 +62827,13 @@ function renderPackCard(pk, libraryView) {
   if (done && done.best === 10) badge = `<div class="pack-badge star">★ ACED</div>`;
   else if (done) badge = `<div class="pack-badge">BEST ${done.best}/10</div>`;
   const roundText = rounds > 0 ? `<span class="round-counter">R${rounds}</span>` : '';
+  // The kindergartener picks packs by ear too: a 🔊 beside the icon, away
+  // from the middle of the card where a tap opens the pack.
+  const voice = isK() ? `<span class="pack-voice">${speakBtn(plainText(pk.title) + '. ' + plainText(pk.desc), false)}</span>` : '';
   return `
     <div class="pack-card" role="button" tabindex="0" aria-label="${ccEscapeForAttr(plainText(pk.title))}" onclick="startPack('${pk.id}')">
       ${badge}
-      <div class="pack-icon-box">${pk.icon}</div>
+      <div class="pack-icon-box">${pk.icon}</div>${voice}
       <div class="pack-title">${pk.title}${roundText}</div>
       <div class="pack-desc">${pk.desc}</div>
       <div class="pack-meta">
@@ -63253,12 +63257,15 @@ function spokenQuestion(q) {
   if (t === 'tf') return 'True or false: ' + (q.sayText || plainText(q.statement));
   if (t === 'mc') return lead(q.text) + q.options.map((o, i) =>
     (earlyReader() ? 'Choice ' + (i + 1) : 'Choice ' + String.fromCharCode(65 + i)) + ': ' + say(o)).join('. ');
+  const choices = opts => opts.map((o, i) =>
+    (earlyReader() ? 'Choice ' + (i + 1) : 'Choice ' + String.fromCharCode(65 + i)) + ': ' + say(o)).join('. ');
   if (t === 'multi') return lead(q.text) + 'Pick ' + NUMBER_WORDS[q.correct.length].toLowerCase() + '. ' +
-    q.options.map(say).join('. ');
-  if (t === 'order') return lead(q.text) + 'The pieces are: ' + q._shuffle.map(i => say(q.items[i])).join('. ');
+    choices(q.options) + '. Then press CHECK.';
+  if (t === 'order') return lead(q.text) + 'The pieces are: ' + q._shuffle.map(i => say(q.items[i])).join('. ') +
+    '. Tap the one that goes first, then the next one. Then press CHECK.';
   if (t === 'sort') return lead(q.text) + 'The groups are ' + q.groups.map(say).join(' and ') + '. ' +
-    q._shuffle.map(i => say(q.items[i].t)).join('. ');
-  if (t === 'twopart') return 'Part A. ' + lead(q.partA.text) + q.partA.options.map(say).join('. ');
+    q._shuffle.map(i => say(q.items[i].t)).join('. ') + '. Put each one in its group, then press CHECK.';
+  if (t === 'twopart') return 'Part A. ' + lead(q.partA.text) + choices(q.partA.options);
   return q.sayText || plainText(q.text);
 }
 
@@ -64348,12 +64355,15 @@ function finishPack() {
 
   const gateAttr = reportGate ? 'disabled' : '';
 
+  // Said aloud to an early reader: how the round went, in words.
+  const doneSay = `Round ${roundNum} done! ${plainText(rating)} You got ${score} out of ${total} right on the first try.` +
+    (fixedCount ? ` You fixed ${fixedCount} more with a hint.` : '');
   render(`
     <div class="quiz profile-${currentProfile.id}">
       <div class="complete">
         <div style="font-size:4rem;margin-bottom:0.5rem;">${ratingEmoji}</div>
         <div class="complete-title">ROUND ${roundNum} DONE!</div>
-        <div class="complete-rating">${rating}</div>
+        <div class="complete-rating">${rating}${earlyReader() ? ' ' + speakBtn(doneSay, false) : ''}</div>
 
         <div class="result-grid">
           <div class="result-stat"><div class="result-big">${score}/${total}</div><div class="result-small">First try</div></div>
@@ -64374,6 +64384,7 @@ function finishPack() {
       </div>
     </div>
   `);
+  if (state.profiles[currentProfile.id].autoRead && earlyReader()) autoSay(doneSay, 500);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -64584,6 +64595,7 @@ function toggleSummerMode() {
   renderHub();
 }
 
+const EXIT_SAY = 'Do you want to stop this round? The STAY button keeps playing. The red EXIT button goes back to your packs.';
 function confirmExit() {
   // Build a custom in-game modal — reliable across browsers/iframes,
   // consistent with the game's visual style. Replaces native confirm()
@@ -64619,7 +64631,7 @@ function confirmExit() {
         color: var(--ink, #1a1a2e);
         margin-bottom: 1.5rem;
         line-height: 1.4;
-      ">Your XP so far is saved. You'll go back to the pack list.</div>
+      ">Your XP so far is saved. You'll go back to the pack list.${earlyReader() ? ' ' + speakBtn(EXIT_SAY, false) : ''}</div>
       <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
         <button id="exit-modal-stay" style="
           background: var(--user-color, #0096c7); color: white;
@@ -64641,6 +64653,7 @@ function confirmExit() {
     </div>
   `;
   document.body.appendChild(modal);
+  if (currentProfile && state.profiles[currentProfile.id].autoRead && earlyReader()) autoSay(EXIT_SAY, 200);
   const back = document.activeElement;
   app.inert = true;
   focusFirst(['#exit-modal-stay']);
