@@ -6584,8 +6584,9 @@ const G4_BANKS = {
 // Helpers
 function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 // Build a question with 4 options where `answer` is one, and wrongs are near it
-// Candidates can repeat (prekAdd10 offers both `a` and `ans-1`, which are
-// often the same number), so they are de-duplicated before picking three —
+// Candidates can repeat (a generator that offers an operand such as `a` beside
+// near misses such as `ans-1` often lists one number twice), so they are
+// de-duplicated before picking three —
 // otherwise a child could see "4, 5, 4, 3" with two identical choices.
 function buildMC(text, answer, wrongCandidates) {
   const wrongs = shuffleArr([...new Set(wrongCandidates)].filter(w => w !== answer && w >= 0)).slice(0, 3);
@@ -6673,45 +6674,275 @@ function whySimplify(frac) {
   return `${g} is the greatest common factor of ${n} and ${d}. Divide both by ${g}: ${n} ÷ ${g} = ${n / g} and ${d} ÷ ${g} = ${d / g}, so ${frac} = ${n / g}/${d / g}.`;
 }
 
+// SHOW ME HOW steps ({ name, steps }), built from the same numbers as the
+// why: the class method (Reveal Math: count them all and take away in K;
+// count on, make a ten and decompose in grade 2; area model, partial
+// products and partial quotients in grade 4) walked through on THIS
+// question, the last step handing the final move to the child. No step says
+// the answer: a part, chunk or estimate that happens to equal it is said
+// another way. Kindergarten steps are read aloud, so they say "plus" and
+// "take away" and use no symbols.
+function nOf(n, word, many) { return `${n} ${n === 1 ? word : (many || word + 's')}`; }
+const FRAC_UNIT = { 4: 'fourth', 5: 'fifth', 6: 'sixth', 7: 'seventh', 8: 'eighth', 9: 'ninth', 10: 'tenth', 11: 'eleventh', 12: 'twelfth' };
+function howAddK(a, b, last) {
+  const hands = a <= 5 && b <= 5;
+  return { name: 'Count Them All', steps: [
+    hands ? `${a} plus ${b} means put them together. Hold up ${nOf(a, 'finger')} on one hand.`
+          : `${a} plus ${b} means put them together. Put out ${nOf(a, 'counter')}, or draw ${nOf(a, 'dot')}.`,
+    hands ? `Hold up ${nOf(b, 'finger')} on your other hand.` : `Then put out ${b} more.`,
+    last || (hands ? 'Now count all the fingers that are up. How many in all?'
+                   : 'Now count them all, touching each one. How many in all?')
+  ] };
+}
+function howSubK(a, b) {
+  return { name: 'Take Away', steps: [
+    `${a} take away ${b}. Hold up ${nOf(a, 'finger')}${a > 5 ? ', using both hands' : ''}.`,
+    `Put down ${b === a ? 'all ' : ''}${b} of them. Those are taken away.`,
+    'Now count the fingers that are still up. How many are left?'
+  ] };
+}
+function howAdd20(a, b, last) {
+  // A double (7 + 7) has no bigger number: start with one of them.
+  const big = Math.max(a, b), small = Math.min(a, b), need = 10 - big, same = a === b;
+  if (big < 10 && a + b > 10) return { name: 'Make a Ten', steps: [
+    same ? `Both numbers are ${big}. Start with one ${big}. It needs ${need} more to make 10.`
+         : `Start with the bigger number, ${big}. It needs ${need} more to make 10.`,
+    same ? `Break the other ${small} into ${need} and ${small - need}. Give the ${need} to the first ${big} to make 10.`
+         : `Break ${small} into ${need} and ${small - need}. Give the ${need} to ${big} to make 10.`,
+    last || `Now add the ${small - need} that is left to 10. What is the sum?`
+  ] };
+  if (small >= 10) return howAddTensOnes(a, b, last);
+  return { name: 'Count On', steps: [
+    same ? `Both numbers are ${big}. Start at ${big} and keep it in your head.`
+         : `Start at the bigger number, ${big}. Keep it in your head.`,
+    `Count on ${small} more, putting up one finger for each: ${big + 1}, and so on.`,
+    last || `Now stop when ${small} fingers are up. What number did you land on?`
+  ] };
+}
+function howSub20(a, b) {
+  // Taking away 1, 2 or 3: count back (Reveal 6-1), not a count up from 1 to 16.
+  if (b <= 3) return { name: 'Count Back', steps: [
+    `You take away only ${b}, so count back. Start at ${a} and keep it in your head.`,
+    b === 1 ? `Count back 1: say the number that comes just before ${a}.`
+            : `Count back ${b}, putting up one finger for each number you say: ${a - 1}, and so on.`,
+    b === 1 ? 'Now, what number did you say? That is the difference.'
+            : `Now stop when ${b} fingers are up. What number did you land on?`
+  ] };
+  // Count up through 10, unless the difference is 10 itself (then "10" would say it).
+  const viaTen = b < 10 && a > 10 && a - b !== 10;
+  return { name: 'Think Addition', steps: viaTen ? [
+    `Think addition: ${b} plus what number makes ${a}? Count up from ${b} to find out.`,
+    `Jump from ${b} up to 10. That is ${10 - b}. Then jump from 10 up to ${a}. That is ${a - 10} more.`,
+    'Now put your two jumps together. What number is missing?'
+  ] : [
+    `Think addition: ${b} plus what number makes ${a}?`,
+    `Start at ${b} and keep it in your head. Count up to ${a}, putting up one finger for each number after ${b}.`,
+    'Now count the fingers that are up. That is the missing number.'
+  ] };
+}
+function howAddTensOnes(a, b, last) {
+  const at = a - a % 10, bt = b - b % 10, ao = a % 10, bo = b % 10;
+  if (ao + bo === 0) return { name: 'Add the Tens', steps: [
+    a === b ? `Both numbers are ${nOf(at / 10, 'ten')}.` : `${a} is ${nOf(at / 10, 'ten')} and ${b} is ${nOf(bt / 10, 'ten')}.`,
+    `Add the tens: ${at / 10} + ${bt / 10}. How many tens is that?`,
+    last || 'Now write that many tens as a number. What is the sum?'
+  ] };
+  if (at === 0 || bt === 0) {
+    // One addend is a single digit: count on, or jump to the next ten first.
+    const big = Math.max(a, b), small = Math.min(a, b), ones = big % 10, toTen = 10 - ones;
+    if (small < toTen) return { name: 'Count On', steps: [
+      `Start at ${big} and count on ${small} more.`,
+      ones === 0 ? `${big} has no ones, so the ${small} ones go in the ones place.`
+                 : `Only the ones change: ${big} has ${nOf(ones, 'one')}, and ${ones} + ${small} is less than 10.`,
+      last || `Now put the tens of ${big} with the new ones. What is the sum?`
+    ] };
+    if (small === toTen) return { name: 'Make the Next Ten', steps: [
+      `Start at ${big}. How many more does ${big} need to make the next ten?`,
+      `Count on ${small} from ${big}, one at a time. Listen for a new ten.`,
+      last || 'Now say the number you land on. What is the sum?'
+    ] };
+    return { name: 'Make the Next Ten', steps: [
+      `Start at ${big}. It needs ${toTen} more to make the next ten, ${big + toTen}.`,
+      `Break ${small} into ${toTen} and ${small - toTen}. Jump ${toTen} to land on ${big + toTen}.`,
+      last || `Now jump the ${small - toTen} that is left. Where do you land?`
+    ] };
+  }
+  const parts = n => n % 10 ? `${n} is ${n - n % 10} + ${n % 10}` : `${n} is ${nOf(n / 10, 'ten')}`;
+  return { name: 'Decompose Addends', steps: [
+    `Break apart both numbers into tens and ones: ${parts(a)}, and ${parts(b)}.`,
+    `Add the tens: ${at} + ${bt} = ${at + bt}. Add the ones: ${ao} + ${bo} = ${ao + bo}.`,
+    last || `Now add those together: ${at + bt} + ${ao + bo}. What is the sum?`
+  ] };
+}
+function howSubTensOnes(a, b) {
+  const bt = b - b % 10, bo = b % 10, ao = a % 10, ans = a - b;
+  const check = `Check by adding ${b} back.`;
+  if (bt === 0) {
+    if (ao >= bo) return { name: 'Take Away the Ones', steps: [
+      `Start at ${a}. You take away ${nOf(bo, 'one')}.`,
+      `${a} has ${nOf(ao, 'one')}, so take ${bo} away from the ones. The tens stay the same.`,
+      `Now how many ones are left? Put them with the tens. ${check}`
+    ] };
+    if (ao === 0) return { name: 'Decompose to Subtract', steps: [
+      `Start at ${a}. It has no ones, so break one ten into 10 ones.`,
+      `Take ${bo} away from those 10 ones.`,
+      `Now put what is left with the other tens. ${check}`
+    ] };
+    return { name: 'Decompose to Subtract', steps: [
+      `Start at ${a}. Take away ${ao} first to get to ${a - ao}.`,
+      `You took ${ao} of the ${bo}. You still need to take away ${bo - ao} more.`,
+      `Now take ${bo - ao} from ${a - ao}. Where do you land? ${check}`
+    ] };
+  }
+  if (bo === 0) return { name: 'Count Back by Tens', steps: [
+    `Take away ${b} by counting back by tens from ${a}.`,
+    `Make one jump back for each ten in ${b}. The ones digit of ${a} stays the same.`,
+    `Now where do you land? ${check}`
+  ] };
+  // A part of b can equal the answer (47 − 27: the 20); then it is not named.
+  const left = a - bt, r = left % 10;
+  const ones = bo === ans ? `the ones of ${b}` : `the ${nOf(bo, 'one')}`;
+  // Not enough ones in what is left (32 − 7): go down to the ten first, then
+  // take the rest (Reveal 6-6: 32 − 2 = 30, 30 − 5). The rest can be the
+  // answer (24 − 19: 14 − 4 − 5), so then it is not named.
+  const through = r > 0 && r < bo
+    ? `: take ${r} to get to ${left - r}, then ${bo - r === ans ? 'the rest' : `${bo - r} more`}` : '';
+  return { name: 'Decompose to Subtract', steps: [
+    bt === ans || bo === ans ? `Break apart ${b} into its tens and its ones.` : `Break apart ${b} into ${bt} and ${bo}.`,
+    bt === ans ? `Take away the tens of ${b} first: ${a} goes down to ${left}.` : `Take away the tens first: ${a} − ${bt} = ${left}.`,
+    `Now take away ${ones} from ${left}${through}. ${check}`
+  ] };
+}
+function howChange(price, paper) {
+  const next = price - price % 10 + 10;
+  return { name: 'Count Up to $1', steps: [
+    paper ? `Change is what is left of your $1. $1 is 100 cents, so write 100 − ${price} on paper. Count up from ${price}.`
+          : `$1 is 100 cents. Start at ${price}¢ and count up to 100¢.`,
+    price % 10 ? `Jump from ${price} to ${next}: that is ${next - price}¢. Then jump by tens from ${next} to 100.`
+               : `Count up by tens from ${price} to 100, one jump for each ten.`,
+    'Now add up all your jumps. How many cents is the change?'
+  ] };
+}
+function howMultPartial(a, b, last) {
+  const big = Math.max(a, b), small = Math.min(a, b), ans = a * b;
+  if (small < 10) {
+    const t = big - big % 10, o = big % 10, est = Math.round(big / 10) * 10;
+    if (o === 0) return { name: 'Multiply by Tens', steps: [
+      `${big} is ${nOf(t / 10, 'ten')}, so ${big} × ${small} is ${t / 10} tens × ${small}.`,
+      `Find ${t / 10} × ${small} first, with a fact you know. That many tens is the product.`,
+      last || 'Now write that many tens as a number. What is the product?'
+    ] };
+    return { name: 'Area Model', steps: [
+      `Estimate first: ${big} is close to ${est}, and ${est} × ${small} = ${est * small}.`,
+      `Draw a rectangle with two parts. Split ${big} into ${t} + ${o} across the top, with ${small} down the side.`,
+      `Multiply each part: ${t} × ${small} = ${t * small} and ${o} × ${small} = ${o * small}.`,
+      last || `Now add the partial products: ${t * small} + ${o * small}. Is the sum close to your estimate?`
+    ] };
+  }
+  const at = a - a % 10, ao = a % 10, bt = b - b % 10, bo = b % 10;
+  if (ao === 0 && bo === 0) return { name: 'Multiply Tens by Tens', steps: [
+    `${a} is ${nOf(at / 10, 'ten')} and ${b} is ${nOf(bt / 10, 'ten')}. Tens times tens makes hundreds.`,
+    `Find ${at / 10} × ${bt / 10} first, with a fact you know. That many hundreds is the product.`,
+    last || 'Now write that many hundreds as a number. What is the product?'
+  ] };
+  // Two 2-digit factors: four parts (two when a factor is a multiple of 10).
+  const parts = ao === 0 ? [[a, bt], [a, bo]] : bo === 0 ? [[at, b], [ao, b]] : [[at, bt], [at, bo], [ao, bt], [ao, bo]];
+  const ra = Math.round(a / 10) * 10, rb = Math.round(b / 10) * 10, steps = [];
+  if (ra * rb !== ans) steps.push(`Estimate first: ${a} × ${b} is about ${ra} × ${rb} = ${ra * rb}.`);
+  steps.push(ao === 0 ? `Draw an area model with two parts: ${a} down the side, and ${b} split into ${bt} + ${bo} across the top.`
+    : bo === 0 ? `Draw an area model with two parts: ${b} down the side, and ${a} split into ${at} + ${ao} across the top.`
+    : `Draw an area model with four parts. Split ${a} into ${at} + ${ao} down the side, and ${b} into ${bt} + ${bo} across the top.`);
+  steps.push(`Multiply each part: ${parts.map(([x, y]) => `${x} × ${y} = ${x * y}`).join(', ')}.`);
+  steps.push(last || `Now add the ${parts.length === 4 ? 'four' : 'two'} partial products. ${steps.length === 3 ? 'Is the sum close to your estimate?' : 'What is the product?'}`);
+  return { name: 'Area Model', steps };
+}
+function howDivide(total, b, q) {
+  if (q <= 10) return { name: 'Think Multiplication', steps: [
+    `Division asks how many groups of ${b} make ${total}. Think: ${b} × ? = ${total}.`,
+    `Skip count by ${b}s until you reach ${total}. Keep track of how many ${b}s you say.`,
+    `Now count how many ${b}s you said. That is the quotient.`
+  ] };
+  const c = q > 20 ? 20 : 10;
+  return { name: 'Partial Quotients', steps: [
+    `How many groups of ${b} are in ${total}? Take away big groups first.`,
+    `Start with ${c} groups: ${c} × ${b} = ${c * b}. Subtract ${c * b} from ${total}. How much is left?`,
+    `Now find how many more groups of ${b} fit in what is left. Add them to ${c} for the quotient.`
+  ] };
+}
+function howDivRem(total, b, q, paper) {
+  if (q <= 10) return { name: 'Find the Biggest Multiple', steps: [
+    `Skip count by ${b}s. Stop at the biggest multiple of ${b} that is not more than ${total}.`,
+    `How many ${b}s did you count? That is the quotient. Subtract that multiple from ${total} to find what is left.`,
+    `Now check: the remainder must be less than ${b}. Write the quotient, then r, then the remainder.`
+  ] };
+  // The first chunk is a multiple of 10 below the quotient, so it is never the quotient itself.
+  const c = 10 * Math.floor((q - 1) / 10);
+  return { name: 'Partial Quotients', steps: [
+    `Use partial quotients${paper ? ' on your paper' : ''}. How many groups of ${b} fit in ${total}?`,
+    `Start with ${c} groups: ${c} × ${b} = ${c * b}. Subtract ${c * b} from ${total}${paper ? `, and write ${c} at the side` : ''}.`,
+    `Keep taking away groups of ${b} until less than ${b} is left. What is left is the remainder.`,
+    `Now add the groups you took for the quotient. Check: quotient × ${b} + remainder = ${total}.`
+  ] };
+}
+function howSimplify(frac) {
+  const [n, d] = frac.split('/').map(Number), g = gcd(n, d);
+  return { name: 'Greatest Common Factor', steps: [
+    `Find the greatest number that divides evenly into both ${n} and ${d}. It is ${g}.`,
+    `Divide the numerator and the denominator by ${g}: ${n} ÷ ${g} and ${d} ÷ ${g}.`,
+    `Now write the two quotients as a fraction. That is ${frac} in simplest form.`
+  ] };
+}
+function howLikeFrac(a, b, den, sub) {
+  const u = FRAC_UNIT[den];
+  return { name: sub ? 'Subtract Like Fractions' : 'Add Like Fractions', steps: [
+    `Both fractions are ${u}s, so every piece is the same size.`,
+    sub ? `Subtract the numerators: ${nOf(a, u)} take away ${nOf(b, u)}. How many ${u}s are left?`
+        : `Add the numerators: ${nOf(a, u)} plus ${nOf(b, u)}. How many ${u}s is that?`,
+    `Now write the ${sub ? 'difference' : 'sum'} as a fraction. The denominator stays ${den}, because the size of the pieces does not change.`
+  ] };
+}
+
 // ═══════════════════════════════════════════════════════════════
 // PRE-K GENERATORS
 // ═══════════════════════════════════════════════════════════════
 
 // Count emoji: "How many? 🐟🐟🐟🐟"
 const COUNT_EMOJI = ['⭐','🍎','🐟','🦋','🌸','🎈','🐞','🐶','🐱','🐰','🌻','🍪'];
+// The coach's steps are read aloud, and speech drops pictures ("the first 🐶"
+// is spoken "the first"), so each step also names the picture in words.
+const COUNT_EMOJI_NAME = {
+  '⭐': ['star', 'stars'], '🍎': ['apple', 'apples'], '🐟': ['fish', 'fish'], '🦋': ['butterfly', 'butterflies'],
+  '🌸': ['flower', 'flowers'], '🎈': ['balloon', 'balloons'], '🐞': ['ladybug', 'ladybugs'], '🐶': ['dog', 'dogs'],
+  '🐱': ['cat', 'cats'], '🐰': ['bunny', 'bunnies'], '🌻': ['sunflower', 'sunflowers'], '🍪': ['cookie', 'cookies'],
+};
 function prekCountEmoji() {
   const n = randInt(2, 10);
   const emoji = COUNT_EMOJI[randInt(0, COUNT_EMOJI.length-1)];
+  const [one, many] = COUNT_EMOJI_NAME[emoji];
   const group = emoji.repeat(n);
   return withWhy(buildMC(`How many? ${group}`, n, [n-1, n+1, n-2, n+2, n+3].filter(x => x>0)),
     `Touch each one and count. The last number you say tells how many: ${n}.`,
-    'Touch each picture one time as you count out loud.');
-}
-
-// Basic add within 10
-function prekAdd10() {
-  const a = randInt(1, 5);
-  const b = randInt(1, 5);
-  const ans = a + b;
-  return withWhy(buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-2, ans+2, a, b].filter(x => x>=0)),
-    whyAddK(a, b), `Hold up ${a} fingers, then ${b} more. Count them all.`);
-}
-
-// Basic sub within 10
-function prekSub10() {
-  const a = randInt(3, 10);
-  const b = randInt(1, a);
-  const ans = a - b;
-  return withWhy(buildMC(`${a} - ${b} = ?`, ans, [ans+1, ans-1, ans+2, a, b].filter(x => x>=0)),
-    whySubK(a, b), `Hold up ${a} fingers. Put down ${b}. How many are still up?`);
+    'Touch each picture one time as you count out loud.',
+    { name: 'Touch and Count', steps: [
+      `Start with the first ${one} ${emoji} on the left. Touch it and say 1.`,
+      `Touch each ${one} ${emoji} just one time, and say the next number. Do not skip any!`,
+      `Now, what is the last number you said? That tells how many ${many} ${emoji} there are.`
+    ] });
 }
 
 // What comes after?
 function prekAfter() {
   const n = randInt(1, 18);
+  const lead = n === 1 ? 'Start to count. Say 1, then stop.'
+    : `Count out loud: ${countUp(Math.max(1, n - 2), n)}. Stop at ${n}.`;
   return withWhy(buildMC(`What comes AFTER ${n}?`, n+1, [n-1, n, n+2, n+3]),
     `When we count, ${n + 1} comes right after ${n}. It is one more.`,
-    `Count out loud and stop at ${n}. What do you say next?`);
+    `Count out loud and stop at ${n}. What do you say next?`,
+    { name: 'Say the Next Number', steps: [
+      lead,
+      `After means the number you say right after ${n}. It is one more.`,
+      `Now say the next number after ${n}. What is it?`
+    ] });
 }
 
 // What comes before?
@@ -6719,7 +6950,12 @@ function prekBefore() {
   const n = randInt(2, 19);
   return withWhy(buildMC(`What comes BEFORE ${n}?`, n-1, [n+1, n, n-2, n-3]),
     `When we count, ${n - 1} comes right before ${n}. It is one less.`,
-    `Count out loud. What do you say just before ${n}?`);
+    `Count out loud. What do you say just before ${n}?`,
+    { name: 'Count and Listen', steps: [
+      `Before means the number you say just before ${n} when you count.`,
+      `Count up to ${n} out loud. Listen for the number right before ${n}.`,
+      `Now, what number did you say just before ${n}?`
+    ] });
 }
 
 // Missing number in sequence
@@ -6732,7 +6968,12 @@ function prekMissing() {
   seq[missPos] = '?';
   return withWhy(buildMC(`${seq.join(', ')}`, missVal, [missVal-1, missVal+1, missVal-2, missVal+2]),
     `Each number is one more than the one before: ${full}. The missing number is ${missVal}.`,
-    'Count along the row. Each number goes up by one.');
+    'Count along the row. Each number goes up by one.',
+    { name: 'Count Along the Row', steps: [
+      `Point to ${start} and count along the row. Each number is one more.`,
+      `${missVal - 1} is just before the missing spot. What do you say right after ${missVal - 1}?`,
+      `Now check: does ${missVal + 1} come right after your number? Which number is missing?`
+    ] });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -6752,7 +6993,8 @@ function g2Add20() {
       ? `Make a ten: ${big} + ${need} = 10, and that leaves ${small - need} of the ${small}. 10 + ${small - need} = ${ans}.`
       : `Start at ${big} and count on ${small}: ${big} + ${small} = ${ans}.`,
     makeTen ? 'Try making a 10 first. How much does the bigger number need to reach 10?'
-            : 'Start at the bigger number and count on.');
+            : 'Start at the bigger number and count on.',
+    howAdd20(a, b));
 }
 
 // Subtraction within 20
@@ -6762,7 +7004,7 @@ function g2Sub20() {
   const ans = a - b;
   return withWhy(buildMC(`${a} − ${b} = ?`, ans, [ans+1, ans-1, ans+2, ans-2, a-b+1]),
     `${a} − ${b} = ${ans}. Check it with addition: ${ans} + ${b} = ${a}.`,
-    `Think addition: ${b} plus what number makes ${a}?`);
+    `Think addition: ${b} plus what number makes ${a}?`, howSub20(a, b));
 }
 
 // Addition within 100 with regrouping
@@ -6771,7 +7013,7 @@ function g2Add100() {
   const b = randInt(15, 50);
   const ans = a + b;
   return withWhy(buildMC(`${a} + ${b} = ?`, ans, [ans-1, ans+1, ans-10, ans+10, ans-2, ans+2]),
-    whyAddTensOnes(a, b), 'Add the tens, then the ones, then put the two together.');
+    whyAddTensOnes(a, b), 'Add the tens, then the ones, then put the two together.', howAddTensOnes(a, b));
 }
 
 // Subtraction within 100 with regrouping
@@ -6780,7 +7022,7 @@ function g2Sub100() {
   const b = randInt(15, a-10);
   const ans = a - b;
   return withWhy(buildMC(`${a} − ${b} = ?`, ans, [ans+1, ans-1, ans+10, ans-10, ans+2, ans-2]),
-    whySubTensOnes(a, b), 'Take away the tens first, then the ones. Check by adding back.');
+    whySubTensOnes(a, b), 'Take away the tens first, then the ones. Check by adding back.', howSubTensOnes(a, b));
 }
 
 // Place value — build number from place values
@@ -6798,7 +7040,17 @@ function g2PlaceValue() {
   ].filter(x => x !== ans && x > 0);
   return withWhy(buildMC(`${h} hundreds + ${t} tens + ${o} ones = ?`, ans, distractors),
     `${h} hundreds is ${h * 100}, ${t} tens is ${t * 10}, and ${o} ones is ${o}. Together that makes ${ans}.`,
-    'Write the hundreds digit first, then the tens digit, then the ones digit.');
+    'Write the hundreds digit first, then the tens digit, then the ones digit.',
+    // With no tens and no ones, "5 hundreds is 500" would be the answer itself.
+    { name: 'Hundreds, Tens and Ones', steps: t + o === 0 ? [
+      `${nOf(h, 'hundred')} means ${nOf(h, 'group')} of one hundred. There are no tens and no ones.`,
+      'Write the hundreds digit first. Then write a 0 in the tens place and a 0 in the ones place.',
+      'Now read the number you wrote. Which choice is it?'
+    ] : [
+      `${nOf(h, 'hundred')} is ${h * 100}. ${nOf(t, 'ten')} is ${t * 10}. ${nOf(o, 'one')} is ${o}.`,
+      'Write the hundreds digit first, then the tens digit, then the ones digit. Use a 0 for a place with none.',
+      `Now put the parts together: ${h * 100} + ${t * 10} + ${o}. What number is it?`
+    ] });
 }
 
 // Compare numbers — which is greater?
@@ -6814,7 +7066,15 @@ function g2Compare() {
   const lead = i === 0 ? '' : i === 1 ? 'The hundreds match, so look at the tens. ' : 'The hundreds and tens match, so look at the ones. ';
   return withWhy(buildMCStr(`Which is greater: ${a} or ${b}?`, String(greater), [String(a), String(b), "Same", "Cannot tell"]),
     `Compare from the left. ${lead}${greater} has ${sg[i]} ${place} and ${smaller} has ${ss[i]}, so ${greater} is greater.`,
-    'Compare the hundreds digits first. If they are the same, move to the tens.');
+    'Compare the hundreds digits first. If they are the same, move to the tens.',
+    { name: 'Compare Place by Place', steps: [
+      i === 0 ? `Compare from the left. Start with the hundreds: ${a} has ${nOf(+String(a)[0], 'hundred')} and ${b} has ${nOf(+String(b)[0], 'hundred')}.`
+        : i === 1 ? `Compare from the left. ${a} and ${b} both have ${nOf(+sg[0], 'hundred')}, so the hundreds are a tie.`
+        : `Compare from the left. Both numbers have ${nOf(+sg[0], 'hundred')} and ${nOf(+sg[1], 'ten')}, so look at the ones.`,
+      i === 0 ? 'More hundreds means a greater number, whatever the tens and ones are.'
+        : `Move to the ${place}: ${a} has ${nOf(+String(a)[i], place.slice(0, -1))} and ${b} has ${nOf(+String(b)[i], place.slice(0, -1))}.`,
+      `Now: which number has more ${place}? That one is greater.`
+    ] });
 }
 
 // Count by 10s
@@ -6822,7 +7082,14 @@ function g2CountBy10() {
   const start = randInt(10, 80) * 10;
   return withWhy(buildMC(`Count by 10s: ${start}, ${start+10}, ${start+20}, ?`, start+30, [start+20, start+40, start+35, start+25, start+31]),
     `Counting by 10s adds 10 each time: ${start + 20} + 10 = ${start + 30}.`,
-    'How much does each number go up by? Add that to the last number.');
+    'How much does each number go up by? Add that to the last number.',
+    { name: 'Skip Count by 10s', steps: [
+      `Look at ${start}, ${start + 10}, ${start + 20}. Each number is 10 more than the one before.`,
+      (start + 20) / 10 % 10 === 9
+        ? `The tens digit of ${start + 20} is 9. One more ten makes 10 tens, and 10 tens is 1 more hundred.`
+        : '10 more means the tens digit goes up by 1. The hundreds and ones stay the same.',
+      `Now add 10 to ${start + 20}. What number comes next?`
+    ] });
 }
 
 // Count by 100s
@@ -6830,7 +7097,12 @@ function g2CountBy100() {
   const start = randInt(1, 7) * 100;
   return withWhy(buildMC(`Count by 100s: ${start}, ${start+100}, ?`, start+200, [start+150, start+300, start+110, start+250]),
     `Counting by 100s adds 100 each time, so the hundreds digit goes up by 1: ${start + 100} + 100 = ${start + 200}.`,
-    'How much does each number go up by? Add that to the last number.');
+    'How much does each number go up by? Add that to the last number.',
+    { name: 'Skip Count by 100s', steps: [
+      `Look at ${start} and ${start + 100}. The second number is 100 more than the first.`,
+      '100 more means the hundreds digit goes up by 1. The tens and ones stay the same.',
+      `Now add 100 to ${start + 100}. What number comes next?`
+    ] });
 }
 
 // Time: minutes to hours (original)
@@ -6840,7 +7112,16 @@ function g2TimeMin() {
   return withWhy(buildMC(`${hours} hour${hours>1?'s':''} = how many minutes?`, mins, [hours*10, hours*30, mins+15, mins-15, mins+30, mins-30]),
     hours === 1 ? 'There are 60 minutes in 1 hour.'
                 : `There are 60 minutes in each hour, so ${hours} hours is ${hours} × 60 = ${mins} minutes.`,
-    'How many minutes are in one hour?');
+    'How many minutes are in one hour?',
+    hours === 1 ? { name: 'Count by 5s', steps: [
+      'The minute hand goes all the way around the clock in 1 hour.',
+      'It moves 5 minutes for each number. Count by 5s around the clock, past all 12 numbers.',
+      'Now: where did your count stop? That is how many minutes are in 1 hour.'
+    ] } : { name: 'Groups of 60 Minutes', steps: [
+      '1 hour is 60 minutes, one full trip of the minute hand around the clock.',
+      `${hours} hours means ${hours} groups of 60 minutes. Add 60 one time for each hour.`,
+      `Now count by 60s, ${hours} times. How many minutes is that?`
+    ] });
 }
 
 // Time: half past X
@@ -6850,7 +7131,12 @@ function g2TimeHalf() {
   const wrongs = [`${h}:00`, `${h}:15`, `${h}:45`, `${h+1 > 12 ? 1 : h+1}:30`, `${h}:03`];
   return withWhy(buildMCStr(`Half past ${h} means?`, answer, wrongs),
     `Half of an hour is 30 minutes, because half of 60 is 30. So half past ${h} is 30 minutes after ${h}:00, which is ${answer}.`,
-    'How many minutes are in a whole hour? What is half of that?');
+    'How many minutes are in a whole hour? What is half of that?',
+    { name: 'Halfway Around the Clock', steps: [
+      'An hour has 60 minutes. In 1 hour, the minute hand goes all the way around the clock.',
+      'Half past means the minute hand has gone halfway around, to the 6. What is half of 60?',
+      `Now write the time: the hour is ${h}, then the minutes after the colon. Which choice matches?`
+    ] });
 }
 
 // Time: quarter past X
@@ -6860,7 +7146,12 @@ function g2TimeQuarter() {
   const wrongs = [`${h}:00`, `${h}:30`, `${h}:45`, `${h+1 > 12 ? 1 : h+1}:15`, `${h}:04`];
   return withWhy(buildMCStr(`Quarter past ${h} means?`, answer, wrongs),
     `An hour split into 4 equal quarters is 15 minutes each, because 60 ÷ 4 = 15. Quarter past ${h} is 15 minutes after ${h}:00, which is ${answer}.`,
-    'An hour has 60 minutes. Split it into 4 equal parts.');
+    'An hour has 60 minutes. Split it into 4 equal parts.',
+    { name: 'A Quarter of an Hour', steps: [
+      'An hour has 60 minutes. A quarter of the hour is 1 of 4 equal parts.',
+      'Quarter past means the minute hand moved from the 12 to the 3. Count by 5s, one count for each number.',
+      `Now write the time: the hour is ${h}, then the minutes you counted. Which choice matches?`
+    ] });
 }
 
 // Time: X minutes later
@@ -6883,7 +7174,17 @@ function g2TimeLater() {
     sum >= 60
       ? `${startM} + ${addMin} = ${sum} minutes. That is 1 hour and ${sum - 60} minutes, so the hour moves up to ${endH}. The time is ${answer}.`
       : `Add the minutes: ${startM} + ${addMin} = ${sum}. The hour stays ${startH}, so the time is ${answer}.`,
-    'Add the minutes. If you get to 60 or more, move up to the next hour.');
+    'Add the minutes. If you get to 60 or more, move up to the next hour.',
+    { name: 'Add the Minutes', steps: sum >= 60 ? [
+      `Start at ${startH}:${String(startM).padStart(2,'0')}. You are adding ${addMin} minutes.`,
+      `Add the minutes: ${startM} + ${addMin}. That is 60 or more, so you pass the next hour.`,
+      '60 minutes make 1 hour, so the hour goes up by 1. Take 60 away to find the minutes left over.',
+      'Now write the new hour and the leftover minutes. Which time is it?'
+    ] : [
+      `Start at ${startH}:${String(startM).padStart(2,'0')}. You are adding ${addMin} minutes.`,
+      `Add the minutes: ${startM} + ${addMin}. You do not reach 60, so the hour stays ${startH}.`,
+      'Now write the hour, a colon, then your new minutes. Which time is it?'
+    ] });
 }
 
 // Time: how long school lasted
@@ -6896,7 +7197,16 @@ function g2TimeElapsed() {
     endH > 12
       ? `From ${startH}:00 AM to 12:00 noon is ${12 - startH} hours. From noon to ${endLabel} is ${endH - 12} more. ${12 - startH} + ${endH - 12} = ${hours} hours.`
       : `Count the hours from ${startH}:00 to ${endLabel}: that is ${hours} hours.`,
-    'Count one hour at a time. After 12:00 noon, the clock starts again at 1.');
+    'Count one hour at a time. After 12:00 noon, the clock starts again at 1.',
+    { name: 'Count the Hours', steps: endH > 12 ? [
+      `Count the hours from ${startH}:00 AM up to 12:00 noon, one jump for each hour.`,
+      `After 12:00 noon the clock starts again at 1:00. Count the jumps from noon to ${endLabel}.`,
+      'Now add your two counts together. How many hours long is school?'
+    ] : [
+      `Put your finger on ${startH}:00 AM. Jump one hour at a time until you reach ${endLabel}.`,
+      `Count each jump: ${startH}:00 to ${startH + 1}:00 is 1 hour.`,
+      'Now, how many jumps did you make? That is how many hours.'
+    ] });
 }
 
 // Time: minutes on a clock
@@ -6915,7 +7225,14 @@ function g2TimeMinutes() {
     correct.hand === 12
       ? 'The minute hand counts by 5s around the clock. At the 12 it is back at the top: 0 minutes, exactly on the hour.'
       : `The minute hand counts by 5s around the clock. At the ${correct.hand} it has gone ${correct.hand} × 5 = ${correct.mins} minutes past the hour, written ${correct.label}.`,
-    'Count by 5s around the clock, starting from the 12.');
+    'Count by 5s around the clock, starting from the 12.',
+    { name: 'Count by 5s', steps: [
+      'The minute hand counts by 5s around the clock, starting at the 12.',
+      correct.hand === 12
+        ? 'When it points at the 12, it is back at the top. It has gone all the way around, or not moved at all.'
+        : `Count by 5s from the 12 to the ${correct.hand}, one count for each number you pass.`,
+      'Now: how many minutes past the hour is that? Which choice matches?'
+    ] });
 }
 
 // Time: convert hours/minutes
@@ -6936,7 +7253,18 @@ function g2TimeConvert() {
     m === 0
       ? `Every 60 minutes is 1 hour. ${totalMin} = ${h} × 60, so it is exactly ${answer}.`
       : `Every 60 minutes is 1 hour. ${totalMin} minutes is ${h * 60} minutes (${h} hour${h > 1 ? 's' : ''}) plus ${m} minutes left over: ${answer}.`,
-    'How many groups of 60 minutes fit? How many minutes are left over?');
+    'How many groups of 60 minutes fit? How many minutes are left over?',
+    // 60 minutes is the one case where "an hour is 60 minutes" is the answer itself.
+    totalMin === 60 ? { name: 'Count by 5s', steps: [
+      'Think about the clock. The minute hand moves 5 minutes for each number it passes.',
+      'There are 12 numbers. Count by 5s all the way around: that makes 60 minutes.',
+      'Now: how long does one full trip around the clock take? Which choice matches?'
+    ] } : { name: 'Groups of 60 Minutes', steps: [
+      `An hour is 60 minutes. Count up by 60s: 60, 120, 180, 240. Stop before you go past ${totalMin}.`,
+      'How many 60s did you count? That is the number of hours.',
+      m === 0 ? `Now check: did you land exactly on ${totalMin}? Then no minutes are left over. Which choice matches?`
+              : `Now take your last 60s number away from ${totalMin}. That is the minutes left over. Which choice matches?`
+    ] });
 }
 
 // Time: AM or PM
@@ -6944,20 +7272,35 @@ function g2TimeAmPm() {
   // Lunch is at 12:30, not "at noon": noon is one of the four choices, so
   // asking whether noon is AM or PM had two defensible answers.
   const scenarios = [
-    { text: 'Eating breakfast at 7:30', answer: 'AM', why: 'Breakfast is in the morning. Times from midnight until noon are AM.' },
-    { text: 'Going to bed at 9:00', answer: 'PM', why: 'Bedtime at 9:00 is at night. Times from noon until midnight are PM.' },
-    { text: 'Lunch at 12:30', answer: 'PM', why: '12:30 is half an hour after noon. Once it is noon, the clock switches to PM.' },
-    { text: 'Sunrise at 6:30', answer: 'AM', why: 'The sun rises in the early morning, and morning times are AM.' },
-    { text: 'Dinner at 6:00', answer: 'PM', why: 'Dinner at 6:00 is in the evening. Times from noon until midnight are PM.' },
-    { text: 'Getting up for school at 7:00', answer: 'AM', why: 'You get up for school in the morning, so it is AM.' },
-    { text: 'Watching TV at 8:00 (after dinner)', answer: 'PM', why: 'After dinner is the evening, and evening times are PM.' },
-    { text: 'Morning cartoons at 9:00', answer: 'AM', why: 'The word "morning" is your clue: morning times, before noon, are AM.' },
-    { text: 'Baseball practice after school at 4:30', answer: 'PM', why: 'After school is the afternoon. Afternoon times are PM.' },
-    { text: 'Brushing teeth before bed at 8:30', answer: 'PM', why: 'Before bed is at night, and night times before midnight are PM.' },
+    { text: 'Eating breakfast at 7:30', answer: 'AM', why: 'Breakfast is in the morning. Times from midnight until noon are AM.',
+      clue: 'When do you eat breakfast: when the day is starting, or at the end of the day?' },
+    { text: 'Going to bed at 9:00', answer: 'PM', why: 'Bedtime at 9:00 is at night. Times from noon until midnight are PM.',
+      clue: 'When do you go to bed at 9:00: in the morning, or at night?' },
+    { text: 'Lunch at 12:30', answer: 'PM', why: '12:30 is half an hour after noon. Once it is noon, the clock switches to PM.',
+      clue: '12:30 is half an hour after 12:00 noon. Is that before noon or after noon?' },
+    { text: 'Sunrise at 6:30', answer: 'AM', why: 'The sun rises in the early morning, and morning times are AM.',
+      clue: 'When does the sun come up: at the start of the day, or at the end?' },
+    { text: 'Dinner at 6:00', answer: 'PM', why: 'Dinner at 6:00 is in the evening. Times from noon until midnight are PM.',
+      clue: 'When do you eat dinner: in the morning, or in the evening?' },
+    { text: 'Getting up for school at 7:00', answer: 'AM', why: 'You get up for school in the morning, so it is AM.',
+      clue: 'When do you get up for school: at the start of the day, or at night?' },
+    { text: 'Watching TV at 8:00 (after dinner)', answer: 'PM', why: 'After dinner is the evening, and evening times are PM.',
+      clue: 'Look at the clue words "after dinner". Is that in the morning, or in the evening?' },
+    { text: 'Morning cartoons at 9:00', answer: 'AM', why: 'The word "morning" is your clue: morning times, before noon, are AM.',
+      clue: 'Look for a clue word in the question. What time of day does it name?' },
+    { text: 'Baseball practice after school at 4:30', answer: 'PM', why: 'After school is the afternoon. Afternoon times are PM.',
+      clue: 'Look at the clue words "after school". Is that before noon or after noon?' },
+    { text: 'Brushing teeth before bed at 8:30', answer: 'PM', why: 'Before bed is at night, and night times before midnight are PM.',
+      clue: 'Look at the clue words "before bed". Is that in the morning, or at night?' },
   ];
   const s = scenarios[randInt(0, scenarios.length-1)];
   return withWhy(buildMCStr(`${s.text} — AM or PM?`, s.answer, ['AM','PM','Noon','Midnight']),
-    s.why, 'Does this happen in the morning, or in the afternoon or night?');
+    s.why, 'Does this happen in the morning, or in the afternoon or night?',
+    { name: 'Morning or Afternoon?', steps: [
+      'AM is from midnight until noon: the morning. PM is from noon until midnight: afternoon, evening and night.',
+      s.clue,
+      `Now pick: is ${s.text[0].toLowerCase() + s.text.slice(1)} AM or PM?`
+    ] });
 }
 
 // Money: add coins
@@ -6980,7 +7323,15 @@ function g2Coins() {
   if (p) values.push(`${parts[values.length]} = ${p}¢`);
   return withWhy(buildMC(`${parts.join(' + ')} = how many cents?`, total, [total+5, total-5, total+10, total-10, total+15]),
     `${values.join(', ')}. Add them up: ${total}¢.`,
-    'Quarters are 25¢, dimes 10¢, nickels 5¢, pennies 1¢. Count the biggest coins first.');
+    'Quarters are 25¢, dimes 10¢, nickels 5¢, pennies 1¢. Count the biggest coins first.',
+    { name: 'Biggest Coins First', steps: [
+      'Start with the coin worth the most. ' + [q && 'A quarter is 25¢', d && 'a dime is 10¢', n && 'a nickel is 5¢', p && 'a penny is 1¢']
+        .filter(Boolean).join(', ').replace(/^a/, 'A') + '.',
+      [q && `by 25s for the quarter${q > 1 ? 's' : ''}`, d && `by 10s for the dime${d > 1 ? 's' : ''}`,
+        n && `by 5s for the nickel${n > 1 ? 's' : ''}`, p && `by 1s for the penn${p > 1 ? 'ies' : 'y'}`]
+        .filter(Boolean).map((s, i) => i === 0 ? `Skip count ${s}.` : i === 1 ? ` Then count on ${s}` : `, ${s}`).join('') + '.',
+      'Now say the last number you counted. How many cents in all?'
+    ] });
 }
 
 // Money: change from $1
@@ -6989,7 +7340,7 @@ function g2Change() {
   const change = 100 - spent;
   return withWhy(buildMC(`$1 - ${spent}¢ = change (in cents)?`, change, [change+5, change-5, change+10, change-10, spent]),
     `$1 is 100 cents. 100 − ${spent} = ${change}. Check: ${spent} + ${change} = 100.`,
-    'A dollar is 100 cents. Count up from the price to 100.');
+    'A dollar is 100 cents. Count up from the price to 100.', howChange(spent));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -7002,7 +7353,7 @@ function g4Mult2x1() {
   const b = randInt(3, 9);
   const ans = a * b;
   return withWhy(buildMC(`${a} × ${b} = ?`, ans, [ans-10, ans+10, ans-1, ans+1, ans-100, ans+100]),
-    whyMultPartial(a, b), 'Split the two-digit number into tens and ones. Multiply each part, then add.');
+    whyMultPartial(a, b), 'Split the two-digit number into tens and ones. Multiply each part, then add.', howMultPartial(a, b));
 }
 
 // Multiplication 2-digit × 2-digit
@@ -7011,7 +7362,7 @@ function g4Mult2x2() {
   const b = randInt(11, 40);
   const ans = a * b;
   return withWhy(buildMC(`${a} × ${b} = ?`, ans, [ans-10, ans+10, ans-100, ans+100, ans-1, ans+1]),
-    whyMultPartial(a, b), 'Use partial products: multiply by the tens part, then the ones part, then add.');
+    whyMultPartial(a, b), 'Use partial products: multiply by the tens part, then the ones part, then add.', howMultPartial(a, b));
 }
 
 // Division with nice answers
@@ -7021,7 +7372,7 @@ function g4DivClean() {
   const a = b * quotient;
   return withWhy(buildMC(`${a} ÷ ${b} = ?`, quotient, [quotient-1, quotient+1, quotient-2, quotient+2, quotient*2]),
     `${b} × ${quotient} = ${a}, so ${a} ÷ ${b} = ${quotient}. Division asks how many groups of ${b} make ${a}.`,
-    `Think multiplication: ${b} times what number equals ${a}?`);
+    `Think multiplication: ${b} times what number equals ${a}?`, howDivide(a, b, quotient));
 }
 
 // Division with remainder
@@ -7037,7 +7388,7 @@ function g4DivRem() {
     `${quotient} r ${rem+1 <= b-1 ? rem+1 : 1}`
   ]),
     `${b} × ${quotient} = ${b * quotient}, the biggest multiple of ${b} that fits in ${a}. ${a} − ${b * quotient} = ${rem} left over, and a remainder must be less than ${b}. So it is ${quotient} r ${rem}.`,
-    `Find the biggest multiple of ${b} that is not more than ${a}. Then see what is left.`);
+    `Find the biggest multiple of ${b} that is not more than ${a}. Then see what is left.`, howDivRem(a, b, quotient));
 }
 
 // Equivalent fractions
@@ -7057,7 +7408,12 @@ function g4EquivFrac() {
   const k = ad / bd;
   return withWhy(buildMCStr(`Which is equivalent to ${set.base}?`, answer, set.wrongs),
     `${answer} is ${set.base} with the top and bottom both multiplied by ${k}: ${bn} × ${k} = ${an} and ${bd} × ${k} = ${ad}. Multiplying by ${k}/${k} is multiplying by 1, so the value does not change.`,
-    'Equivalent fractions multiply the numerator and the denominator by the SAME number.');
+    'Equivalent fractions multiply the numerator and the denominator by the SAME number.',
+    { name: 'Equivalent Fractions', steps: [
+      `Equivalent fractions name the same amount. You make one by multiplying the numerator and denominator of ${set.base} by the same number.`,
+      `Test a choice: what number times ${bd} gives its denominator? Multiply ${bn} by that same number. If no whole number works, cross that choice out.`,
+      `Now test each choice that way. Which one has the numerator you get, so it names the same amount as ${set.base}?`
+    ] });
 }
 
 // Simplify fraction — pick one of: 6/8, 9/12, 4/8, 10/12, etc.
@@ -7078,7 +7434,7 @@ const SIMPLIFY_CASES = [
 function g4Simplify() {
   const c = SIMPLIFY_CASES[randInt(0, SIMPLIFY_CASES.length-1)];
   return withWhy(buildMCStr(`Simplify ${c.frac}`, c.simple, c.wrongs),
-    whySimplify(c.frac), 'Find the largest number that divides evenly into both the numerator and the denominator.');
+    whySimplify(c.frac), 'Find the largest number that divides evenly into both the numerator and the denominator.', howSimplify(c.frac));
 }
 
 // Add fractions same denom
@@ -7090,7 +7446,7 @@ function g4AddFrac() {
     `${a+b}/${den}`,
     [`${a+b}/${den*2}`, `${a*b}/${den}`, `${a+b}/${den-1}`, `${a+b+1}/${den}`, `${a+b-1}/${den}`]),
     `Both fractions count pieces of the same size, 1/${den}, so add the numerators: ${a} + ${b} = ${a + b}. The denominator stays ${den} because the size of the pieces does not change: ${a + b}/${den}.`,
-    'The denominators match, so the pieces are the same size. Which part do you add?');
+    'The denominators match, so the pieces are the same size. Which part do you add?', howLikeFrac(a, b, den));
 }
 
 // Subtract fractions same denom
@@ -7102,7 +7458,7 @@ function g4SubFrac() {
     `${a-b}/${den}`,
     [`${a-b}/${den*2}`, `${a-b+1}/${den}`, `${a-b-1}/${den}`, `${a/b}/${den}`, `${a-b}/${den-1}`]),
     `Both fractions count pieces of size 1/${den}, so subtract the numerators: ${a} − ${b} = ${a - b}. The denominator stays ${den} because the size of the pieces does not change: ${a - b}/${den}.`,
-    'The denominators match, so the pieces are the same size. Which part do you subtract?');
+    'The denominators match, so the pieces are the same size. Which part do you subtract?', howLikeFrac(a, b, den, true));
 }
 
 // Decimal-fraction equivalence
@@ -7130,7 +7486,17 @@ function g4DecToFrac() {
     g === 1
       ? `${c.dec} is read as ${num}/${den}, and that is already in simplest form.`
       : `${c.dec} is read as ${num}/${den}. Divide the top and bottom by ${g} to simplify: ${c.frac}.`,
-    'Read the decimal as tenths or hundredths, write that fraction, then simplify.');
+    'Read the decimal as tenths or hundredths, write that fraction, then simplify.',
+    // Already simplest (0.3 = 3/10): writing the fraction out would be the answer.
+    { name: 'Read It, Then Simplify', steps: g === 1 ? [
+      `Read ${c.dec} by place value. The ${num} is in the tenths place.`,
+      'Write it as a fraction: the number of tenths on top, and 10 on the bottom.',
+      'Now check: can any number besides 1 divide both the top and the bottom? If not, it is in simplest form.'
+    ] : [
+      `Read ${c.dec} by place value: it is ${num} ${den === 10 ? 'tenths' : 'hundredths'}, or ${num}/${den}.`,
+      `Find the greatest number that divides both ${num} and ${den}. It is ${g}.`,
+      `Now divide the numerator and the denominator by ${g}. Which choice matches?`
+    ] });
 }
 
 function g4FracToDec() {
@@ -7142,7 +7508,16 @@ function g4FracToDec() {
     c.frac === `${num}/${den}`
       ? `${c.frac} is ${num} ${den === 10 ? 'tenth' : 'hundredth'}${num === 1 ? '' : 's'}, which is written ${c.dec}.`
       : `Make an equivalent fraction over ${den}: ${c.frac} = ${num}/${den}. ${num} ${den === 10 ? 'tenths' : 'hundredths'} is written ${c.dec}.`,
-    'Make an equivalent fraction with 10 or 100 as the denominator.');
+    'Make an equivalent fraction with 10 or 100 as the denominator.',
+    { name: 'Tenths and Hundredths', steps: c.frac === `${num}/${den}` ? [
+      `${c.frac} means ${nOf(num, 'tenth')}. The denominator is 10, so think tenths.`,
+      'The first place after the decimal point is the tenths place.',
+      `Now write ${nOf(num, 'tenth')} as a decimal: a 0, the decimal point, then the tenths digit. Which choice matches?`
+    ] : [
+      `Make an equivalent fraction with ${den} as the denominator. What number times ${c.frac.split('/')[1]} makes ${den}?`,
+      `Multiply the numerator, ${c.frac.split('/')[0]}, by that same number. That tells how many ${den === 10 ? 'tenths' : 'hundredths'}.`,
+      `Now write that many ${den === 10 ? 'tenths' : 'hundredths'} as a decimal, with ${den === 10 ? 'one place' : 'two places'} after the decimal point. Which choice matches?`
+    ] });
 }
 
 // Compare decimals
@@ -7171,7 +7546,17 @@ function g4CompareDec() {
   return withWhy(buildMCStr(`Which is greater: ${aR.toFixed(2)} or ${bR.toFixed(2)}?`,
     greater.toFixed(2), [aR.toFixed(2), bR.toFixed(2), "Equal", "Cannot tell"]),
     `Line up the decimal points and compare from the left. ${why}`,
-    'Line up the decimal points and compare the digits from left to right.');
+    'Line up the decimal points and compare the digits from left to right.',
+    { name: 'Compare Place by Place', steps: [
+      `Line up the decimal points of ${aR.toFixed(2)} and ${bR.toFixed(2)}. Compare from the left.`,
+      Math.floor(greater) !== Math.floor(smaller)
+        ? `Start with the whole numbers: ${Math.floor(aR)} and ${Math.floor(bR)}.`
+        : sg[sg.length - 2] !== ss[ss.length - 2]
+          ? `The ones match, so compare the tenths: ${aR.toFixed(2)} has ${nOf(+aR.toFixed(2).slice(-2, -1), 'tenth')} and ${bR.toFixed(2)} has ${nOf(+bR.toFixed(2).slice(-2, -1), 'tenth')}.`
+          : `The ones and tenths match, so compare the hundredths: ${aR.toFixed(2).slice(-1)} and ${bR.toFixed(2).slice(-1)}.`,
+      Math.floor(greater) !== Math.floor(smaller) ? 'Now: which whole number is bigger? That decimal is greater.'
+        : `Now: which has more ${sg[sg.length - 2] !== ss[ss.length - 2] ? 'tenths' : 'hundredths'}? That decimal is greater.`
+    ] });
 }
 
 // Decimal addition
@@ -7184,7 +7569,13 @@ function g4AddDec() {
     ans.toFixed(2),
     [(ans+0.1).toFixed(2), (ans-0.1).toFixed(2), (ans+0.01).toFixed(2), (ans-0.01).toFixed(2), (ans*10).toFixed(2)]),
     `Think in hundredths: ${ai} hundredths + ${bi} hundredths = ${ai + bi} hundredths, which is written ${ans.toFixed(2)}.`,
-    'Line up the decimal points, then add the way you add whole numbers.');
+    'Line up the decimal points, then add the way you add whole numbers.',
+    { name: 'Think in Hundredths', steps: [
+      `Read each decimal as hundredths: ${a.toFixed(2)} is ${ai} hundredths and ${b.toFixed(2)} is ${bi} hundredths.`,
+      `Add the hundredths: ${ai} + ${bi}. Line up the places, and regroup if you need to.`,
+      ai + bi >= 100 ? 'Now write your total as a decimal. 100 hundredths make 1 whole. Which choice matches?'
+                     : 'Now write your total hundredths as a decimal, with two places after the decimal point. Which choice matches?'
+    ] });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -7194,9 +7585,6 @@ function g4AddDec() {
 const MATH_GENERATORS = {
   // Pre-K math packs
   pk_count_mc: [prekCountEmoji, prekAfter, prekBefore, prekMissing],
-  pk_more_less: null, // no generator — use bank
-  pk_shapes_mc: null,
-  pk_add: [prekAdd10, prekSub10],
 
   // G2 math packs
   g2_add_mc: [g2Add20],
@@ -8473,14 +8861,14 @@ function prekTypedAdd() {
   const a = randInt(1, 5);
   const b = randInt(1, 5);
   return withWhy({ type:'typed', text:`${a} + ${b} = ?  (type the number)`, acceptedAnswers:[String(a+b)] },
-    whyAddK(a, b), `Hold up ${a} fingers, then ${b} more. Count them all.`);
+    whyAddK(a, b), `Hold up ${a} fingers, then ${b} more. Count them all.`, howAddK(a, b));
 }
 
 function prekTypedSub() {
   const a = randInt(3, 10);
   const b = randInt(1, a);
   return withWhy({ type:'typed', text:`${a} - ${b} = ?  (type the number)`, acceptedAnswers:[String(a-b)] },
-    whySubK(a, b), `Hold up ${a} fingers. Put down ${b}. How many are still up?`);
+    whySubK(a, b), `Hold up ${a} fingers. Put down ${b}. How many are still up?`, howSubK(a, b));
 }
 
 function prekTfCount() {
@@ -8489,7 +8877,8 @@ function prekTfCount() {
   const sum = a + b;
   const claimed = Math.random() < 0.5 ? sum : (Math.random() < 0.5 ? sum + 1 : sum - 1);
   return withWhy({ type:'tf', statement:`${a} + ${b} = ${claimed}`, answer: (claimed === sum) },
-    claimed === sum ? `True. ${a} plus ${b} is ${sum}.` : `False. ${a} plus ${b} is ${sum}, not ${claimed}.`);
+    claimed === sum ? `True. ${a} plus ${b} is ${sum}.` : `False. ${a} plus ${b} is ${sum}, not ${claimed}.`, null,
+    howAddK(a, b, `Now count them all. Is it the same as ${claimed}? Say true or false.`));
 }
 
 function prekTfCompare() {
@@ -8502,7 +8891,12 @@ function prekTfCompare() {
   const statedTruth = claimed ? actualBigger : !actualBigger;
   const big = Math.max(a, b), small = Math.min(a, b);
   return withWhy({ type:'tf', statement:`${a} is ${verb} ${b}.`, answer: statedTruth },
-    `${statedTruth ? 'True' : 'False'}. ${big} is bigger than ${small}. When you count, you say ${small} first and ${big} later.`);
+    `${statedTruth ? 'True' : 'False'}. ${big} is bigger than ${small}. When you count, you say ${small} first and ${big} later.`, null,
+    { name: 'Count to Compare', steps: [
+      `Count out loud from 1 to 10. Listen for ${a} and ${b}.`,
+      'The number you say later is bigger. The number you say first is smaller.',
+      `Now, is ${a} really ${verb} ${b}? Say true or false.`
+    ] });
 }
 
 // ───────────────────────────────────────────────────────
@@ -8512,14 +8906,14 @@ function g2TypedAdd() {
   const a = randInt(5, 50);
   const b = randInt(5, 50);
   return withWhy({ type:'typed', text:`${a} + ${b} = ?`, acceptedAnswers:[String(a+b)] },
-    whyAddTensOnes(a, b), 'Add the tens, then the ones, then put the two together.');
+    whyAddTensOnes(a, b), 'Add the tens, then the ones, then put the two together.', howAddTensOnes(a, b));
 }
 
 function g2TypedSub() {
   const a = randInt(20, 99);
   const b = randInt(5, a - 1);
   return withWhy({ type:'typed', text:`${a} - ${b} = ?`, acceptedAnswers:[String(a-b)] },
-    whySubTensOnes(a, b), 'Take away the tens first, then the ones. Check by adding back.');
+    whySubTensOnes(a, b), 'Take away the tens first, then the ones. Check by adding back.', howSubTensOnes(a, b));
 }
 
 function g2TfMath() {
@@ -8528,7 +8922,8 @@ function g2TfMath() {
   const sum = a + b;
   const claimed = Math.random() < 0.5 ? sum : sum + (Math.random() < 0.5 ? 1 : -1);
   return withWhy({ type:'tf', statement:`${a} + ${b} = ${claimed}`, answer: (claimed === sum) },
-    claimed === sum ? `True. ${a} + ${b} = ${sum}.` : `False. ${a} + ${b} = ${sum}, not ${claimed}. Being off by one is the most common slip — count on carefully.`);
+    claimed === sum ? `True. ${a} + ${b} = ${sum}.` : `False. ${a} + ${b} = ${sum}, not ${claimed}. Being off by one is the most common slip — count on carefully.`, null,
+    howAdd20(a, b, `Now finish the sum and compare it with ${claimed}. The same means true. Different means false.`));
 }
 
 function g2TfPlaceValue() {
@@ -8541,7 +8936,12 @@ function g2TfPlaceValue() {
   const claimed = swap ? (t*100 + h*10 + o) : actual;
   return withWhy({ type:'tf', statement:`${h} hundreds + ${t} tens + ${o} ones equals ${claimed}.`, answer: (claimed === actual) },
     `${claimed === actual ? 'True' : 'False'}. ${h} hundreds + ${t} tens + ${o} ones is ${h * 100} + ${t * 10} + ${o} = ${actual}.` +
-    (claimed === actual ? '' : ` ${claimed} mixes up the hundreds and the tens.`));
+    (claimed === actual ? '' : ` ${claimed} mixes up the hundreds and the tens.`), null,
+    { name: 'Check the Place Value', steps: [
+      `Put each digit in its place: ${h} in the hundreds, ${t} in the tens, ${o} in the ones.`,
+      `Read ${claimed} one digit at a time. How many hundreds does it have? How many tens?`,
+      `Now compare. Does ${claimed} have ${nOf(h, 'hundred')}, ${nOf(t, 'ten')} and ${nOf(o, 'one')}? Say true or false.`
+    ] });
 }
 
 // Show-your-work: word problem requiring multiple steps
@@ -8558,7 +8958,11 @@ function g2ShowWorkAdd() {
     acceptedAnswers:[String(start + added)],
     workPrompt:`Word problem: ${n}, ${t}, start=${start}, added=${added}`
   }, `${n} gets MORE, so add. ${whyAddTensOnes(start, added)}`,
-     'Did the amount go up or down? Pick the operation, then work it out on paper.');
+     'Did the amount go up or down? Pick the operation, then work it out on paper.',
+     { name: 'Add To Problem', steps: [
+       `${n} has ${start} ${t} and gets ${added} more. The amount goes up, so write ${start} + ${added} on your paper.`,
+       ...howAddTensOnes(start, added).steps
+     ] });
 }
 
 function g2ShowWorkSub() {
@@ -8574,7 +8978,11 @@ function g2ShowWorkSub() {
     acceptedAnswers:[String(start - taken)],
     workPrompt:`Word problem: ${n}, ${t}, start=${start}, taken=${taken}`
   }, `Giving some away makes the amount smaller, so subtract: ${start} − ${taken} = ${start - taken}. Check: ${start - taken} + ${taken} = ${start}.`,
-     'Did the amount go up or down? Pick the operation, then work it out on paper.');
+     'Did the amount go up or down? Pick the operation, then work it out on paper.',
+     { name: 'Take From Problem', steps: [
+       `${n} had ${start} ${t} and gave ${taken} away. The amount goes down, so write ${start} − ${taken} on your paper.`,
+       ...howSubTensOnes(start, taken).steps
+     ] });
 }
 
 function g2ShowWorkMoney() {
@@ -8586,7 +8994,7 @@ function g2ShowWorkMoney() {
     acceptedAnswers:[String(paid - price)],
     workPrompt:`Money problem: cost=${price}¢, paid=$1, change=?`
   }, `$1 is 100 cents. Change is what you paid minus the price: 100 − ${price} = ${100 - price}. Check: ${price} + ${100 - price} = 100.`,
-     'A dollar is 100 cents. Count up from the price to 100.');
+     'A dollar is 100 cents. Count up from the price to 100.', howChange(price, true));
 }
 
 function g2ShowWorkComparison() {
@@ -8606,7 +9014,11 @@ function g2ShowWorkComparison() {
     acceptedAnswers:[String(diff)],
     workPrompt:`Comparison: ${a}=${aAmount}, ${b}=${bAmount}, diff=?`
   }, `"How many more" asks for the difference, so subtract the smaller from the bigger: ${big} − ${small} = ${diff}. Check: ${small} + ${diff} = ${big}.`,
-     '"How many more" is a comparing question. Which operation finds the difference?');
+     '"How many more" is a comparing question. Which operation finds the difference?',
+     { name: 'Compare Problem', steps: [
+       `"How many more" compares ${aAmount} and ${bAmount} pages. Find the difference: write ${big} − ${small} on your paper.`,
+       ...howSubTensOnes(big, small).steps
+     ] });
 }
 
 // ───────────────────────────────────────────────────────
@@ -8616,7 +9028,7 @@ function g4TypedMult() {
   const a = randInt(12, 50);
   const b = randInt(3, 9);
   return withWhy({ type:'typed', text:`${a} × ${b} = ?`, acceptedAnswers:[String(a*b)] },
-    whyMultPartial(a, b), 'Split the two-digit number into tens and ones. Multiply each part, then add.');
+    whyMultPartial(a, b), 'Split the two-digit number into tens and ones. Multiply each part, then add.', howMultPartial(a, b));
 }
 
 function g4TypedDiv() {
@@ -8625,7 +9037,7 @@ function g4TypedDiv() {
   const a = b * quotient;
   return withWhy({ type:'typed', text:`${a} ÷ ${b} = ?`, acceptedAnswers:[String(quotient)] },
     `${b} × ${quotient} = ${a}, so ${a} ÷ ${b} = ${quotient}. Division asks how many groups of ${b} make ${a}.`,
-    `Think multiplication: ${b} times what number equals ${a}?`);
+    `Think multiplication: ${b} times what number equals ${a}?`, howDivide(a, b, quotient));
 }
 
 function g4TypedFrac() {
@@ -8646,7 +9058,8 @@ function g4TypedFrac() {
   const c = cases[randInt(0, cases.length-1)];
   return withWhy({ type:'typed', text:`${c.q} (type as n/d)`, acceptedAnswers:c.a },
     whySimplify(c.q.replace('Simplify ', '')),
-    'Find the largest number that divides evenly into both the numerator and the denominator.');
+    'Find the largest number that divides evenly into both the numerator and the denominator.',
+    howSimplify(c.q.replace('Simplify ', '')));
 }
 
 function g4TfMath() {
@@ -8655,7 +9068,8 @@ function g4TfMath() {
   const actual = a * b;
   const claimed = Math.random() < 0.5 ? actual : actual + (randInt(1, 20) * (Math.random() < 0.5 ? 1 : -1));
   return withWhy({ type:'tf', statement:`${a} × ${b} = ${claimed}`, answer: (claimed === actual) },
-    claimed === actual ? `True. ${whyMultPartial(a, b)}` : `False. ${a} × ${b} = ${actual}, not ${claimed}. ${whyMultPartial(a, b)}`);
+    claimed === actual ? `True. ${whyMultPartial(a, b)}` : `False. ${a} × ${b} = ${actual}, not ${claimed}. ${whyMultPartial(a, b)}`, null,
+    howMultPartial(a, b, `Now finish the product and compare it with ${claimed}. The same means true. Different means false.`));
 }
 
 function g4TfFrac() {
@@ -8687,8 +9101,87 @@ function g4TfFrac() {
     { statement:'6/8 simplifies to 3/4.', answer:true,    why:'True. Divide the top and bottom of 6/8 by 2 and you get 3/4.' },
     { statement:'6/8 simplifies to 2/4.', answer:false,   why:'False. 2/4 is only half. Divide the top and bottom of 6/8 by 2 to get 3/4.' },
   ];
+  // SHOW ME HOW for each statement: the steps check it and never say true or false.
+  const eq = (f, g) => {
+    const [fn, fd] = f.split('/'), [gn, gd] = g.split('/');
+    return { name: 'Equivalent Fractions', steps: [
+      'Equivalent fractions come from multiplying the numerator and the denominator by the same number.',
+      `What number times ${fd} makes ${gd}? Multiply ${fn} by that same number. Do you get ${gn}?` +
+        (gd % fd ? ` If no whole number works, simplify ${g} and compare.` : ''),
+      `Now decide: is ${f} equivalent to ${g}? True or false?`
+    ] };
+  };
+  const half = (f, word) => {
+    const [fn, fd] = f.split('/');
+    return { name: 'Compare to 1/2', steps: [
+      `Use 1/2 as a benchmark. What is half of ${fd}? That many ${FRAC_UNIT[fd]}s would be exactly 1/2.`,
+      `Is ${fn} more or less than half of ${fd}? So is ${f} more or less than 1/2?`,
+      `Now decide: is ${f} really ${word} than 1/2? True or false?`
+    ] };
+  };
+  const dec = (d, f) => {
+    const den = d.length === 3 ? 10 : 100, num = Math.round(parseFloat(d) * den);
+    return { name: 'Read It as a Fraction', steps: [
+      `Read ${d} by place value: ${num} ${den === 10 ? 'tenths' : 'hundredths'}, or ${num}/${den}.`,
+      `Simplify ${num}/${den}, or make ${f} into an equivalent fraction over ${den}.`,
+      `Now decide: does ${d} equal ${f}? True or false?`
+    ] };
+  };
+  const add = (x, y, claim, minus) => {
+    const [xn, d] = x.split('/'), yn = y.split('/')[0];
+    return { name: minus ? 'Subtract Like Fractions' : 'Add Like Fractions', steps: [
+      `The denominators match, so the pieces are the same size: ${FRAC_UNIT[d]}s.`,
+      `${minus ? 'Subtract' : 'Add'} the numerators: ${xn} ${minus ? '−' : '+'} ${yn}. Keep the denominator, ${d}. Simplify if you can.`,
+      `Now compare your answer with ${claim}. Are they the same amount? True or false?`
+    ] };
+  };
+  const simp = (f, claim) => {
+    const [n, d] = f.split('/');
+    return { name: 'Greatest Common Factor', steps: [
+      `Find the greatest number that divides evenly into both ${n} and ${d}.`,
+      `Divide the numerator and the denominator of ${f} by that number.`,
+      `Now compare what you get with ${claim}. Is it the same? True or false?`
+    ] };
+  };
+  const how = {
+    '1/2 is equivalent to 2/4.': eq('1/2', '2/4'),
+    '1/2 is equivalent to 3/6.': eq('1/2', '3/6'),
+    '1/2 is equivalent to 4/6.': eq('1/2', '4/6'),
+    '2/3 is equivalent to 4/6.': eq('2/3', '4/6'),
+    '2/3 is equivalent to 6/8.': eq('2/3', '6/8'),
+    '3/4 is equivalent to 6/8.': eq('3/4', '6/8'),
+    '3/4 is equivalent to 9/12.': eq('3/4', '9/12'),
+    '1/4 is equivalent to 2/8.': eq('1/4', '2/8'),
+    '1/4 is equivalent to 3/8.': eq('1/4', '3/8'),
+    '5/6 is GREATER than 1/2.': half('5/6', 'greater'),
+    '1/3 is GREATER than 1/2.': { name: 'Same Numerator', steps: [
+      'Both fractions have a numerator of 1: one piece each. Which piece is bigger, one third or one half of the same whole?',
+      'Cutting a whole into more pieces makes each piece smaller.',
+      'Now decide: is 1/3 really greater than 1/2? True or false?' ] },
+    '3/4 is GREATER than 1/2.': half('3/4', 'greater'),
+    '2/5 is LESS than 1/2.': half('2/5', 'less'),
+    '0.5 equals 1/2.': dec('0.5', '1/2'),
+    '0.25 equals 1/4.': dec('0.25', '1/4'),
+    '0.75 equals 3/4.': dec('0.75', '3/4'),
+    '0.3 equals 1/3.': { name: 'Read It as a Fraction', steps: [
+      'Read 0.3 by place value: 3 tenths, or 3/10.',
+      'Try 3 groups of each: 3 × 3/10 and 3 × 1/3. Do you get the same amount?',
+      'Now decide: does 0.3 equal 1/3? True or false?' ] },
+    '0.4 equals 2/5.': dec('0.4', '2/5'),
+    '0.1 equals 1/10.': { name: 'Read It as a Fraction', steps: [
+      'The first place after the decimal point is the tenths place.',
+      'Read 0.1 by place value. Which digit is in the tenths place, and what does it mean?',
+      'Now decide: does 0.1 equal 1/10? True or false?' ] },
+    '1/4 + 1/4 = 1/2.': add('1/4', '1/4', '1/2'),
+    '1/4 + 1/4 = 2/8.': add('1/4', '1/4', '2/8'),
+    '2/5 + 1/5 = 3/5.': add('2/5', '1/5', '3/5'),
+    '2/5 + 1/5 = 3/10.': add('2/5', '1/5', '3/10'),
+    '3/4 − 1/4 = 1/2.': add('3/4', '1/4', '1/2', true),
+    '6/8 simplifies to 3/4.': simp('6/8', '3/4'),
+    '6/8 simplifies to 2/4.': simp('6/8', '2/4'),
+  };
   const picked = pairs[randInt(0, pairs.length-1)];
-  return { type:'tf', statement: picked.statement, answer: picked.answer, why: picked.why };
+  return { type:'tf', statement: picked.statement, answer: picked.answer, why: picked.why, how: how[picked.statement] };
 }
 
 function g4TfDecimal() {
@@ -8705,8 +9198,40 @@ function g4TfDecimal() {
     { statement:'In 3.47, the 7 is in the hundredths place.', answer:true, why:'True. The second digit after the decimal point is the hundredths place.' },
     { statement:'In 3.47, the 4 is in the hundredths place.', answer:false, why:'False. The 4 is the first digit after the decimal point, so it is in the tenths place. The 7 is in the hundredths.' },
   ];
+  // SHOW ME HOW for each statement: the steps check it and never say true or false.
+  const cmp = (x, y) => ({ name: 'Compare Place by Place', steps: [
+    `Line up the decimal points. Write both with two places: ${(+x).toFixed(2)} and ${(+y).toFixed(2)}.`,
+    'Compare from the left: the ones, then the tenths, then the hundredths. The first place that is different decides.',
+    `Now decide: is ${x} really greater than ${y}? True or false?`
+  ] });
+  const sum = claim => ({ name: 'Think in Tenths', steps: [
+    'Read each decimal as tenths: 0.3 is 3 tenths and 0.4 is 4 tenths.',
+    'Add the tenths: 3 tenths + 4 tenths. Then write that many tenths as a decimal.',
+    `Now compare your sum with ${claim}. Is it the same? True or false?`
+  ] });
+  const place = (digit, where) => ({ name: 'Place Value', steps: [
+    'Find the decimal point in 3.47. The 3 to its left is in the ones place.',
+    'The first digit after the decimal point is in the tenths place. The second is in the hundredths place.',
+    `Now decide: is the ${digit} really in the ${where} place? True or false?`
+  ] });
+  const how = {
+    '0.7 is greater than 0.65.': cmp('0.7', '0.65'),
+    '0.65 is greater than 0.7.': cmp('0.65', '0.7'),
+    '2.5 is greater than 2.45.': cmp('2.5', '2.45'),
+    '0.4 is greater than 0.04.': cmp('0.4', '0.04'),
+    '0.04 is greater than 0.4.': cmp('0.04', '0.4'),
+    '0.5 is equal to 0.50.': { name: 'Tenths and Hundredths', steps: [
+      'Read each by place value: 0.5 is 5 tenths, and 0.50 is 50 hundredths.',
+      '1 tenth is the same as 10 hundredths. So how many hundredths are 5 tenths?',
+      'Now decide: is 0.5 equal to 0.50? True or false?' ] },
+    '0.3 + 0.4 = 0.7.': sum('0.7'),
+    '0.3 + 0.4 = 0.07.': sum('0.07'),
+    'In 3.47, the 4 is in the tenths place.': place('4', 'tenths'),
+    'In 3.47, the 7 is in the hundredths place.': place('7', 'hundredths'),
+    'In 3.47, the 4 is in the hundredths place.': place('4', 'hundredths'),
+  };
   const picked = pairs[randInt(0, pairs.length-1)];
-  return { type:'tf', statement: picked.statement, answer: picked.answer, why: picked.why };
+  return { type:'tf', statement: picked.statement, answer: picked.answer, why: picked.why, how: how[picked.statement] };
 }
 
 // Show-your-work problems for 4th grade
@@ -8719,7 +9244,8 @@ function g4ShowWorkMult() {
     acceptedAnswers:[String(a*b)],
     workPrompt:`Multiplication: ${a} × ${b}`
   }, whyMultPartial(a, b),
-     'Multiply by the ones, then by the tens, then add the partial products. Does your answer match an estimate?');
+     'Multiply by the ones, then by the tens, then add the partial products. Does your answer match an estimate?',
+     howMultPartial(a, b));
 }
 
 function g4ShowWorkDiv() {
@@ -8737,7 +9263,8 @@ function g4ShowWorkDiv() {
   }, rem === 0
        ? `${b} × ${quotient} = ${a} exactly, so ${a} ÷ ${b} = ${quotient} with nothing left over.`
        : `${b} × ${quotient} = ${b * quotient}, and ${a} − ${b * quotient} = ${rem} left over. ${rem} is less than ${b}, so it is ${answerStr}. Check: ${b} × ${quotient} + ${rem} = ${a}.`,
-     'Check your paper: quotient × divisor + remainder should equal the number you started with.');
+     'Check your paper: quotient × divisor + remainder should equal the number you started with.',
+     howDivRem(a, b, quotient, true));
 }
 
 function g4ShowWorkWordProblem() {
@@ -8750,7 +9277,15 @@ function g4ShowWorkWordProblem() {
         answer: String(kids * perBag),
         prompt: `${kids} players × ${perBag} bottles`,
         why: `${kids} players each need ${perBag}, so it is ${kids} equal groups of ${perBag}: ${kids} × ${perBag} = ${kids * perBag}.`,
-        hint: 'Every player needs the same number. Which operation puts equal groups together?'
+        hint: 'Every player needs the same number. Which operation puts equal groups together?',
+        how: { name: 'Equal Groups', steps: [
+          `What is it about? ${kids} players each need ${perBag} bottles. That is ${kids} equal groups of ${perBag}.`,
+          `Write an equation with a letter for the unknown: ${kids} × ${perBag} = b.`,
+          kids % 10 ? `Use an area model: break ${kids} into ${kids - kids % 10} + ${kids % 10}. Find ${kids - kids % 10} × ${perBag} and ${kids % 10} × ${perBag}.`
+                    : `Think tens: ${kids} is ${kids / 10} tens, so find ${kids / 10} × ${perBag} tens.`,
+          kids % 10 ? `Now add the two partial products. Check: is the total close to ${Math.round(kids / 10) * 10} × ${perBag}?`
+                    : 'Now write that many tens as a number. How many bottles is that?'
+        ] }
       };
     },
     () => {
@@ -8765,7 +9300,14 @@ function g4ShowWorkWordProblem() {
         why: rem === 0
           ? `Sharing equally means dividing: ${totalCookies} ÷ ${kids} = ${per}. Check: ${kids} × ${per} = ${totalCookies}.`
           : `Sharing equally means dividing: ${totalCookies} ÷ ${kids} = ${per} r ${rem}. Each kid gets ${per} whole cookies, and ${rem} are left over.`,
-        hint: 'Sharing equally is a division problem. How many does each kid get before you run out?'
+        hint: 'Sharing equally is a division problem. How many does each kid get before you run out?',
+        // The first handout is below the answer: 5 each when each kid gets 10 or fewer.
+        how: { name: 'Partial Quotients', steps: [
+          `What is it about? ${totalCookies} cookies shared equally by ${kids} kids. Sharing equally is division: ${totalCookies} ÷ ${kids} = c.`,
+          `Give each kid ${per > 10 ? 10 : 5} first: ${per > 10 ? 10 : 5} × ${kids} = ${(per > 10 ? 10 : 5) * kids} cookies. Subtract that from ${totalCookies}.`,
+          `Keep handing out cookies until fewer than ${kids} are left. Leftovers cannot be shared equally.`,
+          `Now add up how many each kid got. Check: that number × ${kids}, plus the leftovers, makes ${totalCookies}.`
+        ] }
       };
     },
     () => {
@@ -8776,7 +9318,13 @@ function g4ShowWorkWordProblem() {
         answer: String(pizzas * slicesEach),
         prompt: `${pizzas} pizzas × ${slicesEach} slices`,
         why: `${pizzas} pizzas with ${slicesEach} slices each is ${pizzas} equal groups: ${pizzas} × ${slicesEach} = ${pizzas * slicesEach}.`,
-        hint: 'Every pizza has the same number of slices. Which operation puts equal groups together?'
+        hint: 'Every pizza has the same number of slices. Which operation puts equal groups together?',
+        how: { name: 'Equal Groups', steps: [
+          `What is it about? ${pizzas} pizzas with ${slicesEach} slices each. That is ${pizzas} equal groups of ${slicesEach}.`,
+          `Write an equation with a letter for the unknown: ${pizzas} × ${slicesEach} = s.`,
+          `Use a fact you know: find ${pizzas} × 4 first. ${slicesEach} is double 4, so ${pizzas} × ${slicesEach} is double ${pizzas} × 4.`,
+          `Now double your ${pizzas} × 4 product to find the slices. Check: skip count by ${slicesEach}s, ${pizzas} times.`
+        ] }
       };
     },
     () => {
@@ -8787,7 +9335,13 @@ function g4ShowWorkWordProblem() {
         answer: String(total - taken),
         prompt: `${total} - ${taken}`,
         why: `Sold cards are gone, so subtract: ${total} − ${taken} = ${total - taken}. Check: ${total - taken} + ${taken} = ${total}.`,
-        hint: 'Did the number of cards go up or down? Pick the operation, then check by working backward.'
+        hint: 'Did the number of cards go up or down? Pick the operation, then check by working backward.',
+        how: { name: 'Standard Algorithm', steps: [
+          `What is it about? A store had ${total} cards and sold ${taken}. Sold cards are gone, so subtract: ${total} − ${taken} = c.`,
+          `Estimate first: round ${total} and ${taken} to the nearest ten, then subtract.`,
+          'Line up the places and subtract, starting with the ones. Not enough to subtract in a place? Regroup from the next place.',
+          `Now check: add your answer to ${taken}. Do you get ${total}? Is it close to your estimate?`
+        ] }
       };
     },
     () => {
@@ -8799,7 +9353,13 @@ function g4ShowWorkWordProblem() {
         answer: String(a + b + c),
         prompt: `${a} + ${b} + ${c}`,
         why: `"In total" means put all three together: ${a} + ${b} = ${a + b}, then ${a + b} + ${c} = ${a + b + c}.`,
-        hint: '"In total" means combine everything. Add two of the distances first, then the third.'
+        hint: '"In total" means combine everything. Add two of the distances first, then the third.',
+        how: { name: 'Add Three Numbers', steps: [
+          `What is it about? Three runs: ${a}, ${b} and ${c} meters. "In total" means put all three together: ${a} + ${b} + ${c} = m.`,
+          `Add two of them first: ${a} + ${b}. Line up the tens and the ones.`,
+          `Then add ${c} to that sum. Regroup if the ones make 10 or more.`,
+          'Now check: round each run to the nearest ten and add. Is your total close?'
+        ] }
       };
     },
   ];
@@ -8810,7 +9370,8 @@ function g4ShowWorkWordProblem() {
     acceptedAnswers: [t.answer],
     workPrompt: t.prompt,
     why: t.why,
-    hint: t.hint
+    hint: t.hint,
+    how: t.how
   };
 }
 
@@ -8841,6 +9402,51 @@ function g4ShowWorkFrac() {
     { text: 'Convert 0.6 to a fraction in simplest form. (type as n/d)', answers: ['3/5'], prompt: '0.6 = ? fraction',
       why: '0.6 is 6 tenths, 6/10. Divide the top and bottom by 2 to simplify: 3/5.', hint: 'Read the decimal as tenths, write that fraction, then simplify.' },
   ];
+  // SHOW ME HOW for each case, by its work prompt: the steps for the written work.
+  const like = (x, y, minus) => {
+    const [xn, d] = x.split('/'), yn = y.split('/')[0];
+    return { name: minus ? 'Subtract, Then Simplify' : 'Add Like Fractions', steps: [
+      `Write ${x} ${minus ? '−' : '+'} ${y} on your paper. The pieces are ${FRAC_UNIT[d]}s, all the same size.`,
+      `${minus ? 'Subtract' : 'Add'} the numerators: ${xn} ${minus ? '−' : '+'} ${yn}. The denominator stays ${d}.`,
+      minus ? `Now simplify: divide the numerator and ${d} by a number that goes into both. Write it in simplest form.`
+            : 'Now write your answer as a fraction. Can it be simplified? Check.'
+    ] };
+  };
+  const how = {
+    '1/4 + 2/4': like('1/4', '2/4'),
+    '2/5 + 1/5': like('2/5', '1/5'),
+    '3/8 + 2/8': like('3/8', '2/8'),
+    '5/6 - 2/6': like('5/6', '2/6', true),
+    '7/10 - 3/10': like('7/10', '3/10', true),
+    '1/2 × 6': { name: 'Fraction of a Number', steps: [
+      '1/2 × 6 means one half of 6.',
+      'Draw 6 dots on your paper and split them into 2 equal groups.',
+      'Now count the dots in one group. That is half of 6.' ] },
+    '1/4 × 8': { name: 'Fraction of a Number', steps: [
+      '1/4 × 8 means one fourth of 8.',
+      'Draw 8 dots on your paper and split them into 4 equal groups.',
+      'Now count the dots in one group. That is one fourth of 8.' ] },
+    '2/3 × 9': { name: 'Fraction of a Number', steps: [
+      '2/3 × 9 means two thirds of 9.',
+      'Draw 9 dots and split them into 3 equal groups. One group is one third of 9.',
+      'Now take 2 of those groups. How many dots is that?' ] },
+    '3/4 = ? decimal': { name: 'Make Hundredths', steps: [
+      'Make an equivalent fraction with 100 as the denominator: 4 × 25 = 100.',
+      'Multiply the numerator by 25 too: 3 × 25. That is how many hundredths.',
+      'Now write that many hundredths as a decimal, with two places after the decimal point. Think of three quarters of a dollar.' ] },
+    '1/4 = ? decimal': { name: 'Make Hundredths', steps: [
+      'Make an equivalent fraction with 100 as the denominator: 4 × 25 = 100.',
+      'Multiply the numerator by 25 too: 1 × 25. That is how many hundredths.',
+      'Now write that many hundredths as a decimal, with two places after the decimal point. Think of one quarter of a dollar.' ] },
+    '2/5 = ? decimal': { name: 'Make Tenths', steps: [
+      'Make an equivalent fraction with 10 as the denominator: 5 × 2 = 10.',
+      'Multiply the numerator by 2 too: 2 × 2. That is how many tenths.',
+      'Now write that many tenths as a decimal, with one place after the decimal point.' ] },
+    '0.6 = ? fraction': { name: 'Read It, Then Simplify', steps: [
+      'Read 0.6 by place value: 6 tenths. Write 6/10 on your paper.',
+      'Find the greatest number that divides both 6 and 10.',
+      'Now divide the numerator and the denominator by it. Write the fraction in simplest form.' ] },
+  };
   const c = cases[randInt(0, cases.length-1)];
   return {
     type:'showwork',
@@ -8848,7 +9454,8 @@ function g4ShowWorkFrac() {
     acceptedAnswers: c.answers,
     workPrompt: c.prompt,
     why: c.why,
-    hint: c.hint
+    hint: c.hint,
+    how: how[c.prompt]
   };
 }
 
