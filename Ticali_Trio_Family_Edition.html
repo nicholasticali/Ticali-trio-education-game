@@ -58,15 +58,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* iPad/touch: kill the 300ms tap delay and double-tap-zoom misfires on
-     all interactive elements. Apple Pencil taps route through the same
-     pointer pipeline, so this benefits pencil use too. */
-  button, .choice, .tf-btn, .pack-card, .profile-card, .tut-step-dot,
-  .voice-btn, .summer-toggle, .exit-btn, .tut-ctrl-btn, .tut-close,
-  .tut-skip-btn, .js-speak {
-    touch-action: manipulation;
-  }
-
   /* iOS zooms the page when a focused input has font-size < 16px.
      Keep all text inputs at >= 16px to prevent that jarring zoom. */
   input[type="text"], input[type="number"], textarea {
@@ -82,7 +73,7 @@
   .scratch-toolbar {
     display: flex; align-items: center; gap: 0.6rem;
     padding: 0.6rem 0.8rem;
-    background: var(--cream, #fdf6e3);
+    background: var(--bg);
     border-bottom: 4px solid var(--ink, #1a1a2e);
     flex-wrap: wrap;
   }
@@ -148,55 +139,6 @@
   .scratch-btn:active, .autoread-btn:active {
     transform: translate(1px,1px);
     box-shadow: 1px 1px 0 var(--ink);
-  }
-
-  /* ─── Round report box (end-of-round send-to-parent) ─── */
-  .report-box {
-    border: 3px solid var(--ink);
-    background: #fff8e7;
-    box-shadow: 5px 5px 0 var(--ink);
-    padding: 1rem;
-    margin: 1rem 0;
-    text-align: center;
-  }
-  .report-box-title {
-    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
-    font-size: 1rem;
-    margin-bottom: 0.35rem;
-  }
-  .report-box-sub {
-    font-size: 0.85rem;
-    margin-bottom: 0.85rem;
-  }
-  .report-send-row {
-    display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;
-  }
-  .report-send-btn {
-    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
-    font-size: 0.85rem;
-    background: var(--p-g2);
-    color: white;
-    border: 3px solid var(--ink);
-    box-shadow: 4px 4px 0 var(--ink);
-    padding: 0.8rem 1.1rem;
-    min-height: 48px;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-  .report-send-btn.sms { background: var(--success); }
-  .report-send-btn:active {
-    transform: translate(2px,2px);
-    box-shadow: 1px 1px 0 var(--ink);
-  }
-  .gate-hint {
-    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-    font-size: 0.75rem;
-    margin-top: 0.85rem;
-    color: var(--muted);
-  }
-  .gated-btn[disabled] {
-    opacity: 0.35;
-    pointer-events: none;
   }
 
   /* ─── Progress view bar chart ─── */
@@ -291,7 +233,7 @@
   @media (hover: hover) and (pointer: fine) {
   .profile-card:hover { transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--ink); }
   }
-  .profile-card:active { transform: translate(2px, 2px); box-shadow: 6px 6px 0 var(--ink); }
+  .profile-card:active { box-shadow: 6px 6px 0 var(--ink); }
   .profile-banner { background: var(--card-color); padding: 1.5rem 1.2rem; text-align: center; border-bottom: 3px solid var(--ink); }
   .profile-emoji { font-size: 4rem; line-height: 1; display: block; margin-bottom: 0.5rem; }
   .profile-name { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.3rem; color: white; text-shadow: 2px 2px 0 var(--ink); letter-spacing: 1px; }
@@ -397,37 +339,6 @@
     font-weight: bold;
   }
 
-  .summer-toggle-row {
-    display: flex; align-items: center; gap: 0.75rem;
-    margin: 0 0 1.25rem 0; flex-wrap: wrap;
-    padding: 0.75rem; background: white;
-    border: 3px dashed var(--gold);
-  }
-  .summer-toggle {
-    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
-    font-size: 0.95rem;
-    background: white; color: var(--ink);
-    border: 3px solid var(--ink);
-    box-shadow: 4px 4px 0 var(--ink);
-    padding: 0.6rem 1rem;
-    cursor: pointer;
-    transition: all 0.1s;
-  }
-  @media (hover: hover) and (pointer: fine) {
-  .summer-toggle:hover {
-    transform: translate(-2px,-2px);
-    box-shadow: 6px 6px 0 var(--ink);
-  }
-  }
-  .summer-toggle.on {
-    background: var(--gold); color: var(--ink);
-  }
-  .summer-toggle-help {
-    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-
   .packs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
 
   .pack-card {
@@ -439,7 +350,7 @@
   @media (hover: hover) and (pointer: fine) {
   .pack-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
   }
-  .pack-card:active { transform: translate(1px,1px); box-shadow: 4px 4px 0 var(--ink); }
+  .pack-card:active { box-shadow: 4px 4px 0 var(--ink); }
 
   .pack-voice { display: inline-block; vertical-align: top; margin-left: 0.6rem; }
   .pack-icon-box {
@@ -597,12 +508,12 @@
     min-height: 70px;
   }
   @media (hover: hover) and (pointer: fine) {
-  .choice:hover:not(:disabled) {
+  .choice:hover:not(.disabled) {
     background: var(--user-color); color: white;
     transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink);
   }
   }
-  .choice:disabled, .choice.disabled { cursor: default; }
+  .choice.disabled { cursor: default; }
   .tf-btn.disabled { cursor: default; pointer-events: none; }
   .tf-btn.disabled .voice-btn-sm { pointer-events: auto; }
 
@@ -614,7 +525,7 @@
     font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.9rem; flex-shrink: 0;
   }
   @media (hover: hover) and (pointer: fine) {
-  .choice:hover:not(:disabled) .choice-letter { background: white; color: var(--ink); }
+  .choice:hover:not(.disabled) .choice-letter { background: white; color: var(--ink); }
   }
   .choice.right { background: var(--success) !important; color: white !important; transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
   .choice.right .choice-letter { background: white; color: var(--success); }
@@ -648,21 +559,20 @@
   .tf-btn.true-btn { color: var(--tf-true); }
   .tf-btn.false-btn { color: var(--tf-false); }
   @media (hover: hover) and (pointer: fine) {
-  .tf-btn:hover:not(:disabled) {
+  .tf-btn:hover:not(.disabled) {
     transform: translate(-2px,-2px);
     box-shadow: 7px 7px 0 var(--ink);
   }
   }
   @media (hover: hover) and (pointer: fine) {
-  .tf-btn.true-btn:hover:not(:disabled) { background: var(--tf-true); color: white; }
+  .tf-btn.true-btn:hover:not(.disabled) { background: var(--tf-true); color: white; }
   }
   @media (hover: hover) and (pointer: fine) {
-  .tf-btn.false-btn:hover:not(:disabled) { background: var(--tf-false); color: white; }
+  .tf-btn.false-btn:hover:not(.disabled) { background: var(--tf-false); color: white; }
   }
   .tf-btn.right { background: var(--success) !important; color: white !important; transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
   .tf-btn.wrong { background: var(--danger) !important; color: white !important; animation: shake 0.3s; }
   .tf-btn.revealed { background: var(--success) !important; color: white !important; border-style: dashed; }
-  .tf-btn:disabled { cursor: default; }
 
   .tf-statement {
     background: var(--bg-deep);
@@ -751,7 +661,6 @@
   }
   .feedback.yes { background: var(--success); color: white; }
   .feedback.no { background: var(--danger); color: white; }
-  .feedback.review { background: var(--showwork); color: white; }
   .feedback-head { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.1rem; margin-bottom: 0.4rem; letter-spacing: 1px; }
 
   .next-btn {
@@ -841,6 +750,7 @@
   .profile-k .tf-btn { font-size: 2.3rem; min-height: 160px; }
 
   @media (max-width: 600px) {
+    /* .choices goes back to two columns from 481px: see the 481px – 834px block. */
     .choices, .tf-choices { grid-template-columns: 1fr; }
     .hub-header { flex-direction: column; align-items: flex-start; }
     .result-grid { grid-template-columns: 1fr; }
@@ -1075,7 +985,6 @@
   }
   }
   .tut-skip-btn:active {
-    transform: translate(1px,1px);
     box-shadow: 1px 1px 0 var(--ink);
   }
 
@@ -1841,7 +1750,7 @@
     font-size: 0.95rem; letter-spacing: 1px; margin-bottom: 0.75rem;
   }
   .lookback-item { padding: 0.75rem 0; border-top: 2px dashed rgba(0,0,0,0.15); }
-  .lookback-item:first-of-type { border-top: none; padding-top: 0; }
+  .lookback-head + .lookback-item { border-top: none; padding-top: 0; }
   .lb-q { font-weight: 700; line-height: 1.4; }
   .lb-n {
     display: inline-block; background: var(--ink); color: white;
@@ -2040,9 +1949,9 @@
      in below so passages stay readable and selectable-free but legible. */
   button, .choice, .tf-btn, .pack-card, .profile-card, .trophy,
   .switch-btn, .exit-btn, .next-btn, .help-btn, .voice-btn, .stat-pill,
-  .parent-link, .summer-toggle, .tut-ctrl-btn, .tut-close, .tut-skip-btn,
+  .parent-link, .tut-ctrl-btn, .tut-close, .tut-skip-btn,
   .tut-step-dot, .scratch-color, .scratch-clear, .scratch-close,
-  .report-send-btn, .reset-btn, .rev-ok, .rev-no, .autoread-btn,
+  .reset-btn, .rev-ok, .rev-no, .autoread-btn,
   .scratch-btn, .numpad-key, .js-speak, .order-item, .order-slot, .sort-btn, .grade-chip, .grade-door, label {
     touch-action: manipulation;
     -webkit-touch-callout: none;
@@ -2060,7 +1969,6 @@
   .switch-btn:active,
   .exit-btn:active,
   .help-btn:active,
-  .report-send-btn:active,
   .reset-btn:active,
   .tut-ctrl-btn:active:not(:disabled),
   .tut-skip-btn:active,
@@ -2077,7 +1985,7 @@
      Apple's HIG floor is 44pt; for a kindergartener aiming with a whole
      hand, 56px is the practical floor on the primary answer controls. */
   @media (any-pointer: coarse) {
-    .exit-btn, .switch-btn, .reset-btn, .report-send-btn,
+    .exit-btn, .switch-btn, .reset-btn,
     .tut-ctrl-btn, .tut-close, .tut-skip-btn,
     .rev-ok, .rev-no, .scratch-clear, .scratch-close {
       min-height: 48px;
@@ -2178,7 +2086,6 @@
     display: flex; align-items: center; justify-content: center;
     line-height: 1;
   }
-  .numpad-key.wide { grid-column: span 2; }
   .numpad-key.util {
     background: var(--bg-deep);
     font-size: 1.2rem;
@@ -2208,7 +2115,7 @@
 
   /* ─── Phones and iPad Split View at its narrowest (≤ 480px) ─── */
   @media (max-width: 480px) {
-    .hub, .quiz { padding: 1rem 0.9rem; }
+    .hub, .quiz { padding: 1rem 0.9rem calc(1rem + env(safe-area-inset-bottom)); }
     .question-frame { padding: 1.4rem 1rem; box-shadow: 6px 6px 0 var(--ink); }
     .packs-grid { grid-template-columns: 1fr; gap: 1rem; }
     .trophy-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
@@ -2220,7 +2127,7 @@
   /* ─── iPad portrait & Split View halves (481px – 834px) ─── */
   @media (min-width: 481px) and (max-width: 834px) {
     .packs-grid { grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 1rem; }
-    .quiz { max-width: 720px; padding: 1.25rem; }
+    .quiz { max-width: 720px; padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom)); }
     .choices { grid-template-columns: 1fr 1fr; gap: 1rem; }
     /* Long answer text reads badly in two narrow columns — the .choices-long
        class is applied by the renderer when any option is wordy. */
@@ -2230,7 +2137,7 @@
   /* ─── iPad landscape / 11-inch class (835px – 1194px) ─── */
   @media (min-width: 835px) and (max-width: 1194px) {
     .quiz { max-width: 900px; }
-    .hub { max-width: 1000px; padding: 1.75rem; }
+    .hub { max-width: 1000px; padding: 1.75rem 1.75rem calc(1.75rem + env(safe-area-inset-bottom)); }
     .packs-grid { grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); }
   }
 
@@ -2282,7 +2189,7 @@
     .tf-btn { min-height: 110px; font-size: 1.5rem; padding: 1rem; }
     .tf-btn .tf-emoji { font-size: 1.6rem; }
     .question-frame { padding: 1.2rem 1rem; }
-    .title-screen { padding: 1.25rem; min-height: auto; }
+    .title-screen { padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom)); min-height: auto; }
     .brand { font-size: 2.2rem; margin-bottom: 0.2rem; }
     .brand-tag { margin-bottom: 1.25rem; }
     .profile-emoji { font-size: 2.6rem; }
@@ -2291,7 +2198,6 @@
 
   /* ─── Stage Manager / Slide Over: extremely narrow but tall ─── */
   @media (max-width: 400px) {
-    .choices, .tf-choices { grid-template-columns: 1fr; }
     .quiz-top { flex-wrap: wrap; }
     .progress-wrap { order: 10; flex: 0 0 100%; }
   }
@@ -2314,10 +2220,10 @@
     .question-frame { animation: none; }
   }
 
-  /* ─── Printing a round report / work paper ─── */
+  /* ─── Printing a round / work paper ─── */
   @media print {
     .quiz-top, .parent-link, .next-btn, .scratch-btn, .autoread-btn,
-    .help-btn, .report-send-row { display: none !important; }
+    .help-btn { display: none !important; }
     .app { height: auto; overflow: visible; }
     body { background: white; }
   }
@@ -64185,12 +64091,12 @@ function confirmExit() {
   `;
   modal.innerHTML = `
     <div style="
-      background: var(--cream, #fdf6e3);
+      background: var(--bg);
       border: 4px solid var(--ink, #1a1a2e);
       box-shadow: 8px 8px 0 var(--ink, #1a1a2e);
       max-width: 420px; width: 100%;
       padding: 1.5rem; text-align: center;
-      font-family: 'Nunito', system-ui, sans-serif;
+      font-family: system-ui, sans-serif;
     ">
       <div style="
         font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
