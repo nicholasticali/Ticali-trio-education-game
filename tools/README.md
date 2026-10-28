@@ -13,8 +13,9 @@ Then:
 | `node saves.js` | the children's saved progress survives a page load: this year's save, last year's (pre-K, 2nd and 4th grade keys), an old save missing newer fields, play-then-reload, a corrupt save (kept aside, never overwritten), and storage that throws (private browsing) — the game still plays. Every other test starts from empty storage |
 | `node validate-packs.js <dir>` | shape-checks raw question-bank `.js` files before they are merged into the app, including puzzle types, and warns on a missing why or hint |
 
-All six take an optional path to the HTML file as the first argument; they default
-to the one beside this directory.
+The first five take an optional path to the HTML file as the first argument and
+default to the one beside this directory; `validate-packs.js` needs the folder of
+bank files to check.
 
 `smoke.js`, `screens.js`, `platforms.js` and `saves.js` need Chromium at `/opt/pw-browsers/chromium`. Change
 `executablePath` if yours lives elsewhere, or drop the option to use Playwright's

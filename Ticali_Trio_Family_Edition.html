@@ -26254,8 +26254,8 @@ const THEME_G4_WRESTLING = [
 // NO Gabby, NO Mattel, NO DreamWorks. Original prose only.
 // K-level: counting, sequencing, sight words, simple comparison,
 // colors, shapes, basic phonics support.
-// Tagged for the K Bridge profile (prek). tier:'k' so it appears
-// in the Kindergarten Preview section.
+// Written as a kindergarten preview (tier:'k'); TIER_ALIASES now reads that
+// as this year's work.
 // ═══════════════════════════════════════════════════════════════
 
 const THEME_K_DOLLS = [
@@ -27310,7 +27310,7 @@ const QUEST_G5_READING = [
 
 // ═══════════════════════════════════════════════════════════════
 // G2 READING QUEST 📖 — passage-set comprehension game (12 sets, ~54 Q)
-// CURRENT-GRADE quest for the 2nd grader. Shorter passages (~100-150 words), G2 vocabulary.
+// 2nd-grade quest, the 3rd grader's review. Shorter passages (~100-150 words), G2 vocabulary.
 // Skill coverage per set is deliberate: main idea, sequence,
 // cause/effect, character feelings, vocab in context, fact vs.
 // opinion, prediction, evidence. Themes: baseball ⚾, wrestling 🤼,
@@ -27627,7 +27627,7 @@ const QUEST_G2_READING = [
 
 // ═══════════════════════════════════════════════════════════════
 // G4 READING QUEST 📖 — passage-set comprehension game (10 sets, ~48 Q)
-// CURRENT-GRADE quest for the 4th grader — always visible.
+// 4th-grade quest, the 5th grader's review.
 // G4-level passages (~180-250 words). Skill coverage: main idea,
 // inference, cause/effect, compare/contrast, fact vs. opinion,
 // author's purpose, vocab in context, text structure, theme.
@@ -29597,7 +29597,7 @@ const PACKS = {
     { id:'g2_baseball',      title:'Baseball Math',          icon:'⚾', subject:'math',    desc:'Math wrapped in baseball!',                themeBank:'THEME_G2_BASEBALL' },
     { id:'g2_wrestling',     title:'Champions of the Ring',  icon:'🤼', subject:'math',    desc:'Wrestling-themed math + reading!',         themeBank:'THEME_G2_WRESTLING' },
     { id:'g2_reading_quest', title:'Reading Quest',          icon:'🗺️', subject:'reading', desc:'Read full stories, crack the questions — baseball, animals & mysteries!', quest:true, questBank:'QUEST_G2_READING' },
-    // ─── G3 BRIDGE PACKS (Grade 3 Preview for summer use) ───
+    // ─── G3 BRIDGE PACKS (written as a summer preview; this year's work now, see TIER_ALIASES) ───
     { id:'g3_mult',          title:'G3: Multiplication',     icon:'✖️', subject:'math',    desc:'G3: multiplication facts to 100!',        tier:'next', bridgeBank:'BRIDGE_G3_MULT' },
     { id:'g3_addsub',        title:'G3: Bigger Add/Subtract',icon:'➕', subject:'math',    desc:'G3: add & subtract within 1,000!',        tier:'next', bridgeBank:'BRIDGE_G3_ADDSUB' },
     { id:'g3_fractions',     title:'G3: Fractions',          icon:'🍕', subject:'math',    desc:'G3: parts of a whole, equivalent fractions!', tier:'next', bridgeBank:'BRIDGE_G3_FRACTIONS' },
@@ -29674,7 +29674,7 @@ const PACKS = {
     { id:'g4_baseball',       title:'Baseball Math',          icon:'⚾', subject:'math',    desc:'Stats, averages, baseball math!',          themeBank:'THEME_G4_BASEBALL' },
     { id:'g4_wrestling',      title:'Champions of the Ring',  icon:'🤼', subject:'math',    desc:'Wrestling math + tournament brackets!',    themeBank:'THEME_G4_WRESTLING' },
     { id:'g4_reading_quest',  title:'Reading Quest',          icon:'🗺️', subject:'reading', desc:'Full stories + tough questions — sports, science & mysteries!', quest:true, questBank:'QUEST_G4_READING' },
-    // ─── G5 BRIDGE PACKS (Grade 5 Preview for summer use) ───
+    // ─── G5 BRIDGE PACKS (written as a summer preview; this year's work now, see TIER_ALIASES) ───
     { id:'g5_decimals',       title:'G5: Decimals',           icon:'🔟', subject:'math',    desc:'G5: place value, comparing, operations!',  tier:'next', bridgeBank:'BRIDGE_G5_DECIMALS' },
     { id:'g5_multdiv',        title:'G5: Multiply & Divide',  icon:'✖️', subject:'math',    desc:'G5: multi-digit mult + long division!',    tier:'next', bridgeBank:'BRIDGE_G5_MULTDIV' },
     { id:'g5_fract_ops',      title:'G5: Fraction Operations',icon:'🍰', subject:'math',    desc:'G5: add/subtract unlike denominators!',    tier:'next', bridgeBank:'BRIDGE_G5_FRACT_OPS' },
@@ -63827,7 +63827,7 @@ function handleAnswer(isRight, correctAnswer, givenAnswer, opts) {
   const fixed = isRight && tries > 0;
   d.attempts++;
 
-  // Log this answer for the round report and the end-of-round look back.
+  // Log this answer for the end-of-round look back.
   const qLogText = plainText(qNow.text || qNow.statement || (qNow.partA && qNow.partA.text) || '');
   roundLog.push({
     n: qIdx + 1,

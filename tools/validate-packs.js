@@ -5,7 +5,11 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const DIR = process.argv[2] || require('path').join(__dirname, 'question-banks');
+const DIR = process.argv[2];
+if (!DIR || !fs.existsSync(DIR)) {
+  console.error('usage: node validate-packs.js <folder of question-bank .js files>');
+  process.exit(2);
+}
 
 const files = fs.readdirSync(DIR).filter(f => f.endsWith('.js')).sort();
 let hardFail = 0, softFail = 0, totalQ = 0;
