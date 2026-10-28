@@ -775,6 +775,24 @@
   .parent-dash h2 { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem; }
   .parent-dash > p { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem; }
 
+  /* ─── About this game (for grown-ups) ─── */
+  .about-link {
+    margin-top: 2rem; min-height: 48px; padding: 0.6rem 1.1rem;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.85rem;
+    background: white; color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); cursor: pointer;
+  }
+  .about-page .kid-block p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.75rem; }
+  .about-page .kid-block p:last-child { margin-bottom: 0; }
+  .about-list { margin: 0 0 0.25rem 1.2rem; font-size: 0.95rem; line-height: 1.6; }
+  .about-list li { margin-bottom: 0.45rem; }
+  .about-figures { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .about-figures span { background: var(--bg); border: 2px solid var(--ink); padding: 0.35rem 0.6rem; font-size: 0.85rem; }
+  .about-grade { border-top: 2px dashed rgba(0,0,0,0.15); padding: 0.25rem 0; }
+  .about-grade summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1rem; }
+  .about-count { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.75rem; color: var(--muted); }
+  .about-subject { font-size: 0.85rem !important; line-height: 1.5; margin: 0.25rem 0 0.6rem !important; }
+  .about-note { color: var(--muted); font-size: 0.85rem !important; }
   .kid-block { background: white; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); padding: 1.5rem; margin-bottom: 1.25rem; }
   .kid-block h3 { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.2rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 3px solid var(--ink); }
   .parent-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.95rem; border-bottom: 1px dashed rgba(0,0,0,0.1); }
@@ -1997,7 +2015,7 @@
     .pack-card { padding-bottom: 1.1rem; }
 
     /* The walkthrough step dots were 10px pucks 5px apart. An invisible
-       44px hit area around each one would have overlapped its neighbours
+       44px hit area around each one would have overlapped its neighbors
        and fired the wrong step, so the dots themselves grow and the gap
        grows with them: 24px dot + 10px of padding each side = a 44px
        target, and a 20px gap makes the pitch exactly 44px so no two
@@ -31425,7 +31443,7 @@ const PACKS = {
     { id:'g3_ss_community', title:'Community, Maps & Economics', icon:'🗺️', subject:'ss', tier:'now', desc:'Map skills, landforms, producers and consumers.', bank:'G3_SS_COMMUNITY' },
     { id:'g3_ss_aaco', title:'Our County & the Chesapeake', icon:'🦀', subject:'ss', tier:'now', desc:'The watershed we live in, and how to take care of it.', bank:'G3_SS_AACO' },
     { id:'g3_health', title:'My Body, Food & Feelings', icon:'🍎', subject:'health', tier:'now', desc:'Nutrition, sleep, germs, safety and stress.', bank:'G3_HEALTH' },
-    { id:'g3_mstar', title:'MSTAR Test Prep', icon:'📝', subject:'mcap', tier:'now', desc:'Your first state test year. Practise the question styles.', bank:'MSTAR_G3' },
+    { id:'g3_mstar', title:'MSTAR Test Prep', icon:'📝', subject:'mcap', tier:'now', desc:'Your first state test year. Practice the question styles.', bank:'MSTAR_G3' },
   // ═══ END 2026-2027 PACKS ═══
   ],
   g5: [
@@ -31492,7 +31510,7 @@ const PACKS = {
     { id:'g5_ckla_reformation', title:'CKLA: The Reformation', icon:'📜', subject:'reading', tier:'now', desc:'The printing press, Luther, and a Christendom split.', bank:'CKLA_G5_REFORMATION' },
     { id:'g5_ckla_native', title:'CKLA: Native Americans', icon:'🪶', subject:'reading', tier:'now', desc:'The Great Law of Peace, removal, and Native nations today.', bank:'CKLA_G5_NATIVE_AMERICANS' },
     { id:'g5_sci_matter', title:'Matter and Its Properties', icon:'⚗️', subject:'science', tier:'now', desc:'Particles, conservation of mass, physical vs. chemical change.', bank:'G5_SCI_MATTER' },
-    { id:'g5_sci_space', title:'Gravity, Stars & the Sky', icon:'🌟', subject:'science', tier:'now', desc:'Why \'down\' means Earth\'s centre, and why we have seasons.', bank:'G5_SCI_SPACE' },
+    { id:'g5_sci_space', title:'Gravity, Stars & the Sky', icon:'🌟', subject:'science', tier:'now', desc:'Why \'down\' means Earth\'s center, and why we have seasons.', bank:'G5_SCI_SPACE' },
     { id:'g5_sci_eco', title:'Energy & Matter in Ecosystems', icon:'🌿', subject:'science', tier:'now', desc:'It all traces back to the sun — and plants eat air.', bank:'G5_SCI_ECOSYSTEMS' },
     { id:'g5_sci_earth', title:'Earth\'s Systems & Water', icon:'🌎', subject:'science', tier:'now', desc:'Four spheres interacting, and how little fresh water there is.', bank:'G5_SCI_EARTH' },
     { id:'g5_ss_gov', title:'Government & Founding Documents', icon:'🏛️', subject:'ss', tier:'now', desc:'The Constitution, the Bill of Rights, and how a bill becomes law.', bank:'G5_SS_GOVERNMENT' },
@@ -31500,7 +31518,7 @@ const PACKS = {
     { id:'g5_ss_civil_war', title:'The Civil War & Its Aftermath', icon:'🇺🇸', subject:'ss', tier:'now', desc:'Antietam, Gettysburg, Reconstruction — and Maryland divided.', bank:'G5_SS_CIVIL_WAR' },
     { id:'g5_ss_modern', title:'America: 1900 to Today', icon:'🚀', subject:'ss', tier:'now', desc:'Suffrage, world wars, civil rights, and Thurgood Marshall.', bank:'G5_SS_MODERN' },
     { id:'g5_health', title:'Body Systems & Growing Up', icon:'🫀', subject:'health', tier:'now', desc:'How your systems work, nutrition labels, and saying no.', bank:'G5_HEALTH' },
-    { id:'g5_mstar', title:'MSTAR Test Prep', icon:'📝', subject:'mcap', tier:'now', desc:'Spring state test in ELA and math. Practise the formats.', bank:'MSTAR_G5' },
+    { id:'g5_mstar', title:'MSTAR Test Prep', icon:'📝', subject:'mcap', tier:'now', desc:'Spring state test in ELA and math. Practice the formats.', bank:'MSTAR_G5' },
     { id:'g5_misa', title:'MISA Science Test Prep', icon:'🔬', subject:'mcap', tier:'now', desc:'Your science test year — and it covers grades 3, 4 AND 5.', bank:'MISA_G5' },
   // ═══ END 2026-2027 PACKS ═══
   ]
@@ -40492,7 +40510,7 @@ const CKLA_G3_WIND_WILLOWS = [
     hint:'Look at the words that point to the characters. Do you see I and me, or he, him and them?' },
 
   { type:'tf',
-    statement:'Badger loves Society and is always out visiting his neighbours on the River Bank.',
+    statement:'Badger loves Society and is always out visiting his neighbors on the River Bank.',
     answer:false,
     why:'False. The passage says Badger "hated Society and never went out." Society here means parties and visiting. He waited for friends to come to him instead.' },
 
@@ -49077,16 +49095,16 @@ const CKLA_G5_QUIXOTE = [
     why:'True. The innkeeper "fetched out the book in which he wrote down the straw and barley he sold" and mumbled over it as if it were holy, then tapped him with a sword.' },
 
   { type:'tf',
-    statement:'Don Quixote is already travelling with Sancho Panza on the night the innkeeper dubs him a knight.',
+    statement:'Don Quixote is already traveling with Sancho Panza on the night the innkeeper dubs him a knight.',
     answer:false,
     why:'False. He rode out that first morning "with no squire." Only after being knighted did he turn home to find a squire, and that is when he found Sancho Panza.' },
 
   // ---------- Passage 3: Finding a Squire ----------
   { type:'mc',
     passage:`<strong>Finding a Squire</strong>
-<p>Every knight-errant in the books had a squire, and so Don Quixote went looking for one. He found Sancho Panza, a farmer who lived down the road — a short, round, good-hearted man with a wife, two children, and no imagination whatsoever. Don Quixote worked on him for days. He described the honours a squire wins, the fame, the songs that would someday be sung about the two of them together.</p>
+<p>Every knight-errant in the books had a squire, and so Don Quixote went looking for one. He found Sancho Panza, a farmer who lived down the road — a short, round, good-hearted man with a wife, two children, and no imagination whatsoever. Don Quixote worked on him for days. He described the honors a squire wins, the fame, the songs that would someday be sung about the two of them together.</p>
 <p>Sancho listened politely to all of it. Then Don Quixote happened to mention that a knight-errant usually conquers an island in the course of his adventures, and that it is only right and proper for the knight to hand that island over to his faithful squire to govern. Sancho packed his saddlebags that same night.</p>
-<p>They made an odd pair on the road: the long thin knight up on the long thin Rocinante, and the short round squire jogging along behind on his short round donkey. Don Quixote talked about honour, about Dulcinea, about the giants they were sure to meet. Sancho talked about breakfast. When Don Quixote saw an army, Sancho saw sheep. When Don Quixote saw a castle, Sancho saw an inn and asked what it cost for the night. Neither of them ever talked the other one out of anything, and neither of them ever rode away.</p>`,
+<p>They made an odd pair on the road: the long thin knight up on the long thin Rocinante, and the short round squire jogging along behind on his short round donkey. Don Quixote talked about honor, about Dulcinea, about the giants they were sure to meet. Sancho talked about breakfast. When Don Quixote saw an army, Sancho saw sheep. When Don Quixote saw a castle, Sancho saw an inn and asked what it cost for the night. Neither of them ever talked the other one out of anything, and neither of them ever rode away.</p>`,
     text:'What finally persuades Sancho Panza to leave his farm and follow Don Quixote?',
     options:[
       'Don Quixote pays him a bag of gold on the night before they go.',
@@ -49094,12 +49112,12 @@ const CKLA_G5_QUIXOTE = [
       'His wife tells him he must go away and make something of himself.',
       'Don Quixote promises him an island to govern once they win one.'],
     correct:3,
-    why:'Sancho "listened politely" to talk of honour and fame. But when Don Quixote mentioned handing his squire "an island" to govern, "Sancho packed his saddlebags that same night." The island promise is what convinced him.',
+    why:'Sancho "listened politely" to talk of honor and fame. But when Don Quixote mentioned handing his squire "an island" to govern, "Sancho packed his saddlebags that same night." The island promise is what convinced him.',
     hint:'Sancho listened politely to most of the talk. What one promise made him pack that same night?' },
 
   { type:'mc',
     passage:`<strong>from "Finding a Squire"</strong>
-<p>They made an odd pair on the road: the long thin knight up on the long thin Rocinante, and the short round squire jogging along behind on his short round donkey. Don Quixote talked about honour, about Dulcinea, about the giants they were sure to meet. Sancho talked about breakfast.</p>`,
+<p>They made an odd pair on the road: the long thin knight up on the long thin Rocinante, and the short round squire jogging along behind on his short round donkey. Don Quixote talked about honor, about Dulcinea, about the giants they were sure to meet. Sancho talked about breakfast.</p>`,
     text:'Why does the author line the two travellers up like this, opposite in every detail?',
     options:[
       'To make them foils, so each one makes the other stand out sharply.',
@@ -49107,16 +49125,16 @@ const CKLA_G5_QUIXOTE = [
       'To hint that Sancho will soon take over as the knight of the story.',
       'To suggest that the two men are secretly brothers, long separated.'],
     correct:0,
-    why:'A foil is a character whose differences make another character stand out. Long and thin versus short and round, honour versus breakfast: Sancho\'s practical nature makes Don Quixote\'s dreaming look even bigger, and the reverse.',
+    why:'A foil is a character whose differences make another character stand out. Long and thin versus short and round, honor versus breakfast: Sancho\'s practical nature makes Don Quixote\'s dreaming look even bigger, and the reverse.',
     hint:'Notice how every detail about one man is the opposite of the other. What does putting opposites side by side do?' },
 
   { type:'mc',
     passage:`<strong>from "Finding a Squire"</strong>
-<p>Don Quixote talked about honour, about Dulcinea, about the giants they were sure to meet. Sancho talked about breakfast. When Don Quixote saw an army, Sancho saw sheep. When Don Quixote saw a castle, Sancho saw an inn and asked what it cost for the night.</p>`,
+<p>Don Quixote talked about honor, about Dulcinea, about the giants they were sure to meet. Sancho talked about breakfast. When Don Quixote saw an army, Sancho saw sheep. When Don Quixote saw a castle, Sancho saw an inn and asked what it cost for the night.</p>`,
     text:'Which theme of the book do these sentences develop most directly?',
     options:[
       'Loyalty to a master matters more than loyalty to family.',
-      'Travelling teaches a person far more than books ever could.',
+      'Traveling teaches a person far more than books ever could.',
       'Idealism and practicality ride side by side, and neither wins.',
       'Poor men turn out to make better knights than rich men do.'],
     correct:2,
@@ -49129,7 +49147,7 @@ const CKLA_G5_QUIXOTE = [
     why:'False. Sancho has "no imagination whatsoever" and only agrees after being promised an island to govern. He follows for a practical reward, not because he loves books of chivalry.' },
 
   { type:'fib',
-    text:'A knight\'s attendant and travelling companion, who rides with him and looks after his gear, is called his ____.',
+    text:'A knight\'s attendant and traveling companion, who rides with him and looks after his gear, is called his ____.',
     acceptedAnswers:['squire','a squire','esquire'],
     why:'A squire is a knight\'s attendant who rides along and helps him. Sancho Panza is Don Quixote\'s squire, following on his donkey.',
     hint:'What job does Sancho Panza have in the story? Use that word.' },
@@ -49231,8 +49249,8 @@ const CKLA_G5_QUIXOTE = [
   // ---------- Passage 6: The Golden Helmet ----------
   { type:'mc',
     passage:`<strong>The Golden Helmet</strong>
-<p>Rain was falling when a man came along the road on a grey donkey. He was the barber from a village nearby, and to keep the rain off his hat he had clapped his shining brass basin on his head — the same basin he used for shaving customers.</p>
-<p>"Sancho," Don Quixote whispered, "do you see that knight riding toward us on the dapple-grey? On his head he wears the helmet of Mambrino, the golden helmet I swore an oath to win."</p>
+<p>Rain was falling when a man came along the road on a gray donkey. He was the barber from a village nearby, and to keep the rain off his hat he had clapped his shining brass basin on his head — the same basin he used for shaving customers.</p>
+<p>"Sancho," Don Quixote whispered, "do you see that knight riding toward us on the dapple-gray? On his head he wears the helmet of Mambrino, the golden helmet I swore an oath to win."</p>
 <p>"What I see," said Sancho, "is a man on a donkey with something brassy on his head, and it looks a great deal like a barber’s basin."</p>
 <p>Don Quixote lowered his lance and thundered down the road. The barber, who had no interest whatsoever in being run through, threw himself off the donkey and ran away across the fields. The basin lay shining in the mud. Don Quixote picked it up, turned it over admiringly, and set it on his head, where it sat like a soup bowl.</p>
 <p>"It is a noble helmet," he said, "though plainly some ignorant person has broken half of it away and melted down the rest."</p>
@@ -49340,11 +49358,11 @@ const CKLA_G5_QUIXOTE = [
     text:'As it is used in this paragraph, chivalry means —',
     options:[
       'the business of buying and selling war horses',
-      'the code of honour that knights were supposed to live by',
+      'the code of honor that knights were supposed to live by',
       'a kind of Spanish poetry written only for the king',
       'a long journey made on foot to a holy place far away'],
     correct:1,
-    why:'The paragraph lists what the knights did: they "kept their promises, defended the helpless, spoke the truth" and served faithfully. Those are rules of honour, so chivalry means the code knights were supposed to live by.',
+    why:'The paragraph lists what the knights did: they "kept their promises, defended the helpless, spoke the truth" and served faithfully. Those are rules of honor, so chivalry means the code knights were supposed to live by.',
     hint:'Look at the list of things the knights in those books did. What do all those actions have in common?' },
 
   { type:'mc',
@@ -49848,7 +49866,7 @@ const CKLA_G5_NATIVE_AMERICANS = [
   // ---------- Passage 2: The Great Law of Peace ----------
   { type:'mc',
     passage:`<strong>The Great Law of Peace</strong>
-<p>Five nations lived in what is now upstate New York: the Mohawk, the Oneida, the Onondaga, the Cayuga, and the Seneca. For generations they fought one another, and every killing demanded revenge, and every revenge demanded another. Then two men — a leader remembered as the Peacemaker and a Mohawk named Hiawatha — travelled from nation to nation carrying one idea. Bury the weapons. Stop the cycle. Join together under a single law.</p>
+<p>Five nations lived in what is now upstate New York: the Mohawk, the Oneida, the Onondaga, the Cayuga, and the Seneca. For generations they fought one another, and every killing demanded revenge, and every revenge demanded another. Then two men — a leader remembered as the Peacemaker and a Mohawk named Hiawatha — traveled from nation to nation carrying one idea. Bury the weapons. Stop the cycle. Join together under a single law.</p>
 <p>The five nations agreed, and the agreement is called the Great Law of Peace. Together they became the Haudenosaunee, "the people of the longhouse" — a name that pictures five nations sharing one long house, each keeping its own fire. Around 1722 a sixth nation, the Tuscarora, moved north and joined them.</p>
 <p>The Great Law is a constitution, though no one wrote it on paper. It was memorised, and recorded with strings and belts of wampum beads that trained speakers could read back. Each nation ran its own affairs, but sent chiefs to a Grand Council at Onondaga to settle anything that touched everyone. The council worked toward agreement rather than simply outvoting the losers. And the chiefs did not inherit their seats. Clan mothers — the senior women of each clan — chose them, watched how they behaved, and could remove a chief who failed his people.</p>
 <p>Colonists noticed. In 1744, at a treaty meeting in Pennsylvania, an Onondaga leader named Canasatego told English officials that their squabbling colonies would be far stronger if they united the way the Haudenosaunee had. Benjamin Franklin printed those words. Ten years later he proposed a plan to unite the colonies himself. In 1988 the United States Congress passed a resolution formally acknowledging the Confederacy's contribution to the Constitution.</p>`,
@@ -49882,7 +49900,7 @@ const CKLA_G5_NATIVE_AMERICANS = [
 
   { type:'typed',
     passage:`<strong>The Great Law of Peace</strong>
-<p>Five nations lived in what is now upstate New York: the Mohawk, the Oneida, the Onondaga, the Cayuga, and the Seneca. For generations they fought one another, and every killing demanded revenge, and every revenge demanded another. Then two men — a leader remembered as the Peacemaker and a Mohawk named Hiawatha — travelled from nation to nation carrying one idea. Bury the weapons. Stop the cycle. Join together under a single law.</p>
+<p>Five nations lived in what is now upstate New York: the Mohawk, the Oneida, the Onondaga, the Cayuga, and the Seneca. For generations they fought one another, and every killing demanded revenge, and every revenge demanded another. Then two men — a leader remembered as the Peacemaker and a Mohawk named Hiawatha — traveled from nation to nation carrying one idea. Bury the weapons. Stop the cycle. Join together under a single law.</p>
 <p>The five nations agreed, and the agreement is called the Great Law of Peace. Together they became the Haudenosaunee, "the people of the longhouse" — a name that pictures five nations sharing one long house, each keeping its own fire. Around 1722 a sixth nation, the Tuscarora, moved north and joined them.</p>
 <p>The Great Law is a constitution, though no one wrote it on paper. It was memorised, and recorded with strings and belts of wampum beads that trained speakers could read back. Each nation ran its own affairs, but sent chiefs to a Grand Council at Onondaga to settle anything that touched everyone. The council worked toward agreement rather than simply outvoting the losers. And the chiefs did not inherit their seats. Clan mothers — the senior women of each clan — chose them, watched how they behaved, and could remove a chief who failed his people.</p>
 <p>Colonists noticed. In 1744, at a treaty meeting in Pennsylvania, an Onondaga leader named Canasatego told English officials that their squabbling colonies would be far stronger if they united the way the Haudenosaunee had. Benjamin Franklin printed those words. Ten years later he proposed a plan to unite the colonies himself. In 1988 the United States Congress passed a resolution formally acknowledging the Confederacy's contribution to the Constitution.</p>`,
@@ -49895,7 +49913,7 @@ const CKLA_G5_NATIVE_AMERICANS = [
   { type:'mc',
     passage:`<strong>An Invisible Invasion</strong>
 <p>The deadliest thing Europeans brought to the Americas was not a weapon. It was disease. Smallpox, measles, and influenza had circulated in Europe, Asia, and Africa for centuries, and people there had built up some resistance to them. Native peoples in the Americas had never met these germs at all. When the illnesses arrived, everyone in a village fell sick at the same time, so there was no one well enough to carry water, keep a fire going, or hunt. In many regions historians estimate that half or more of the population died within a few generations. Some of the villages the Pilgrims walked into in 1620 stood empty because an epidemic had swept that coast three years earlier.</p>
-<p>Sickness often travelled faster than the Europeans themselves, running ahead along the same trade paths that had carried copper and shells for centuries. That is one reason certain explorers described a thinly settled land. They were describing the aftermath of a catastrophe, not the way things had always been.</p>
+<p>Sickness often traveled faster than the Europeans themselves, running ahead along the same trade paths that had carried copper and shells for centuries. That is one reason certain explorers described a thinly settled land. They were describing the aftermath of a catastrophe, not the way things had always been.</p>
 <p>Trade changed things too, in a different way. Europe wanted beaver fur, which was pressed into felt for expensive hats, and Native hunters were the only people who could supply it. Back came metal knives, copper kettles, wool cloth, and guns. Native nations were nobody's fools in these deals. They were sharp negotiators who knew exactly what they had, and they played the Dutch, the French, and the English against one another for better terms. But the fur trade also pulled nations into other people's wars, pushed hunters to take far more beaver than they ever had before, and left some nations depending on goods only Europeans could sell. The Haudenosaunee generally allied with the Dutch and later the English; the Wendat and the Algonquin allied with the French.</p>`,
     text:'Why were European diseases so much deadlier in the Americas than they were in Europe?',
     options:[
@@ -49909,7 +49927,7 @@ const CKLA_G5_NATIVE_AMERICANS = [
 
   { type:'mc',
     passage:`<strong>from "An Invisible Invasion"</strong>
-<p>Sickness often travelled faster than the Europeans themselves, running ahead along the same trade paths that had carried copper and shells for centuries.</p>`,
+<p>Sickness often traveled faster than the Europeans themselves, running ahead along the same trade paths that had carried copper and shells for centuries.</p>`,
     text:'Some explorers wrote that the land was thinly settled. What does the passage say was really going on?',
     options:[
       'They were arriving after epidemics had already emptied villages ahead of them.',
@@ -49945,8 +49963,8 @@ const CKLA_G5_NATIVE_AMERICANS = [
     passage:`<strong>Sequoyah's Talking Leaves</strong>
 <p>Sequoyah was a Cherokee silversmith who could not read or write English — or any other language on earth. What he noticed was that white soldiers and traders could put marks on paper, hand the paper to someone a hundred miles away, and have their exact words arrive. Cherokee people sometimes called those papers "talking leaves." Sequoyah decided the Cherokee language deserved leaves of its own.</p>
 <p>He worked on the problem for roughly twelve years. His first plan was a separate symbol for every word, and he gave it up when the pile of symbols ran into the thousands. Then he tried something smarter. Cherokee words are built out of syllables, so he made one character for each syllable — <em>ga</em>, <em>na</em>, <em>hi</em>, and so on — and finished with eighty-five of them. A writing system built that way is called a <em>syllabary</em>.</p>
-<p>His neighbours thought he had lost his mind, and some accused him of witchcraft. So in 1821 he asked his young daughter Ayokeh to walk out of hearing. He took a message from a group of men, wrote it down, called her back, and had her read it aloud. She read it exactly.</p>
-<p>What happened next is astonishing. Because each character stood for a sound a Cherokee speaker already made every day, people could learn the whole system in weeks rather than years. Within a few years a large share of the Cherokee Nation could read and write their own language — a higher share than among their white neighbours. In 1828 the nation began printing the <em>Cherokee Phoenix</em>, a newspaper in Cherokee and English, the first newspaper ever published in a Native American language. Sequoyah remains the only person in recorded history known to have invented a complete writing system without first being able to read one.</p>`,
+<p>His neighbors thought he had lost his mind, and some accused him of witchcraft. So in 1821 he asked his young daughter Ayokeh to walk out of hearing. He took a message from a group of men, wrote it down, called her back, and had her read it aloud. She read it exactly.</p>
+<p>What happened next is astonishing. Because each character stood for a sound a Cherokee speaker already made every day, people could learn the whole system in weeks rather than years. Within a few years a large share of the Cherokee Nation could read and write their own language — a higher share than among their white neighbors. In 1828 the nation began printing the <em>Cherokee Phoenix</em>, a newspaper in Cherokee and English, the first newspaper ever published in a Native American language. Sequoyah remains the only person in recorded history known to have invented a complete writing system without first being able to read one.</p>`,
     text:'Why could Cherokee speakers learn Sequoyah\'s system in weeks instead of years?',
     options:[
       'Each character stood for a syllable they already said every day.',
@@ -49961,8 +49979,8 @@ const CKLA_G5_NATIVE_AMERICANS = [
     passage:`<strong>Sequoyah's Talking Leaves</strong>
 <p>Sequoyah was a Cherokee silversmith who could not read or write English — or any other language on earth. What he noticed was that white soldiers and traders could put marks on paper, hand the paper to someone a hundred miles away, and have their exact words arrive. Cherokee people sometimes called those papers "talking leaves." Sequoyah decided the Cherokee language deserved leaves of its own.</p>
 <p>He worked on the problem for roughly twelve years. His first plan was a separate symbol for every word, and he gave it up when the pile of symbols ran into the thousands. Then he tried something smarter. Cherokee words are built out of syllables, so he made one character for each syllable — <em>ga</em>, <em>na</em>, <em>hi</em>, and so on — and finished with eighty-five of them. A writing system built that way is called a <em>syllabary</em>.</p>
-<p>His neighbours thought he had lost his mind, and some accused him of witchcraft. So in 1821 he asked his young daughter Ayokeh to walk out of hearing. He took a message from a group of men, wrote it down, called her back, and had her read it aloud. She read it exactly.</p>
-<p>What happened next is astonishing. Because each character stood for a sound a Cherokee speaker already made every day, people could learn the whole system in weeks rather than years. Within a few years a large share of the Cherokee Nation could read and write their own language — a higher share than among their white neighbours. In 1828 the nation began printing the <em>Cherokee Phoenix</em>, a newspaper in Cherokee and English, the first newspaper ever published in a Native American language. Sequoyah remains the only person in recorded history known to have invented a complete writing system without first being able to read one.</p>`,
+<p>His neighbors thought he had lost his mind, and some accused him of witchcraft. So in 1821 he asked his young daughter Ayokeh to walk out of hearing. He took a message from a group of men, wrote it down, called her back, and had her read it aloud. She read it exactly.</p>
+<p>What happened next is astonishing. Because each character stood for a sound a Cherokee speaker already made every day, people could learn the whole system in weeks rather than years. Within a few years a large share of the Cherokee Nation could read and write their own language — a higher share than among their white neighbors. In 1828 the nation began printing the <em>Cherokee Phoenix</em>, a newspaper in Cherokee and English, the first newspaper ever published in a Native American language. Sequoyah remains the only person in recorded history known to have invented a complete writing system without first being able to read one.</p>`,
     text:'What was that newspaper called?',
     acceptedAnswers:['Cherokee Phoenix','the Cherokee Phoenix','Phoenix','The Cherokee Phoenix'],
     why:'The newspaper was the Cherokee Phoenix, first printed in 1828 in Cherokee and English. It was the first newspaper ever published in a Native American language.',
@@ -49983,7 +50001,7 @@ const CKLA_G5_NATIVE_AMERICANS = [
       'To prove that only children were able to learn the new writing.',
       'To show the men that the message had actually been written in English.'],
     correct:1,
-    why:'Ayokeh was out of hearing, so she could not have heard the message. When she read it back exactly, it proved the marks themselves carried the words. His neighbours had doubted him, and this answered them.',
+    why:'Ayokeh was out of hearing, so she could not have heard the message. When she read it back exactly, it proved the marks themselves carried the words. His neighbors had doubted him, and this answered them.',
     hint:'Why did Sequoyah send his daughter out of hearing first? What would her reading prove?' },
 
   // ---------- Passage 5: A Law, a Court, and a Road ----------
@@ -50093,8 +50111,8 @@ const CKLA_G5_NATIVE_AMERICANS = [
   { type:'mc',
     passage:`<strong>Carlisle</strong>
 <p>In 1879 an army officer named Richard Henry Pratt opened a school in an old barracks at Carlisle, Pennsylvania, for Native children. His stated goal was to "kill the Indian" in a child and "save the man." Hundreds of schools followed Carlisle, run by the government and by churches, and by the early 1900s tens of thousands of Native children were living in them. Many families were never asked. Agents held back food rations from parents who refused, and some children were simply taken.</p>
-<p>The routine was nearly the same everywhere. Children arrived and had their long hair cut off — a thing that, in many Native nations, is done only in mourning. Their clothes were burned. They were given new English names. They were forbidden to speak their own languages and were punished, sometimes beaten, when they did. They wore uniforms, marched in lines, and spent half of each day doing the labour that kept the school running. Brothers and sisters were often kept apart on purpose. Many children did not go home for years. Some never went home at all: disease moved fast through crowded dormitories, and school cemeteries hold the graves of children whose families were never told.</p>
-<p>Some students survived it and turned what they had learned against the system, becoming lawyers, writers, and organisers who spent their lives fighting for Native rights. That does not make the schools good. It means the children were stronger than what was done to them.</p>
+<p>The routine was nearly the same everywhere. Children arrived and had their long hair cut off — a thing that, in many Native nations, is done only in mourning. Their clothes were burned. They were given new English names. They were forbidden to speak their own languages and were punished, sometimes beaten, when they did. They wore uniforms, marched in lines, and spent half of each day doing the labor that kept the school running. Brothers and sisters were often kept apart on purpose. Many children did not go home for years. Some never went home at all: disease moved fast through crowded dormitories, and school cemeteries hold the graves of children whose families were never told.</p>
+<p>Some students survived it and turned what they had learned against the system, becoming lawyers, writers, and organizers who spent their lives fighting for Native rights. That does not make the schools good. It means the children were stronger than what was done to them.</p>
 <p>In 1924 Congress passed the Indian Citizenship Act, making all Native people born in the United States citizens. Even then, several states kept Native residents from voting for decades afterward. Arizona and New Mexico did not allow it until 1948.</p>`,
     text:'What were the Indian boarding schools designed to do?',
     options:[
@@ -50135,10 +50153,10 @@ const CKLA_G5_NATIVE_AMERICANS = [
   // ---------- Passage 8: Right Now, and Right Here ----------
   { type:'mc',
     passage:`<strong>Right Now, and Right Here</strong>
-<p>Native nations are not a chapter that closed. There are more than 570 federally recognised tribal nations in the United States today, and others recognised by their states. They are sovereign governments. They write their own constitutions, elect their own leaders, and run their own courts, police departments, schools, clinics, colleges, and businesses, and they deal with the United States government to government, the way one government deals with another.</p>
+<p>Native nations are not a chapter that closed. There are more than 570 federally recognized tribal nations in the United States today, and others recognized by their states. They are sovereign governments. They write their own constitutions, elect their own leaders, and run their own courts, police departments, schools, clinics, colleges, and businesses, and they deal with the United States government to government, the way one government deals with another.</p>
 <p>Languages the boarding schools tried to end are being brought back deliberately. Cherokee, Lakota, Ojibwe, Navajo and dozens of others are taught in immersion schools where four-year-olds hear nothing else all day, while elders record their speech for the children who come next. It is slow, stubborn work, and it is working.</p>
 <p>Native people today are in every walk of life: teachers, welders, surgeons, novelists, engineers, soldiers, ranchers, ballerinas, coders. In 2021 Deb Haaland, a member of the Pueblo of Laguna, became Secretary of the Interior — the first Native American ever to serve in a president\'s Cabinet.</p>
-<p>And this is not only a story about somewhere else. The Chesapeake was Algonquian country. The Piscataway lived along the Potomac River under a principal leader called a <em>tayac</em>. The Nanticoke lived on the Eastern Shore along the river that still carries their name. Their descendants are still here. In 2012 Maryland formally recognised two Piscataway groups, the Piscataway Indian Nation and the Piscataway Conoy Tribe. The map gives it away every day: Potomac, Patuxent, Choptank, Wicomico, Chesapeake. Those are Algonquian words, spoken in Maryland long before English was, and spoken again every time somebody gives directions.</p>`,
+<p>And this is not only a story about somewhere else. The Chesapeake was Algonquian country. The Piscataway lived along the Potomac River under a principal leader called a <em>tayac</em>. The Nanticoke lived on the Eastern Shore along the river that still carries their name. Their descendants are still here. In 2012 Maryland formally recognized two Piscataway groups, the Piscataway Indian Nation and the Piscataway Conoy Tribe. The map gives it away every day: Potomac, Patuxent, Choptank, Wicomico, Chesapeake. Those are Algonquian words, spoken in Maryland long before English was, and spoken again every time somebody gives directions.</p>`,
     text:'What does it mean to say that tribal nations today are sovereign?',
     options:[
       'They govern themselves — writing constitutions, electing leaders, running courts and schools — and deal with the United States government to government.',
@@ -50169,10 +50187,10 @@ const CKLA_G5_NATIVE_AMERICANS = [
 
   { type:'typed',
     passage:`<strong>Right Now, and Right Here</strong>
-<p>Native nations are not a chapter that closed. There are more than 570 federally recognised tribal nations in the United States today, and others recognised by their states. They are sovereign governments. They write their own constitutions, elect their own leaders, and run their own courts, police departments, schools, clinics, colleges, and businesses, and they deal with the United States government to government, the way one government deals with another.</p>
+<p>Native nations are not a chapter that closed. There are more than 570 federally recognized tribal nations in the United States today, and others recognized by their states. They are sovereign governments. They write their own constitutions, elect their own leaders, and run their own courts, police departments, schools, clinics, colleges, and businesses, and they deal with the United States government to government, the way one government deals with another.</p>
 <p>Languages the boarding schools tried to end are being brought back deliberately. Cherokee, Lakota, Ojibwe, Navajo and dozens of others are taught in immersion schools where four-year-olds hear nothing else all day, while elders record their speech for the children who come next. It is slow, stubborn work, and it is working.</p>
 <p>Native people today are in every walk of life: teachers, welders, surgeons, novelists, engineers, soldiers, ranchers, ballerinas, coders. In 2021 Deb Haaland, a member of the Pueblo of Laguna, became Secretary of the Interior — the first Native American ever to serve in a president\'s Cabinet.</p>
-<p>And this is not only a story about somewhere else. The Chesapeake was Algonquian country. The Piscataway lived along the Potomac River under a principal leader called a <em>tayac</em>. The Nanticoke lived on the Eastern Shore along the river that still carries their name. Their descendants are still here. In 2012 Maryland formally recognised two Piscataway groups, the Piscataway Indian Nation and the Piscataway Conoy Tribe. The map gives it away every day: Potomac, Patuxent, Choptank, Wicomico, Chesapeake. Those are Algonquian words, spoken in Maryland long before English was, and spoken again every time somebody gives directions.</p>`,
+<p>And this is not only a story about somewhere else. The Chesapeake was Algonquian country. The Piscataway lived along the Potomac River under a principal leader called a <em>tayac</em>. The Nanticoke lived on the Eastern Shore along the river that still carries their name. Their descendants are still here. In 2012 Maryland formally recognized two Piscataway groups, the Piscataway Indian Nation and the Piscataway Conoy Tribe. The map gives it away every day: Potomac, Patuxent, Choptank, Wicomico, Chesapeake. Those are Algonquian words, spoken in Maryland long before English was, and spoken again every time somebody gives directions.</p>`,
     text:'Which Native nation is that Eastern Shore river named for?',
     acceptedAnswers:['Nanticoke','the Nanticoke','Nanticoke River'],
     why:'The Nanticoke lived on the Eastern Shore "along the river that still carries their name." Maryland\'s map is full of Algonquian names like this, including Patuxent and Chesapeake.',
@@ -50180,10 +50198,10 @@ const CKLA_G5_NATIVE_AMERICANS = [
 
   { type:'fib',
     passage:`<strong>Right Now, and Right Here</strong>
-<p>Native nations are not a chapter that closed. There are more than 570 federally recognised tribal nations in the United States today, and others recognised by their states. They are sovereign governments. They write their own constitutions, elect their own leaders, and run their own courts, police departments, schools, clinics, colleges, and businesses, and they deal with the United States government to government, the way one government deals with another.</p>
+<p>Native nations are not a chapter that closed. There are more than 570 federally recognized tribal nations in the United States today, and others recognized by their states. They are sovereign governments. They write their own constitutions, elect their own leaders, and run their own courts, police departments, schools, clinics, colleges, and businesses, and they deal with the United States government to government, the way one government deals with another.</p>
 <p>Languages the boarding schools tried to end are being brought back deliberately. Cherokee, Lakota, Ojibwe, Navajo and dozens of others are taught in immersion schools where four-year-olds hear nothing else all day, while elders record their speech for the children who come next. It is slow, stubborn work, and it is working.</p>
 <p>Native people today are in every walk of life: teachers, welders, surgeons, novelists, engineers, soldiers, ranchers, ballerinas, coders. In 2021 Deb Haaland, a member of the Pueblo of Laguna, became Secretary of the Interior — the first Native American ever to serve in a president\'s Cabinet.</p>
-<p>And this is not only a story about somewhere else. The Chesapeake was Algonquian country. The Piscataway lived along the Potomac River under a principal leader called a <em>tayac</em>. The Nanticoke lived on the Eastern Shore along the river that still carries their name. Their descendants are still here. In 2012 Maryland formally recognised two Piscataway groups, the Piscataway Indian Nation and the Piscataway Conoy Tribe. The map gives it away every day: Potomac, Patuxent, Choptank, Wicomico, Chesapeake. Those are Algonquian words, spoken in Maryland long before English was, and spoken again every time somebody gives directions.</p>`,
+<p>And this is not only a story about somewhere else. The Chesapeake was Algonquian country. The Piscataway lived along the Potomac River under a principal leader called a <em>tayac</em>. The Nanticoke lived on the Eastern Shore along the river that still carries their name. Their descendants are still here. In 2012 Maryland formally recognized two Piscataway groups, the Piscataway Indian Nation and the Piscataway Conoy Tribe. The map gives it away every day: Potomac, Patuxent, Choptank, Wicomico, Chesapeake. Those are Algonquian words, spoken in Maryland long before English was, and spoken again every time somebody gives directions.</p>`,
     text:'The Piscataway called their principal leader a ____.',
     acceptedAnswers:['tayac','a tayac'],
     why:'The passage says the Piscataway "lived along the Potomac River under a principal leader called a tayac." The Piscataway are still in Maryland today.',
@@ -66979,6 +66997,7 @@ function renderProfileSelect() {
       <div class="brand-tag">Math · Reading · Science · Puzzles</div>
       <div class="profiles">${cards}</div>
       ${FUN.html('titleExtra', {})}
+      <button class="about-link" onclick="renderAbout()">ℹ️ For grown-ups: about this game</button>
     </div>
   `);
 }
@@ -68782,6 +68801,176 @@ function showTrophyPop(t) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// ABOUT THIS GAME — for grown-ups (teachers, principals, family)
+// ═══════════════════════════════════════════════════════════════
+// Reached from the title screen with no PIN. Counts are taken from the
+// game itself, so they stay true as packs are added.
+
+// Written questions the packs can deal (generated math not counted), each bank once.
+function writtenQuestionCount() {
+  const banks = new Set();
+  const add = a => { if (Array.isArray(a) && a.length) banks.add(a); };
+  for (const pk of allPacks()) {
+    if (pk.kBankKey) add(K_BANKS[pk.kBankKey]);
+    if (pk.quest && BANKS[pk.questBank]) BANKS[pk.questBank].forEach(set => add(set.questions));
+    else add(resolvePackBank(pk));
+    if (!pk.generated && pk.bankKey) add(({ k: PREK_BANKS, g3: G2_BANKS, g5: G4_BANKS }[pk.home] || {})[pk.bankKey]);
+    if (pk.nonMcKey && !(pk.generated && (NONMC_MATH_GENERATORS[pk.id] || []).length)) {
+      add(({ k: PREK_NONMC_BANKS, g3: G2_NONMC_BANKS, g5: G4_NONMC_BANKS }[pk.home] || {})[pk.nonMcKey]);
+    }
+    add(THINK_ITEMS[pk.id]);
+  }
+  let n = 0;
+  banks.forEach(a => { n += a.length; });
+  return n;
+}
+
+// The fun features this build has (the optional modules are spliced in at FUN MODULES).
+function funList() {
+  const has = name => { try { return typeof window.eval(name) !== 'undefined'; } catch (e) { return false; } };
+  const parts = ['XP, levels, trophies and streaks'];
+  if (has('BUDDY_TYPES')) parts.push('a buddy that grows with the child');
+  if (has('STICKERS_SETS')) parts.push('stickers that each teach a true fact');
+  if (has('MISSIONS_POOLS')) parts.push('daily missions');
+  if (has('BOSS_PACK_ID')) parts.push('goofy boss battles');
+  return parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
+}
+
+function renderAbout() {
+  currentProfile = null;
+  const packs = allPacks();
+  const round100 = n => (n >= 1000 ? Math.floor(n / 100) * 100 : n).toLocaleString();
+  const puzzles = Object.values(THINK_ITEMS).reduce((n, a) => n + a.length, 0);
+  const road = typeof READING_ROAD !== 'undefined' && READING_ROAD.lands && READING_ROAD.lands.length ? READING_ROAD : null;
+  const roadStops = road ? road.lands.reduce((n, l) => n + l.stops.length, 0) : 0;
+
+  const grades = GRADES.map(g => {
+    const inGrade = packs.filter(pk => pk.grade === g.key);
+    const bySubject = SUBJECT_SECTIONS.map(s => {
+      const list = inGrade.filter(pk => pk.subject === s.key);
+      return list.length ? `<p class="about-subject"><strong>${s.icon} ${s.label}</strong> · ${list.map(pk => pk.title.replace(/^G\d: /, '')).join(' · ')}</p>` : '';
+    }).join('');
+    return `<details class="about-grade"><summary>${g.icon} ${g.label} <span class="about-count">${inGrade.length} packs</span></summary>${bySubject}</details>`;
+  }).join('');
+
+  render(`
+    <div class="parent-dash about-page">
+      <button class="switch-btn" onclick="renderProfileSelect()">← BACK TO GAME</button>
+      <h2 style="margin-top:1.25rem;">ℹ️ About Ticali Trio</h2>
+      <p>For grown-ups: teachers, principals and family · School year 2026-2027 · Anne Arundel County Public Schools</p>
+
+      <div class="kid-block">
+        <h3>🎯 What it is</h3>
+        <p>A practice game a parent made for three children at Anne Arundel County Public Schools: a kindergartener,
+        a 3rd grader and a 5th grader. It practices the work their classes are doing this year, explains why every answer
+        is right, and shows the method class uses when a child is stuck. It is one file that runs in a web browser on an
+        iPad or a laptop. It needs no internet connection, no account and no sign-in, and has no ads or purchases.</p>
+        <p class="about-figures">
+          <span><strong>${packs.length}</strong> packs, kindergarten to 5th grade</span>
+          <span><strong>${round100(writtenQuestionCount())}+</strong> written questions, each with an explanation</span>
+          <span><strong>${puzzles}</strong> thinking puzzles</span>
+          <span>math questions made fresh every round</span>
+          ${road ? `<span><strong>${roadStops}</strong> Reading Road stops with stories</span>` : ''}
+        </p>
+      </div>
+
+      <div class="kid-block">
+        <h3>🧭 What it is for</h3>
+        <ul class="about-list">
+          <li><strong>Practice this year's work</strong>, with last year's kept for review, and every other grade from kindergarten
+            to 5th one tap away.</li>
+          <li><strong>Understand, not just answer.</strong> After every answer, right or wrong, the child sees <em>why</em>.
+            After a wrong answer they get a hint and one more try.</li>
+          <li><strong>Learn it the way class teaches it.</strong> 💡 SHOW ME HOW walks through the method step by step,
+            using the question's own numbers and words: make a ten, the area model, arm blending, look back in the story.</li>
+          <li><strong>Think, not guess.</strong> Puzzles ask the child to pick every answer that fits, put steps or events in
+            order, sort, or answer and then prove it: the kinds of items on Maryland's new MSTAR tests.</li>
+          <li><strong>Grow readers.</strong> ${road ? `The 📖 Reading Road goes from first letter sounds to decodable stories and
+            questions about them, in the order Amplify CKLA teaches the sounds (${road.lands.map(l => l.title).join(', ')}).` : ''}
+            In kindergarten and 1st grade every question, answer and puzzle piece has a 🔊 button, so a child who cannot read
+            yet can play alone.</li>
+          <li><strong>Keep it fun and kind.</strong> ${funList()}. A wrong answer never takes away progress.</li>
+        </ul>
+      </div>
+
+      <div class="kid-block">
+        <h3>📚 What it follows</h3>
+        <ul class="about-list">
+          <li><strong>Reading and writing:</strong> Amplify CKLA, which AACPS uses in K-5. Reading packs follow each grade's CKLA
+            units; phonics follows the CKLA Skills sequence.</li>
+          <li><strong>Math:</strong> McGraw Hill Reveal Math, which AACPS uses in K-5, and Maryland's revised math standards
+            (adopted July 2025, in effect this school year).</li>
+          <li><strong>Science:</strong> Maryland's NGSS-based standards. Maryland's grade 5 science test (MISA) covers grades 3, 4
+            and 5, so the 5th grader's hub keeps 4th grade science on hand.</li>
+          <li><strong>Social studies:</strong> Maryland's social studies framework, revised in 2025.</li>
+          <li><strong>Tests:</strong> the formats of MSTAR, which replaces MCAP for grades 3-8 reading and math from spring 2027.</li>
+        </ul>
+      </div>
+
+      <div class="kid-block">
+        <h3>🤖 How it was made, and its limits</h3>
+        <p>The questions, explanations, coaching steps and stories were drafted with the help of an AI assistant, working from
+        official curriculum information that is publicly available. They were then checked by automated tests and by separate
+        review passes.</p>
+        <p><strong>Read in full:</strong> Amplify's published CKLA curriculum maps (kindergarten to grade 5) and its K-5 program
+        guide; the openly licensed Core Knowledge teacher guides that CKLA is built on (2013 edition); McGraw Hill's published
+        lesson-by-lesson Reveal Math alignment documents for grades 3-5; a Reveal Math pacing guide published by a school
+        district in another state; and an AACPS family handout on math strategies. Maryland facts come from Maryland State
+        Department of Education announcements.</p>
+        <p><strong>Limits:</strong></p>
+        <ul class="about-list">
+          <li>This is <strong>not an AACPS product</strong> and has not been reviewed or endorsed by AACPS or its teachers.</li>
+          <li>Several official websites (AACPS, MSDE, McGraw Hill and Amplify) could not be opened directly while the game was
+            built, so some details rest on search results that quote those documents.</li>
+          <li>It did not use AACPS pacing guides, teacher editions or other licensed classroom materials. Math unit order follows
+            McGraw Hill's national editions; how AACPS maps Reveal Math onto Maryland's revised standards has not been
+            published.</li>
+          <li>AACPS's health scope and sequence was not found. Health packs use general elementary health content and leave out
+            family-life topics.</li>
+          <li>No question cites a standard code; each is written to the content. A question can still be wrong. Corrections are
+            welcome.</li>
+        </ul>
+      </div>
+
+      <div class="kid-block">
+        <h3>🔒 Privacy</h3>
+        <ul class="about-list">
+          <li>No accounts or sign-in. The only names are the three profile labels: Kindergarten, 3rd Grade, 5th Grade.</li>
+          <li>Progress is saved only in this browser, on this device. Nothing a child types or does is sent anywhere. No ads,
+            tracking or purchases.</li>
+          <li>When online, the page loads its typefaces from Google Fonts. Read-aloud uses the voices built into the device or
+            browser.</li>
+        </ul>
+      </div>
+
+      <div class="kid-block">
+        <h3>👀 How to try it</h3>
+        <ul class="about-list">
+          <li>Go back and tap a card: <strong>Kindergarten</strong>, <strong>3rd Grade</strong> or <strong>5th Grade</strong>. Each
+            hub groups that grade's packs by subject: this year's work and last year's review (the kindergartener's also has a
+            look ahead at 1st grade).</li>
+          <li><strong>Explore Any Grade</strong>, in every hub, opens every pack from kindergarten to 5th grade.</li>
+          <li>Start a pack to play a round of ten. Give a wrong answer to see the hint and second try, and tap
+            <strong>💡 SHOW ME HOW</strong> on any question.</li>
+          <li>The Kindergarten card shows the read-aloud: every question and answer has a 🔊.</li>
+          <li>The small <strong>parent</strong> link (PIN 0000) shows progress and settings, such as turning off second chances
+            for test-style practice.</li>
+          <li>Playing here only changes this device. It does not touch the children's progress at home.</li>
+        </ul>
+      </div>
+
+      <div class="kid-block">
+        <h3>🗂️ What is in each grade</h3>
+        <p class="about-note">Tap a grade to see its packs. Each pack is a round of ten questions on one topic.</p>
+        ${grades}
+      </div>
+
+      <button class="switch-btn" onclick="renderProfileSelect()" style="margin-top:0.5rem;">← BACK TO GAME</button>
+    </div>
+  `);
+}
+
+// ═══════════════════════════════════════════════════════════════
 // PARENT DASHBOARD
 // ═══════════════════════════════════════════════════════════════
 
@@ -68897,7 +69086,7 @@ function renderParentDash() {
           <strong>MSTAR</strong> for 3rd and 5th grade reading and math, testing
           29 March – 28 May 2027. 5th grade science (MISA) is unchanged this year and covers
           grades 3, 4 and 5. MSTAR mixes plain multiple choice with multiple-select,
-          two-part and drag-to-order items — the puzzle questions here practise exactly
+          two-part and drag-to-order items — the puzzle questions here practice exactly
           those formats.
         </p>
         <p style="font-size:0.85rem;line-height:1.55;color:var(--muted);margin-top:0.75rem;">
@@ -69736,6 +69925,7 @@ document.addEventListener('keydown', e => {
 
     if (key === 'Escape') {
       if (document.querySelector('.question-frame')) { e.preventDefault(); confirmExit(); }
+      else if (document.querySelector('.about-page')) { e.preventDefault(); renderProfileSelect(); }
       return;
     }
     if (isTyping(t)) return;   // a real text box: the child is typing
