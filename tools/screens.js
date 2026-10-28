@@ -140,7 +140,7 @@ async function audit(page, label, out) {
         for (const pack of PACKS[pid]) {
           const qs = getQuestions(pack, pid) || [];
           const q = qs.find(x => (x.type === 'typed' || x.type === 'fib') && numpadKeysFor(x) !== null);
-          if (q) return { packId: pack.id, pid, text: q.text };
+          if (q) { window.__numpadQ = q; return { packId: pack.id, pid, text: q.text }; }
         }
       }
       return null;
@@ -150,8 +150,8 @@ async function audit(page, label, out) {
       await page.evaluate(({ pid, packId }) => {
         pickProfile(pid);
         currentPack = PACKS[pid].find(p => p.id === packId);
-        questions = getQuestions(currentPack, pid).filter(x => (x.type === 'typed' || x.type === 'fib') && numpadKeysFor(x) !== null);
-        qIdx = 0; score = 0; xpEarned = 0; streak = 0; locked = false; roundLog = []; reviewItems = [];
+        questions = [window.__numpadQ];   // the one just found: a fresh draw is random and may hold none
+        qIdx = 0; score = 0; xpEarned = 0; streak = 0; locked = false; roundLog = [];
         renderQuestion();
       }, padOk);
       await page.waitForTimeout(250);
@@ -191,7 +191,7 @@ async function audit(page, label, out) {
         await page.evaluate(({ pid, packId, type }) => {
           currentPack = PACKS[pid].find(p => p.id === packId);
           questions = [prepareQuestion(THINK_ITEMS[packId].find(q => q.type === type))];
-          qIdx = 0; score = 0; xpEarned = 0; streak = 0; locked = false; roundLog = []; reviewItems = [];
+          qIdx = 0; score = 0; xpEarned = 0; streak = 0; locked = false; roundLog = [];
           renderQuestion();
         }, { pid, packId, type });
         await page.waitForTimeout(250);

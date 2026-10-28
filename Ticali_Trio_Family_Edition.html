@@ -6677,26 +6677,18 @@ const G4_BANKS = {
 
 // Helpers
 function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length-1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i+1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 // Build a question with 4 options where `answer` is one, and wrongs are near it
 // Candidates can repeat (prekAdd10 offers both `a` and `ans-1`, which are
 // often the same number), so they are de-duplicated before picking three —
 // otherwise a child could see "4, 5, 4, 3" with two identical choices.
 function buildMC(text, answer, wrongCandidates) {
-  const wrongs = shuffle([...new Set(wrongCandidates)].filter(w => w !== answer && w >= 0)).slice(0, 3);
+  const wrongs = shuffleArr([...new Set(wrongCandidates)].filter(w => w !== answer && w >= 0)).slice(0, 3);
   while (wrongs.length < 3) {
     // Safety: add random distractors if not enough unique wrongs
     const w = answer + randInt(-5, 5);
     if (w !== answer && !wrongs.includes(w) && w > 0) wrongs.push(w);
   }
-  const allOptions = shuffle([answer, ...wrongs]);
+  const allOptions = shuffleArr([answer, ...wrongs]);
   return {
     text,
     options: allOptions.map(String),
@@ -6705,9 +6697,9 @@ function buildMC(text, answer, wrongCandidates) {
 }
 // String-based options (used for money, answers like "$1.25")
 function buildMCStr(text, answerStr, wrongStrs) {
-  const wrongs = shuffle([...new Set(wrongStrs)].filter(w => w !== answerStr)).slice(0, 3);
+  const wrongs = shuffleArr([...new Set(wrongStrs)].filter(w => w !== answerStr)).slice(0, 3);
   while (wrongs.length < 3) wrongs.push("none"); // safety
-  const allOptions = shuffle([answerStr, ...wrongs]);
+  const allOptions = shuffleArr([answerStr, ...wrongs]);
   return {
     text,
     options: allOptions,
@@ -7240,7 +7232,7 @@ function g4FracToDec() {
   const { num, den } = decAsFraction(c.dec);
   return withWhy(buildMCStr(`${c.frac} as a decimal?`,
     c.dec,
-    shuffle([c.dec.replace('.','').length > 1 ? `0.0${c.dec.slice(2)}` : '0.1', '0.01', '0.5', '1.0', '0.15'].filter(x => x !== c.dec))),
+    shuffleArr([c.dec.replace('.','').length > 1 ? `0.0${c.dec.slice(2)}` : '0.1', '0.01', '0.5', '1.0', '0.15'].filter(x => x !== c.dec))),
     c.frac === `${num}/${den}`
       ? `${c.frac} is ${num} ${den === 10 ? 'tenth' : 'hundredth'}${num === 1 ? '' : 's'}, which is written ${c.dec}.`
       : `Make an equivalent fraction over ${den}: ${c.frac} = ${num}/${den}. ${num} ${den === 10 ? 'tenths' : 'hundredths'} is written ${c.dec}.`,
@@ -14005,17 +13997,10 @@ const K_PHONEMIC_TUTORIALS = {
 // defined, but before GAME STATE so getQuestions sees them.
 // ═══════════════════════════════════════════════════════════════
 
-if (typeof K_BANKS !== 'undefined') {
-  if (typeof K_ENDING_SOUNDS !== 'undefined')      K_BANKS.ending_sounds_k     = K_ENDING_SOUNDS;
-  if (typeof K_SOUND_BLENDING !== 'undefined')     K_BANKS.sound_blending_k    = K_SOUND_BLENDING;
-  if (typeof K_SOUND_SEGMENTATION !== 'undefined') K_BANKS.sound_segmentation_k = K_SOUND_SEGMENTATION;
-}
-
-if (typeof K_BRIDGE_TUTORIALS !== 'undefined' && typeof K_PHONEMIC_TUTORIALS !== 'undefined') {
-  for (const k in K_PHONEMIC_TUTORIALS) {
-    K_BRIDGE_TUTORIALS[k] = K_PHONEMIC_TUTORIALS[k];
-  }
-}
+K_BANKS.ending_sounds_k      = K_ENDING_SOUNDS;
+K_BANKS.sound_blending_k     = K_SOUND_BLENDING;
+K_BANKS.sound_segmentation_k = K_SOUND_SEGMENTATION;
+for (const k in K_PHONEMIC_TUTORIALS) K_BRIDGE_TUTORIALS[k] = K_PHONEMIC_TUTORIALS[k];
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -22312,18 +22297,10 @@ const CKLA_G4_NARRATIVES_ADDITIONS = [
 // ═══════════════════════════════════════════════════════════════
 // MERGE — extend the existing banks with these additions
 // ═══════════════════════════════════════════════════════════════
-if (typeof CKLA_K_FIVE_SENSES !== 'undefined') {
-  CKLA_K_FIVE_SENSES_ADDITIONS.forEach(q => CKLA_K_FIVE_SENSES.push(q));
-}
-if (typeof CKLA_K_PLANTS !== 'undefined') {
-  CKLA_K_PLANTS_ADDITIONS.forEach(q => CKLA_K_PLANTS.push(q));
-}
-if (typeof CKLA_G2_WAR_1812 !== 'undefined') {
-  CKLA_G2_WAR_1812_ADDITIONS.forEach(q => CKLA_G2_WAR_1812.push(q));
-}
-if (typeof CKLA_G4_NARRATIVES !== 'undefined') {
-  CKLA_G4_NARRATIVES_ADDITIONS.forEach(q => CKLA_G4_NARRATIVES.push(q));
-}
+CKLA_K_FIVE_SENSES_ADDITIONS.forEach(q => CKLA_K_FIVE_SENSES.push(q));
+CKLA_K_PLANTS_ADDITIONS.forEach(q => CKLA_K_PLANTS.push(q));
+CKLA_G2_WAR_1812_ADDITIONS.forEach(q => CKLA_G2_WAR_1812.push(q));
+CKLA_G4_NARRATIVES_ADDITIONS.forEach(q => CKLA_G4_NARRATIVES.push(q));
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -25277,13 +25254,6 @@ const BRIDGE_G5_READING = [
 
 
 // ═══════════════════════════════════════════════════════════════
-// G3 BRIDGE — MULTI-DIGIT ADD & SUBTRACT (50 questions)
-// CCSS 3.NBT.A.2 — fluently add and subtract within 1000.
-// Focus: 3-digit + 3-digit, regrouping (carrying/borrowing),
-// estimation, word problems, missing addend.
-// ═══════════════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════════════
 // G2 BASEBALL ⚾ — themed math + reading + vocab pack (50 Q)
 // Generic baseball: positions, plays, stats, vocabulary.
 // NO MLB team names, player names, or branded content.
@@ -26714,11 +26684,11 @@ const MCAP_G4_ADDITIONS = [
 // ═══════════════════════════════════════════════════════════════
 // MERGE
 // ═══════════════════════════════════════════════════════════════
-if (typeof BRIDGE_G3_FRACTIONS !== 'undefined') BRIDGE_G3_FRACTIONS_ADDITIONS.forEach(q => BRIDGE_G3_FRACTIONS.push(q));
-if (typeof BRIDGE_G3_READING !== 'undefined')   BRIDGE_G3_READING_ADDITIONS.forEach(q => BRIDGE_G3_READING.push(q));
-if (typeof BRIDGE_G5_READING !== 'undefined')   BRIDGE_G5_READING_ADDITIONS.forEach(q => BRIDGE_G5_READING.push(q));
-if (typeof MCAP_G2 !== 'undefined')             MCAP_G2_ADDITIONS.forEach(q => MCAP_G2.push(q));
-if (typeof MCAP_G4 !== 'undefined')             MCAP_G4_ADDITIONS.forEach(q => MCAP_G4.push(q));
+BRIDGE_G3_FRACTIONS_ADDITIONS.forEach(q => BRIDGE_G3_FRACTIONS.push(q));
+BRIDGE_G3_READING_ADDITIONS.forEach(q => BRIDGE_G3_READING.push(q));
+BRIDGE_G5_READING_ADDITIONS.forEach(q => BRIDGE_G5_READING.push(q));
+MCAP_G2_ADDITIONS.forEach(q => MCAP_G2.push(q));
+MCAP_G4_ADDITIONS.forEach(q => MCAP_G4.push(q));
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -27340,8 +27310,7 @@ const QUEST_G5_READING = [
 
 // ═══════════════════════════════════════════════════════════════
 // G2 READING QUEST 📖 — passage-set comprehension game (12 sets, ~54 Q)
-// CURRENT-GRADE quest for the 2nd grader — always visible (no Summer
-// Mode gate). Shorter passages (~100-150 words), G2 vocabulary.
+// CURRENT-GRADE quest for the 2nd grader. Shorter passages (~100-150 words), G2 vocabulary.
 // Skill coverage per set is deliberate: main idea, sequence,
 // cause/effect, character feelings, vocab in context, fact vs.
 // opinion, prediction, evidence. Themes: baseball ⚾, wrestling 🤼,
@@ -28183,8 +28152,8 @@ const QUEST_G5_ADDITIONS = [
 // ═══════════════════════════════════════════════════════════════
 // MERGE into the existing quest banks
 // ═══════════════════════════════════════════════════════════════
-if (typeof QUEST_G3_READING !== 'undefined') QUEST_G3_ADDITIONS.forEach(s => QUEST_G3_READING.push(s));
-if (typeof QUEST_G5_READING !== 'undefined') QUEST_G5_ADDITIONS.forEach(s => QUEST_G5_READING.push(s));
+QUEST_G3_ADDITIONS.forEach(s => QUEST_G3_READING.push(s));
+QUEST_G5_ADDITIONS.forEach(s => QUEST_G5_READING.push(s));
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -29375,11 +29344,7 @@ const MCAP_G5 = [
 // ═══════════════════════════════════════════════════════════════
 
 // Merge K Bridge tutorials into TUTORIALS so the help button finds them
-if (typeof K_BRIDGE_TUTORIALS !== 'undefined' && typeof TUTORIALS !== 'undefined') {
-  for (const k in K_BRIDGE_TUTORIALS) {
-    TUTORIALS[k] = K_BRIDGE_TUTORIALS[k];
-  }
-}
+for (const k in K_BRIDGE_TUTORIALS) TUTORIALS[k] = K_BRIDGE_TUTORIALS[k];
 
 const STORAGE_KEY = 'tapChampions_v3';
 // Last year's profile keys -> this year's. Declared before the first
@@ -29399,8 +29364,7 @@ let xpEarned = 0;
 let streak = 0;
 let bestStreak = 0;
 let locked = false;
-let reviewItems = []; // {question, typedAnswer, timestamp}
-let roundLog = [];    // per-question answer log for parent reports
+let roundLog = [];    // per-question answer log for the end-of-round look back
 // Thinking it through: one wrong try earns a hint and a second chance.
 let tries = 0;          // wrong attempts already made on this question (0 or 1)
 let firstWrong = null;  // what the child chose the first time, for the round log
@@ -62175,11 +62139,11 @@ function getQuestions(pack, profileId) {
 
 function getBaseQuestions(pack, profileId) {
   // K Bridge packs (kindergarten preview): pull from K_BANKS, already mixed
-  if (pack.kBankKey && typeof K_BANKS !== 'undefined' && K_BANKS[pack.kBankKey]) {
+  if (pack.kBankKey && K_BANKS[pack.kBankKey]) {
     const source = K_BANKS[pack.kBankKey];
     if (source && source.length > 0) {
       const picked = shuffleArr(source).slice(0, 10);
-      return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
+      return picked.map(prepareQuestion);
     }
     return [];
   }
@@ -62198,7 +62162,7 @@ function getBaseQuestions(pack, profileId) {
         for (const q of set.questions) {
           if (out.length >= 10) break;
           const withPassage = Object.assign({}, q, { passage: set.passage });
-          out.push(withPassage.type === 'mc' ? shuffleMcAnswers(withPassage) : withPassage);
+          out.push(prepareQuestion(withPassage));
         }
       }
       return out;
@@ -62208,17 +62172,16 @@ function getBaseQuestions(pack, profileId) {
 
   // Every other pre-mixed bank — CKLA, science, social studies, health, tech,
   // state test prep, themed, and grade-level bridge packs — is a flat array of
-  // ready-made questions. Shuffle, take ten, and re-order each multiple
-  // choice's options so a replay is not the same four positions.
+  // ready-made questions. Shuffle, take ten, and let prepareQuestion re-order
+  // each one's choices (puzzles included) so a replay is not the same positions.
   const preMixed = resolvePackBank(pack);
   if (preMixed) {
     if (!preMixed.length) return [];
     const picked = shuffleArr(preMixed).slice(0, 10);
-    return picked.map(q => q.type === 'mc' ? shuffleMcAnswers(q) : q);
+    return picked.map(prepareQuestion);
   }
 
   const totalNeeded = 10;
-  const mcTarget = 5;
   const nonMcTarget = 5;
 
   // Try to get 5 non-MC first
@@ -62783,7 +62746,6 @@ function startPack(packId) {
   streak = 0;
   bestStreak = 0;
   locked = false;
-  reviewItems = [];
   roundLog = [];
   tries = 0;
   firstWrong = null;
@@ -64073,30 +64035,6 @@ function finishPack() {
     ? `<div class="review-notice"><strong>✏️ ${pendingReviews} SHOW-YOUR-WORK NEEDS REVIEW</strong>Parent can check the work paper in the parent dashboard.</div>`
     : '';
 
-  // ─── Parent report section (Family Edition: no destinations, no gate) ───
-  const pset = state.parent || { reportRequired: true };
-  const hasDest = PARENT_CONTACTS.emails.length > 0 || PARENT_CONTACTS.phones.length > 0;
-  const reportGate = hasDest && pset.reportRequired !== false;
-  window.__reportSent = false;
-
-  const smsBtns = PARENT_CONTACTS.phones.map((c, i) =>
-    `<button class="report-send-btn sms" onclick="sendReportSms(${i})">💬 TEXT ${c.label}</button>`
-  ).join('');
-
-  const reportSection = !hasDest ? '' : `
-    <div class="report-box">
-      <div class="report-box-title">${reportGate ? '📋 REPORT REQUIRED' : '📋 SEND YOUR REPORT'}</div>
-      <div class="report-box-sub">${reportGate
-        ? 'Send your round report to Mom & Dad before you can continue. Tap a button, then press SEND in the app that opens.'
-        : 'Share how you did with every question and answer.'}</div>
-      <div class="report-send-row">
-        <button class="report-send-btn" onclick="sendReportEmail()">📧 EMAIL MOM & DAD</button>
-        ${smsBtns}
-      </div>
-    </div>`;
-
-  const gateAttr = reportGate ? 'disabled' : '';
-
   // Said aloud to an early reader: how the round went, in words.
   const doneSay = `Round ${roundNum} done! ${plainText(rating)} You got ${score} out of ${total} right on the first try.` +
     (fixedCount ? ` You fixed ${fixedCount} more with a hint.` : '');
@@ -64118,112 +64056,13 @@ function finishPack() {
         ${FUN.html('completeExtra', { summary })}
         ${lookback}
         ${reviewNotice}
-        ${reportSection}
 
-        <button class="next-btn gated-btn" ${gateAttr} onclick="startPack('${currentPack.id}')">↻ PLAY AGAIN (NEW QUESTIONS)</button>
-        <button class="next-btn gated-btn" ${gateAttr} style="background:white;color:var(--ink);box-shadow:5px 5px 0 var(--user-color);margin-top:0.75rem;" onclick="backToPacks()">← BACK TO PACKS</button>
-        ${reportGate ? '<div class="gate-hint" id="gate-hint">🔒 Buttons unlock after you send your report</div>' : ''}
+        <button class="next-btn complete-nav" onclick="startPack('${currentPack.id}')">↻ PLAY AGAIN (NEW QUESTIONS)</button>
+        <button class="next-btn complete-nav" style="background:white;color:var(--ink);box-shadow:5px 5px 0 var(--user-color);margin-top:0.75rem;" onclick="backToPacks()">← BACK TO PACKS</button>
       </div>
     </div>
   `);
   if (state.profiles[currentProfile.id].autoRead && earlyReader()) autoSay(doneSay, 500);
-}
-
-// ═══════════════════════════════════════════════════════════════
-// PARENT REPORTS — build the round report and hand it to the iPad's
-// Mail or Messages app, pre-addressed and pre-written.
-// Parent contact info is HARDCODED here (not in localStorage) so it
-// cannot be changed from inside the game.
-// ═══════════════════════════════════════════════════════════════
-
-// FAMILY EDITION: no parent contacts baked in — reports disabled.
-const PARENT_CONTACTS = { emails: [], phones: [] };
-
-function buildRoundReport() {
-  const d = state.profiles[currentProfile.id];
-  const total = questions.length;
-  const pct = Math.round((score / total) * 100);
-  const now = new Date();
-  const when = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
-
-  const lines = [];
-  lines.push('TICALI TRIO ROUND REPORT');
-  lines.push('Player: ' + currentProfile.name);
-  lines.push('Pack: ' + currentPack.title);
-  lines.push('When: ' + when);
-  lines.push('Score: ' + score + '/' + total + ' (' + pct + '%)  XP: +' + xpEarned + '  Best streak: ' + bestStreak);
-  lines.push('');
-  lines.push('QUESTION BY QUESTION:');
-  roundLog.forEach(e => {
-    if (e.right) {
-      lines.push('Q' + e.n + ' [CORRECT] ' + e.q + ' -> "' + e.given + '"');
-    } else if (e.fixed) {
-      lines.push('Q' + e.n + ' [FIXED AFTER HINT] ' + e.q + ' -> "' + e.given + '"');
-    } else {
-      lines.push('Q' + e.n + ' [WRONG] ' + e.q + ' -> answered "' + e.given + '", correct was "' + e.correct + '"');
-    }
-  });
-
-  // Improvement context: this pack's recent rounds + overall accuracy
-  const packHist = (d.history || []).filter(h => h.pack === currentPack.id);
-  if (packHist.length > 1) {
-    const recent = packHist.slice(-6, -1).map(h => h.score + '/' + h.total).join(', ');
-    const best = Math.max(...packHist.map(h => h.score));
-    lines.push('');
-    lines.push('PROGRESS ON THIS PACK:');
-    lines.push('Rounds played: ' + packHist.length + '  Best: ' + best + '/' + total);
-    if (recent) lines.push('Previous rounds: ' + recent + '  ->  This round: ' + score + '/' + total);
-  }
-  const overallAcc = d.attempts ? Math.round((d.correct / d.attempts) * 100) : 0;
-  lines.push('');
-  lines.push('OVERALL: ' + d.xp + ' XP, ' + overallAcc + '% lifetime accuracy, ' + (d.history || []).length + ' rounds completed.');
-
-  return lines.join('\n');
-}
-
-function sendReportEmail() {
-  // Sends to BOTH parents in one email (addresses hardcoded above).
-  const subject = 'Ticali Trio: ' + currentProfile.name + ' — ' + currentPack.title + ' (' + score + '/' + questions.length + ')';
-  const body = buildRoundReport();
-  const href = 'mailto:' + PARENT_CONTACTS.emails.join(',')
-    + '?subject=' + encodeURIComponent(subject)
-    + '&body=' + encodeURIComponent(body);
-  markReportSent();
-  window.location.href = href;
-}
-
-function sendReportSms(parentIdx) {
-  const contact = PARENT_CONTACTS.phones[parentIdx || 0];
-  if (!contact) return;
-  // Compact version for SMS (full detail goes better via email)
-  const d = state.profiles[currentProfile.id];
-  const total = questions.length;
-  const pct = Math.round((score / total) * 100);
-  const wrong = roundLog.filter(e => !e.right);
-  const lines = [];
-  lines.push('Ticali Trio: ' + currentProfile.name + ' finished ' + currentPack.title);
-  lines.push('Score ' + score + '/' + total + ' (' + pct + '%), +' + xpEarned + ' XP, streak ' + bestStreak);
-  if (wrong.length === 0) {
-    lines.push('Every question correct!');
-  } else {
-    lines.push('Missed ' + wrong.length + ':');
-    wrong.forEach(e => lines.push('Q' + e.n + ': answered "' + e.given + '", correct "' + e.correct + '"'));
-  }
-  const overallAcc = d.attempts ? Math.round((d.correct / d.attempts) * 100) : 0;
-  lines.push('Lifetime: ' + overallAcc + '% accuracy, ' + (d.history || []).length + ' rounds.');
-  const body = lines.join('\n');
-  // iOS Messages accepts sms:<number>&body=; Android uses ?body=
-  const isApple = /iPad|iPhone|Macintosh/.test(navigator.userAgent);
-  const sep = isApple ? '&' : '?';
-  markReportSent();
-  window.location.href = 'sms:' + contact.number + sep + 'body=' + encodeURIComponent(body);
-}
-
-function markReportSent() {
-  window.__reportSent = true;
-  document.querySelectorAll('.gated-btn').forEach(b => b.removeAttribute('disabled'));
-  const hint = document.getElementById('gate-hint');
-  if (hint) hint.innerHTML = '✅ Report opened — press SEND in the app, then come back and continue!';
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -64311,7 +64150,6 @@ function exitToHub() {
   streak = 0;
   bestStreak = 0;
   locked = false;
-  reviewItems = [];
   roundLog = [];
   tries = 0;
   firstWrong = null;
@@ -64322,19 +64160,11 @@ function exitToHub() {
 
   // Clean up any leftover overlays/animations from mid-question
   const stragglers = document.querySelectorAll(
-    '.xp-pop, .streak-pop, #exit-modal-backdrop, .tutorial-backdrop, .tutorial-modal'
+    '.xp-pop, .streak-pop, #exit-modal-backdrop'
   );
   stragglers.forEach(el => el.remove());
 
   backToPacks();
-}
-
-function toggleSummerMode() {
-  if (!currentProfile) return;
-  const d = state.profiles[currentProfile.id];
-  d.summerMode = !d.summerMode;
-  saveState();
-  renderHub();
 }
 
 const EXIT_SAY = 'Do you want to stop this round? The STAY button keeps playing. The red EXIT button goes back to your packs.';
@@ -64638,15 +64468,6 @@ function saveSecondChance() {
     : '✓ Saved. The first answer is final, like the state test.';
 }
 
-function saveParentSettings() {
-  if (!state.parent) state.parent = { reportRequired: true };
-  const reqEl = document.getElementById('parent-require');
-  state.parent.reportRequired = !!(reqEl && reqEl.checked);
-  saveState();
-  const note = document.getElementById('parent-settings-saved');
-  if (note) note.textContent = '✓ Saved. ' + (state.parent.reportRequired ? 'Reports are REQUIRED after every round.' : 'Reports are optional.');
-}
-
 function renderReviewItem(profileId, r) {
   const date = new Date(r.timestamp);
   const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -64681,8 +64502,7 @@ let tutState = {
   packId: null,
   stepIdx: 0,
   visited: [],
-  voiceOn: true,
-  playing: false
+  voiceOn: true
 };
 
 // Check speech synthesis availability
@@ -64699,8 +64519,7 @@ function openTutorial(packId) {
     packId: packId,
     stepIdx: 0,
     visited: [0],
-    voiceOn: tutState.voiceOn, // preserve voice preference
-    playing: false
+    voiceOn: tutState.voiceOn // preserve voice preference
   };
   renderTutorial();
 }
@@ -64774,47 +64593,13 @@ function pickVoice(voices) {
   return voices.find(v => en(v) && v.localService) || voices.find(en) || voices[0];
 }
 
+// The walkthrough narrates through speakText(), like every 🔊 button and the
+// coach: the same voice, rate and spoken-math rules, plus the iOS resume(),
+// keepalive and retained utterance.
 function speakCurrentStep() {
   if (!SPEECH_AVAILABLE || !tutState.voiceOn || !tutState.active) return;
-  const tut = TUTORIALS[tutState.packId];
-  const step = tut.steps[tutState.stepIdx];
-  if (!step || !step.narration) return;
-
-  let voices = window.speechSynthesis.getVoices();
-  if (!voices || voices.length === 0) {
-    // Lazy-load and retry
-    try { window.speechSynthesis.getVoices(); } catch(e) {}
-    setTimeout(() => speakCurrentStep(), 250);
-    return;
-  }
-
-  // Cancel anything speaking, then speak after a tiny delay (Chrome bug workaround)
-  try { window.speechSynthesis.cancel(); } catch(e) {}
-  setTimeout(() => {
-    try {
-      if (!tutState.voiceOn || !tutState.active) return; // user toggled in the gap
-      const utter = new SpeechSynthesisUtterance(step.narration);
-      utter.rate = 0.9;
-      utter.pitch = 1.0;
-      utter.volume = 0.9;
-
-      const preferred = pickVoice(window.speechSynthesis.getVoices());
-      if (preferred) {
-        utter.voice = preferred;
-        utter.lang = preferred.lang || 'en-US';
-      } else {
-        utter.lang = 'en-US';
-      }
-      utter.onerror = (e) => {
-        const err = (e && e.error) || '';
-        if (err === 'interrupted' || err === 'canceled') return;
-        console.warn('[tut speak] utterance error:', err || e);
-      };
-      window.speechSynthesis.speak(utter);
-    } catch(e) {
-      console.warn('[tut speak] failed:', e.message);
-    }
-  }, 50);
+  const step = TUTORIALS[tutState.packId].steps[tutState.stepIdx];
+  if (step && step.narration) speakText(step.narration);
 }
 
 // ─── Saying math the way a teacher says it ───
@@ -64848,6 +64633,8 @@ const PICTURE = /(?:\p{Extended_Pictographic}|[■-◿✓✗])(?:\uFE0F|\u20E3|\
 function speechify(text) {
   text = String(text);
   if ((text.match(SOUND_BY_SOUND) || []).length >= 2) {
+    // The last sound usually has no dots of its own ("p... i... g", "K... a... t.").
+    text = text.replace(/(\.{3}|…)(\s+)([a-z])(?!\.{3}|…)(?=[.!?,;:"”’)]|$)/gi, '$1$2$3…');
     text = text.replace(/\b([a-z])(?:\.{3}|…)/gi, (m, l) => LETTER_SOUND[l.toLowerCase()] + ',');
   }
   return text
@@ -65277,8 +65064,8 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
 // ═══════════════════════════════════════════════════════════════
 // TOUCH RUNTIME
 // Behaviour that CSS alone cannot express: reacting to the software
-// keyboard, to rotation, and to the iPad's habit of treating a slow tap
-// as a text selection.
+// keyboard, and to the iPad's habit of treating a slow tap as a text
+// selection.
 // ═══════════════════════════════════════════════════════════════
 
 // ─── Keyboard-aware layout ───
@@ -65327,27 +65114,6 @@ if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
       }
     }, 150);
   });
-})();
-
-// ─── Rotation ───
-// Safari fires resize before the new metrics have settled, which can leave
-// a sticky passage column measured against the old orientation. A short
-// settle-and-nudge keeps scroll position sane after a turn.
-(function setupOrientationSettle() {
-  let t = null;
-  const settle = () => {
-    clearTimeout(t);
-    t = setTimeout(() => {
-      const el = document.querySelector('.question-frame');
-      if (el) {
-        // Reading a layout property forces Safari to recompute the sticky
-        // column against the new viewport.
-        void el.offsetHeight;
-      }
-    }, 250);
-  };
-  window.addEventListener('orientationchange', settle);
-  window.addEventListener('resize', settle);
 })();
 
 // ─── Stray selection on slow taps ───
