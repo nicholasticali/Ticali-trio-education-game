@@ -156,8 +156,9 @@ async function answerCorrect(page, vp) {
     const v = String(q.accepted[0]);
     if (await page.locator('.numpad-key').count()) {
       for (const ch of v) {
-        if (ch === ' ') continue;
-        const idx = await page.evaluate(ch => [...document.querySelectorAll('.numpad-key')].findIndex(k => k.textContent.trim() === ch), ch);
+        // A mixed number such as 4 3/4 gets a SPACE key on the pad.
+        const idx = await page.evaluate(ch => [...document.querySelectorAll('.numpad-key')].findIndex(k => ch === ' ' ? k.getAttribute('aria-label') === 'SPACE' : k.textContent.trim() === ch), ch);
+        if (idx < 0 && ch === ' ') continue;
         await press(page, vp, page.locator('.numpad-key').nth(idx));
       }
     } else await page.locator('#typedInput').fill(v);
