@@ -38399,7 +38399,7 @@ const PACKS = {
     { id:'g5_morphology', title:'Roots, Prefixes & Suffixes', icon:'🧬', subject:'ela', tier:'now', desc:'Greek and Latin parts that unlock hundreds of words.', bank:'G5_MORPHOLOGY' },
     { id:'g5_ckla_narratives', title:'CKLA: Personal Narratives', icon:'📖', subject:'reading', tier:'now', desc:'How real writers tell true stories about themselves.', bank:'CKLA_G5_NARRATIVES' },
     { id:'g5_ckla_poetry', title:'CKLA: Poetry', icon:'🎭', subject:'reading', tier:'now', desc:'Metaphor, meter, speaker, and what a poem is really doing.', bank:'CKLA_G5_POETRY' },
-    { id:'g5_ckla_mango', title:'CKLA: The House on Mango Street', icon:'🏡', subject:'reading', tier:'now', desc:'Esperanza, the vignettes, and a house of her own.', bank:'CKLA_G5_MANGO' },
+    { id:'g5_ckla_mango', title:'CKLA: The House on Mango Street', icon:'🏡', subject:'reading', tier:'review', desc:'Esperanza, the vignettes, and a house of her own.', bank:'CKLA_G5_MANGO' },
     { id:'g5_ckla_quixote', title:'CKLA: Don Quixote', icon:'🐴', subject:'reading', tier:'now', desc:'Windmills, Sancho Panza, and reading too many books.', bank:'CKLA_G5_QUIXOTE' },
     { id:'g5_ckla_reformation', title:'CKLA: The Reformation', icon:'📜', subject:'reading', tier:'now', desc:'The printing press, Luther, and a Christendom split.', bank:'CKLA_G5_REFORMATION' },
     { id:'g5_ckla_native', title:'CKLA: Native Americans', icon:'🪶', subject:'reading', tier:'now', desc:'The Great Law of Peace, removal, and Native nations today.', bank:'CKLA_G5_NATIVE_AMERICANS' },
@@ -104804,7 +104804,7 @@ function funList() {
   if (has('STICKERS_SETS')) parts.push('stickers that each teach a true fact');
   if (has('MISSIONS_POOLS')) parts.push('daily missions');
   if (has('BOSS_PACK_ID')) parts.push('goofy boss battles');
-  if (has('SPRINT_CFG')) parts.push('speed sprints against your own best');
+  if (has('SPRINT_CFG')) parts.push('speed sprints against the child\'s own best');
   if (has('FAMILY_DEFAULT_TARGET')) parts.push('a family team goal the three children reach together');
   return parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
 }
@@ -104858,7 +104858,7 @@ function renderAbout() {
           <li><strong>Practice this year's work</strong>, with last year's kept for review, and every other grade from kindergarten
             to 5th one tap away.</li>
           <li><strong>Understand, not just answer.</strong> After every answer, right or wrong, the child sees <em>why</em>.
-            After a wrong answer they get a hint and one more try.</li>
+            After a wrong answer on most question types, they get a hint and one more try.</li>
           <li><strong>Learn it the way the programs teach it.</strong> 💡 SHOW ME HOW walks through the method step by step,
             using the question's own numbers and words: make a ten, the area model, arm blending, look back in the story.</li>
           <li><strong>Think, not guess.</strong> Puzzles ask the child to pick every answer that fits, put steps or events in
@@ -104866,7 +104866,7 @@ function renderAbout() {
           <li><strong>Grow readers.</strong> ${road ? `The 📖 Reading Road goes from first letter sounds to decodable stories and
             questions about them, in the order Amplify CKLA teaches the sounds (${road.lands.map(l => l.title).join(', ')}).` : ''}
             In kindergarten and 1st grade every question, answer and puzzle piece has a 🔊 button, so a child who cannot read
-            yet can play alone.</li>
+            yet can play without a grown-up reading to them.</li>
           <li><strong>Keep it fun and kind.</strong> ${funList()}. A wrong answer never takes away progress.</li>
         </ul>
       </div>
@@ -104875,13 +104875,13 @@ function renderAbout() {
         <h3>📚 What it follows</h3>
         <ul class="about-list">
           <li><strong>Reading and writing:</strong> Amplify CKLA, which AACPS uses in K-5. Reading packs follow each grade's CKLA
-            units; phonics follows the CKLA Skills sequence.</li>
+            units (2nd edition); phonics follows the CKLA Skills sequence.</li>
           <li><strong>Math:</strong> McGraw Hill Reveal Math, which AACPS uses in K-5, and Maryland's revised math standards
             (adopted July 2025, in effect this school year).</li>
           <li><strong>Science:</strong> Maryland's NGSS-based standards. Maryland's grade 5 science test (MISA) covers grades 3, 4
             and 5, so the 5th grader's hub keeps 4th grade science on hand.</li>
           <li><strong>Social studies:</strong> Maryland's social studies framework, revised in 2025.</li>
-          <li><strong>Tests:</strong> the formats of MSTAR, which replaces MCAP for grades 3-8 reading and math from spring 2027.</li>
+          <li><strong>Tests:</strong> item formats like those on MSTAR, which replaces MCAP for grades 3-8 reading and math from spring 2027.</li>
         </ul>
       </div>
 
@@ -104890,7 +104890,7 @@ function renderAbout() {
         <p>The questions, explanations, coaching steps and stories were written by an AI assistant at the parent's direction,
         working from official curriculum information that is publicly available. They were then checked by automated tests
         and by further AI review passes that re-solved every question.</p>
-        <p><strong>Read in full</strong> (PDF copies on public file-storage links, which opened even though the websites
+        <p><strong>The AI assistant read in full</strong> (PDF copies on public file-storage links, which opened even though the websites
         did not): Amplify's published CKLA curriculum maps (kindergarten to grade 5) and its K-5 program
         guide; the openly licensed Core Knowledge teacher guides that CKLA is built on (2013 edition); McGraw Hill's published
         lesson-by-lesson Reveal Math alignment documents for grades 3-5; a Reveal Math pacing guide published by a school
@@ -104898,7 +104898,7 @@ function renderAbout() {
         that quote Maryland State Department of Education announcements.</p>
         <p><strong>Limits:</strong></p>
         <ul class="about-list">
-          <li>This is <strong>not an AACPS product</strong> and has not been reviewed or endorsed by AACPS or its teachers.</li>
+          <li>This is <strong>not an AACPS product</strong> and has not been reviewed or endorsed by AACPS or its teachers. Nor is it a product of Amplify or McGraw Hill, the publishers of CKLA and Reveal Math, and they have not reviewed or endorsed it.</li>
           <li>The AI assistant could not open several official websites (AACPS, MSDE, McGraw Hill and Amplify) directly while
             the game was built, so some details rest on search results that quote those documents.</li>
           <li>It did not use AACPS pacing guides, teacher editions or other licensed classroom materials. Math unit order follows
@@ -104908,7 +104908,7 @@ function renderAbout() {
             use this year could not be confirmed; the reading packs follow the 2nd edition's units.</li>
           <li>AACPS's health scope and sequence was not found. Health packs use general elementary health content and leave out
             family-life topics.</li>
-          <li>Read-aloud uses the device's own voice. When it sounds out a word for blending ("c... a... t"), it says the
+          <li>Read-aloud uses a voice from the device or browser. When it sounds out a word for blending ("c... a... t"), it says the
             short sounds /k/ and /t/ as "kuh" and "tuh", because a speech engine cannot say them short. The written
             explanations give a key word instead ("the quick sound at the start of tag"), and a grown-up can model the
             short sounds.</li>
@@ -104921,18 +104921,18 @@ function renderAbout() {
         <h3>🔒 Privacy</h3>
         <ul class="about-list">
           <li>No accounts or sign-in. The only names are the three profile labels: Kindergarten, 3rd Grade, 5th Grade.</li>
-          <li>Progress is saved only in this browser, on this device. Nothing a child types or does is sent anywhere. No ads,
+          <li>Progress is saved only in this browser, on this device. A child's answers are never sent anywhere. No ads,
             tracking or purchases.</li>
           <li>When online, the page loads its typefaces from Google Fonts. Read-aloud uses the most natural voice the device or
-            browser offers; in Edge and Chrome some of those are online voices, which receive the words being read aloud, never
-            anything a child types. A parent can choose a voice built into the device instead.</li>
+            browser offers; in Edge and Chrome some of those are online voices, which receive the words being read aloud: the game's own
+            words, plus any name a 3rd or 5th grader types for their buddy. A parent can choose a voice built into the device instead.</li>
         </ul>
       </div>
 
       <div class="kid-block">
         <h3>👀 How to try it</h3>
         <ul class="about-list">
-          <li>Go back and tap a card: <strong>Kindergarten</strong>, <strong>3rd Grade</strong> or <strong>5th Grade</strong>. Each
+          <li>Go back and click a card: <strong>Kindergarten</strong>, <strong>3rd Grade</strong> or <strong>5th Grade</strong>. Each
             hub groups that grade's packs by subject: this year's work and last year's review (the kindergartener's also has a
             look ahead at 1st grade).</li>
           <li><strong>Explore Any Grade</strong>, near the bottom of every hub (just above the trophies), opens every pack from
@@ -105063,7 +105063,7 @@ function renderParentDash() {
       <p>School year 2026-2027 · Kindergarten, 3rd and 5th grade · Anne Arundel County</p>
 
       <div class="kid-block" style="border-color:var(--gold);">
-        <h3>📚 What this is aligned to</h3>
+        <h3>📚 What it is based on</h3>
         <p style="font-size:0.9rem;line-height:1.55;">
           Questions are written to the programs AACPS uses: <strong>Amplify CKLA</strong> for
           reading (the packs follow the 2nd-edition CKLA unit sequence for each grade; which edition AACPS
@@ -105110,7 +105110,7 @@ function renderParentDash() {
         Settings › Accessibility › Read &amp; Speak (called Spoken Content on older versions) › Voices › English, then download a
         voice marked Premium or Enhanced, such as Ava. On a Mac: System Settings › Accessibility › Spoken Content › System
         voice › Manage Voices. On Windows, Microsoft Edge has natural voices built in. Reload the game afterwards. Edge's
-        Natural and Chrome's Google voices work online: they receive the words being read aloud, never anything a child types.</p>
+        Natural and Chrome's Google voices work online: they receive the words being read aloud: the game's own words, plus any name a 3rd or 5th grader types for their buddy.</p>
         <div id="voice-saved" class="mini-label" style="margin-top:0.5rem;"></div>
       </div>
 
