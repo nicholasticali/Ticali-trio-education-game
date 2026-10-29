@@ -161,7 +161,7 @@ async function answerQuestion(page, missFirst) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
   const results = [];
   const jsErrors = [];
 
@@ -248,4 +248,8 @@ async function answerQuestion(page, missFirst) {
   console.log('\n=== LAYOUT / TOUCH FINDINGS (' + results.length + ') ===');
   const uniq = [...new Set(results)];
   uniq.forEach(r => console.log(r));
+  const failed = jsErrors.length || uniq.length;
+  console.log(failed ? `\nsmoke: FAIL — ${new Set(jsErrors).size} JS errors, ${uniq.length} layout/touch findings`
+    : `\nsmoke: PASS — a whole round at ${VIEWPORTS.length} viewports, 0 JS errors, 0 layout/touch findings`);
+  process.exit(failed ? 1 : 0);
 })();

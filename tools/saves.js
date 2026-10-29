@@ -24,7 +24,7 @@ const CASES = [
 ];
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
   const fails = [];
   for (const c of CASES) {
     const page = await (await browser.newContext()).newPage();
@@ -85,6 +85,7 @@ const CASES = [
   }
 
   await browser.close();
-  console.log(fails.length ? fails.map(f => 'FAIL ' + f).join('\n') : `saves: ${CASES.length} kinds of save load intact, survive play and reload; a corrupt save is kept aside; no storage still plays`);
+  if (fails.length) console.log(fails.map(f => 'FAIL ' + f).join('\n'));
+  console.log(fails.length ? `saves: FAIL — ${fails.length} problems` : `saves: PASS — ${CASES.length} kinds of save load intact, survive play and reload; a corrupt save is kept aside; no storage still plays`);
   process.exit(fails.length ? 1 : 0);
 })();

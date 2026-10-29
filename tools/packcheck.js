@@ -7,7 +7,7 @@ const path = require('path');
 const APP = 'file://' + path.resolve(process.argv[2] || require('path').join(__dirname, '..', 'Ticali_Trio_Family_Edition.html'));
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
   const page = await browser.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
@@ -126,5 +126,8 @@ const APP = 'file://' + path.resolve(process.argv[2] || require('path').join(__d
     [...new Set(r.problems)].slice(0, 6).forEach(p => console.log(`      ${p}`));
   });
   if (!bad.length) console.log('  none — every pack returns a full, well-formed round.');
-  process.exit(bad.length || out.orphans.length || out.noWhy.length || errors.length ? 1 : 0);
+  const failed = bad.length || out.orphans.length || out.noWhy.length || errors.length;
+  console.log(failed ? `packcheck: FAIL — ${bad.length} packs with problems, ${out.orphans.length} pointing at a missing bank, ${out.noWhy.length} without a why, ${errors.length} JS errors`
+    : `packcheck: PASS — all ${out.rows.length} packs return a full, well-formed round`);
+  process.exit(failed ? 1 : 0);
 })();

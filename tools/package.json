@@ -1,11 +1,34 @@
 {
   "name": "ticali-trio-tools",
   "private": true,
-  "description": "Checks for the Ticali Trio app. Run `npm install`, then `node packcheck.js` and `node smoke.js`.",
+  "description": "Checks for the Ticali Trio app. Run `npm install`, then `npm test` for every check, or `node <check>.js` for one.",
   "scripts": {
+    "test": "bash run-all.sh",
+    "all": "bash run-all.sh",
+    "repo": "bash run-all.sh repo",
+    "extras": "bash run-all.sh extras",
+    "modules": "bash run-all.sh modules",
     "check": "node packcheck.js",
     "smoke": "node smoke.js",
-    "screens": "node screens.js"
+    "screens": "node screens.js",
+    "platforms": "node platforms.js",
+    "saves": "node saves.js",
+    "coach": "node coach.js",
+    "readaloud": "node readaloud.js",
+    "voice": "node voice.js",
+    "about": "node about.js",
+    "reset": "node reset.js",
+    "boss-example": "node boss-example.js",
+    "generators": "node generators.js",
+    "speech": "node speech.js",
+    "readcheck": "node modules/readcheck.js",
+    "buddy": "node modules/buddy.test.js",
+    "stickers": "node modules/stickers.test.js",
+    "boss": "node modules/boss.test.js",
+    "missions": "node modules/missions.test.js",
+    "sprint": "node modules/sprint.test.js",
+    "family": "node modules/family.test.js",
+    "reading": "node modules/reading.test.js"
   },
   "dependencies": {
     "playwright": "^1.49.1"

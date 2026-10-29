@@ -55,7 +55,7 @@ async function chooseBuddyIfAsked(page) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
   const out = [];
   const errs = [];
 
@@ -228,4 +228,8 @@ async function chooseBuddyIfAsked(page) {
   console.log(`\nFindings (${uniq.length}):`);
   uniq.forEach(o => console.log('  ' + o));
   if (!uniq.length) console.log('  none');
+  const failed = errs.length || uniq.length;
+  console.log(failed ? `\nscreens: FAIL — ${new Set(errs).size} JS errors, ${uniq.length} findings`
+    : `\nscreens: PASS — every other screen at ${VIEWPORTS.length} viewports, 0 JS errors, 0 findings`);
+  process.exit(failed ? 1 : 0);
 })();

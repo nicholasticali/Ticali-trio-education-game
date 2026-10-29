@@ -98,7 +98,7 @@ async function answer(page, how) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
   const failures = [];
   const outcomes = {};
   for (const dev of DEVICES) {
@@ -250,5 +250,7 @@ async function answer(page, how) {
   const uniq = [...new Set(failures)];
   console.log(`\n${uniq.length} problems${uniq.length ? ':' : ' — the same game on every device.'}`);
   uniq.forEach(f => console.log('  ' + f));
+  console.log(uniq.length ? `\nplatforms: FAIL — ${uniq.length} problems`
+    : `\nplatforms: PASS — ${Object.keys(outcomes).length} play-throughs, the same game on every device`);
   process.exit(uniq.length ? 1 : 0);
 })();
