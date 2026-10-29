@@ -37,9 +37,14 @@ from the Word file.
   a web address (for example a private link or a family web server). Once it is
   open in Safari from a web address, **Share ▸ Add to Home Screen** gives it an app
   tile that runs full screen.
+- **From GitHub Pages:** with this repository public and Pages turned on (Settings ▸
+  Pages ▸ Deploy from a branch, the folder `/ (root)`), the game is at
+  `https://nicholasticali.github.io/Ticali-trio-education-game/`. `index.html` opens
+  the game file. Safari can clear a website's saved data after about a week without
+  a visit; a Home Screen app keeps it, so add the game to the Home Screen.
 
-Progress lives in that browser on that device. A copy opened somewhere else starts
-fresh and never touches the children's progress.
+Progress lives in that browser on that device, for that web address. A copy opened
+somewhere else starts fresh and never touches the children's progress.
 
 ## The three children, 2026-2027
 
