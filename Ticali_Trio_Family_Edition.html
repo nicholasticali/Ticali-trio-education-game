@@ -28809,9 +28809,6 @@ const CKLA_K_PLANTS_ADDITIONS = [
     how:{ name:'Think What You Know', steps:['Picture the trees and the grass outside in summer.', 'What color do you see the most?', 'Now pick the color of most leaves.'] } },
 
   // TF
-  { type:'tf', statement:'Plants need water to grow.', answer:true,
-    why:'True. Plants need water to grow. Their roots drink it up from the soil.',
-    how:{ name:'Look Back', steps:['Remember the story: roots drink water from the soil.', 'Think: what happens to a plant that never gets any water?', 'Now decide: do plants need water to grow? Pick true or false.'] } },
   { type:'tf', statement:'Plants can grow in total darkness with no sunlight at all.', answer:false,
     why:'False. Plants need sunlight. Their leaves use light to make food, so in total darkness they cannot stay healthy.',
     how:{ name:'Find the Clue Words', steps:['Listen for the clue words: no sunlight at all.', 'Remember the story: leaves catch sunlight to make the plant\'s food.', 'Now decide: can plants grow in total darkness? Pick true or false.'] } },
@@ -75249,7 +75246,7 @@ function getBaseQuestions(pack, profileId) {
 
 // ═══════════════════════════════════════════════════════════════
 // FUN LAYER — shared plumbing for the engagement features
-// The buddy, missions, stickers, boss battles, sprints and family goal
+// The buddy, missions, stickers, boss battles, speed sprints, family goal and Reading Road
 // are separate modules below. None of them edits the round engine; they
 // listen for its events and contribute HTML at fixed places on screen:
 //
@@ -77330,22 +77327,6 @@ function bossAutoRead(pid) { const d = state.profiles[pid]; return !!(d && d.aut
 function bossSay(text, delay) {
   if (typeof speakText !== 'function' || !text) return;
   setTimeout(() => { try { speakText(text); } catch (e) {} }, delay || 0);
-}
-// Speak once nothing else is talking (the buddy and the sticker book also
-// read aloud on the round-complete screen), and only while `selector` is
-// still on screen.
-function bossSayWhenQuiet(text, selector, delay) {
-  if (typeof speakText !== 'function' || !text) return;
-  let quiet = 0, tries = 0;
-  const tick = () => {
-    if (selector && !document.querySelector(selector)) return;
-    const ss = window.speechSynthesis;
-    const busy = !!(ss && (ss.speaking || ss.pending));
-    quiet = busy ? 0 : quiet + 1;
-    if (quiet >= 2) { try { speakText(text); } catch (e) {} return; }
-    if (++tries < 80) setTimeout(tick, 350);
-  };
-  setTimeout(tick, delay || 0);
 }
 function bossSpeakBtn(text) { return typeof speakBtn === 'function' ? speakBtn(text, false) : ''; }
 function bossHalf(n) {
@@ -99246,6 +99227,8 @@ function funList() {
   if (has('STICKERS_SETS')) parts.push('stickers that each teach a true fact');
   if (has('MISSIONS_POOLS')) parts.push('daily missions');
   if (has('BOSS_PACK_ID')) parts.push('goofy boss battles');
+  if (has('SPRINT_CFG')) parts.push('speed sprints against your own best');
+  if (has('FAMILY_DEFAULT_TARGET')) parts.push('a family team goal the three children reach together');
   return parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0];
 }
 
@@ -99264,7 +99247,11 @@ function renderAbout() {
       return list.length ? `<p class="about-subject"><strong>${s.icon} ${s.label}</strong> · ${list.map(pk => pk.title.replace(/^G\d: /, '')).join(' · ')}</p>` : '';
     }).join('');
     return `<details class="about-grade"><summary>${g.icon} ${g.label} <span class="about-count">${inGrade.length} packs</span></summary>${bySubject}</details>`;
-  }).join('');
+  }).join('') + (() => {
+    // Pre-K review for the kindergartener and each child's Big Thinker puzzle mix belong to no single grade.
+    const other = packs.filter(pk => !GRADES.some(g => g.key === pk.grade));
+    return other.length ? `<details class="about-grade"><summary>🧸 PRE-K REVIEW AND PUZZLE MIXES <span class="about-count">${other.length} packs</span></summary><p class="about-subject">${[...new Set(other.map(pk => pk.title))].join(' · ')}</p></details>` : '';
+  })();
 
   render(`
     <div class="parent-dash about-page">
@@ -99338,6 +99325,8 @@ function renderAbout() {
           <li>It did not use AACPS pacing guides, teacher editions or other licensed classroom materials. Math unit order follows
             McGraw Hill's national editions; how AACPS maps Reveal Math onto Maryland's revised standards has not been
             published.</li>
+          <li>Amplify published a 3rd edition of CKLA for 2025-26 with a different order of units. Which edition AACPS classrooms
+            use this year could not be confirmed; the reading packs follow the 2nd edition's units.</li>
           <li>AACPS's health scope and sequence was not found. Health packs use general elementary health content and leave out
             family-life topics.</li>
           <li>No question cites a standard code; each is written to the content. A question can still be wrong. Corrections are
@@ -99543,6 +99532,7 @@ function renderParentDash() {
 
       ${blocks}
       <button class="reset-btn" onclick="if(confirm('Reset ALL progress for all three children? Cannot be undone.')){try{localStorage.setItem('${STORAGE_KEY}_before_reset',localStorage.getItem('${STORAGE_KEY}')||'')}catch(e){}localStorage.removeItem('${STORAGE_KEY}');location.reload();}">⚠ RESET ALL</button>
+      ${(() => { try { return localStorage.getItem(STORAGE_KEY + '_before_reset') ? '<button class="reset-btn" style="background:white;color:var(--ink);" onclick="restoreBeforeReset()">↩ UNDO THE LAST RESET</button>' : ''; } catch (e) { return ''; } })()}
       <button class="switch-btn" onclick="renderProfileSelect()" style="margin-top:1rem;">← BACK TO GAME</button>
     </div>
   `);
@@ -99583,6 +99573,18 @@ function previewVoice(name) {
   voicePreview = name && name !== 'auto' ? name : null;
   window.__currentSpokenText = null;
   speakText(VOICE_SAMPLE);
+}
+
+// Put back the save that RESET ALL replaced.
+function restoreBeforeReset() {
+  if (!confirm('Bring back all three children\'s progress from before the last reset? Anything played since then is replaced.')) return;
+  try {
+    const old = localStorage.getItem(STORAGE_KEY + '_before_reset');
+    if (!old) return;
+    localStorage.setItem(STORAGE_KEY, old);
+    localStorage.removeItem(STORAGE_KEY + '_before_reset');
+  } catch (e) { alert('That copy could not be restored on this device.'); return; }
+  location.reload();
 }
 
 function saveSecondChance() {
@@ -100124,8 +100126,13 @@ function renderCoach() {
   const last = i === c.steps.length - 1;
   const existing = document.getElementById('coach-overlay');
   const dots = c.steps.map((_, k) => `<div class="tut-step-dot ${k === i ? 'active' : k < i ? 'visited' : ''}"></div>`).join('');
-  const example = last && currentPack && TUTORIALS[currentPack.id]
-    ? `<button class="coach-example" onclick="closeCoach(); openTutorial('${currentPack.id}')">📺 SEE A WHOLE EXAMPLE</button>` : '';
+  // A boss battle mixes packs: offer the worked example of the pack this question came from.
+  const qNow = questions[qIdx];
+  const exampleId = !last || !currentPack ? null
+    : TUTORIALS[currentPack.id] ? currentPack.id
+    : qNow && qNow._bossPack && TUTORIALS[qNow._bossPack] ? qNow._bossPack : null;
+  const example = exampleId
+    ? `<button class="coach-example" onclick="closeCoach(); openTutorial('${exampleId}')">📺 SEE A WHOLE EXAMPLE</button>` : '';
   const html = `
     <div class="tut-overlay coach-overlay${existing ? ' stay' : ''}" id="coach-overlay" role="dialog" aria-modal="true" aria-label="Show me how">
       <div class="tut-modal coach-modal${earlyReader() ? ' early' : ''}">
