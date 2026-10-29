@@ -777,6 +777,14 @@
   .parent-dash h2 { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem; }
   .parent-dash > p { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem; }
 
+  /* ─── Parent dashboard: read-aloud voice ─── */
+  .voice-list { display: flex; flex-direction: column; gap: 0.35rem; max-height: 22rem; overflow-y: auto; }
+  .voice-row { display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px dashed rgba(0,0,0,0.12); padding: 0.15rem 0; }
+  .voice-pick { flex: 1; display: flex; align-items: center; gap: 0.6rem; min-height: 44px; cursor: pointer; font-size: 0.95rem; }
+  .voice-pick input { width: 22px; height: 22px; flex: none; }
+  .voice-tags, .voice-now { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.72rem; color: var(--muted); }
+  .voice-try { min-width: 44px; min-height: 44px; border: 2px solid var(--ink); background: white; cursor: pointer; font-size: 1rem; }
+
   /* ─── About this game (for grown-ups) ─── */
   .about-link {
     margin-top: 2rem; min-height: 48px; padding: 0.6rem 1.1rem;
@@ -93033,8 +93041,9 @@ function renderAbout() {
           <li>No accounts or sign-in. The only names are the three profile labels: Kindergarten, 3rd Grade, 5th Grade.</li>
           <li>Progress is saved only in this browser, on this device. Nothing a child types or does is sent anywhere. No ads,
             tracking or purchases.</li>
-          <li>When online, the page loads its typefaces from Google Fonts. Read-aloud uses the voices built into the device or
-            browser.</li>
+          <li>When online, the page loads its typefaces from Google Fonts. Read-aloud uses the most natural voice the device or
+            browser offers; in Edge and Chrome some of those are online voices, which receive the words being read aloud, never
+            anything a child types. A parent can choose a voice built into the device instead.</li>
         </ul>
       </div>
 
@@ -93207,6 +93216,19 @@ function renderParentDash() {
         <div id="parent-second-saved" class="mini-label" style="margin-top:0.5rem;"></div>
       </div>
 
+      <div class="kid-block" style="border-color:var(--p-k);">
+        <h3>🗣️ Read-Aloud Voice</h3>
+        <p style="font-size:0.9rem;line-height:1.55;margin-bottom:0.75rem;">The game uses the most natural-sounding voice on this
+        device. Tap ▶ to hear one, and pick the one your children like best. This is saved on this device only.</p>
+        <div id="voice-list" class="voice-list">${voiceListHtml()}</div>
+        <p class="mini-label" style="margin-top:0.75rem;line-height:1.5;">For a more natural voice on an iPad or iPhone:
+        Settings › Accessibility › Read &amp; Speak (called Spoken Content on older versions) › Voices › English, then download a
+        voice marked Premium or Enhanced, such as Ava. On a Mac: System Settings › Accessibility › Spoken Content › System
+        voice › Manage Voices. On Windows, Microsoft Edge has natural voices built in. Reload the game afterwards. Edge's
+        Natural and Chrome's Google voices work online: they receive the words being read aloud, never anything a child types.</p>
+        <div id="voice-saved" class="mini-label" style="margin-top:0.5rem;"></div>
+      </div>
+
       ${FUN.html('parentExtra', {})}
 
       ${blocks}
@@ -93214,6 +93236,43 @@ function renderParentDash() {
       <button class="switch-btn" onclick="renderProfileSelect()" style="margin-top:1rem;">← BACK TO GAME</button>
     </div>
   `);
+}
+
+// The parent dashboard's voice list: Automatic first, then every English voice, most natural first.
+const VOICE_SAMPLE = "Hi! Let's read together. What sound does m make? mmm, like monkey. Great job!";
+function voiceLabel(v) {
+  return String(v.name).replace(/^Microsoft\s+/i, '').replace(/\s+-\s+English.*$/i, '').replace(/\s+Online\s*/i, ' ');
+}
+function voiceListHtml() {
+  if (!SPEECH_AVAILABLE) return '<p class="mini-label">This browser has no read-aloud.</p>';
+  const all = window.speechSynthesis.getVoices();
+  const voices = rankVoices(all);
+  if (!voices.length) return '<p class="mini-label">Loading the voices on this device…</p>';
+  const chosen = (state.parent && state.parent.voice) || 'auto';
+  const auto = bestVoice(all);
+  const row = (value, label, tags) => `
+    <div class="voice-row">
+      <label class="voice-pick"><input type="radio" name="voice" value="${ccEscapeForAttr(value)}" ${chosen === value ? 'checked' : ''}
+        onchange="chooseVoice(this.value)"><span>${label}${tags ? ` <span class="voice-tags">${tags}</span>` : ''}</span></label>
+      <button class="voice-try" data-voice="${ccEscapeForAttr(value)}" aria-label="Hear ${ccEscapeForAttr(value === 'auto' ? 'the automatic voice' : voiceLabel({ name: value }))}"
+        onclick="previewVoice(this.dataset.voice)">▶</button>
+    </div>`;
+  return row('auto', `Automatic${auto ? ` <span class="voice-now">(now ${ccEscapeForAttr(voiceLabel(auto))})</span>` : ''}`, '') +
+    voices.map(v => row(v.name, ccEscapeForAttr(voiceLabel(v)),
+      [naturalVoice(v) ? 'natural' : '', v.localService ? 'on this device' : 'online'].filter(Boolean).join(' · '))).join('');
+}
+function chooseVoice(name) {
+  if (!state.parent) state.parent = {};
+  state.parent.voice = name || 'auto';
+  saveState();
+  const note = document.getElementById('voice-saved');
+  if (note) note.textContent = '✓ Saved. Read-aloud will use this voice on this device.';
+  previewVoice(name);
+}
+function previewVoice(name) {
+  voicePreview = name && name !== 'auto' ? name : null;
+  window.__currentSpokenText = null;
+  speakText(VOICE_SAMPLE);
 }
 
 function saveSecondChance() {
@@ -93340,16 +93399,59 @@ function updateVoiceButton() {
   }
 }
 
-// The same American voice on every device. Voices are tried in this order;
-// a single pattern with find() takes whichever one the platform happens to
-// list first, and Apple lists Karen (Australian) ahead of Samantha. Online
-// voices come last: the game must work without a network.
-const VOICE_PREFERENCE = [/^Samantha/i, /^Microsoft Zira/i, /^Google US English/i];
+// ─── Choosing the voice ───
+// Devices carry voices of very different quality. The newer ones sound close to
+// a person: Apple's Premium and Enhanced voices (a free download on an iPad or a
+// Mac), Microsoft's "Natural" voices in Edge and Google's voices in Chrome. The
+// old defaults (Samantha, Zira) and Apple's novelty voices sound like a robot.
+// So every English voice is ranked and the most natural one is used, with
+// American English first. A parent can choose another on the parent dashboard
+// (state.parent.voice, by name). Edge's Natural and Chrome's Google voices are
+// online: when one fails (no network), the best built-in voice takes over, so
+// the game still reads aloud offline.
+const NOVELTY_VOICES = /^(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Deranged|Hysterical|Pipe Organ|Fred|Junior|Kathy|Ralph|Princess|Grandma|Grandpa|Eddy|Flo|Reed|Rocko|Sandy|Shelley)\b/i;
+function voiceScore(v) {
+  const name = (v && v.name) || '', lang = String((v && v.lang) || '').replace('_', '-');
+  if (!/^en(-|$)/i.test(lang)) return -1;
+  let s = 0;
+  if (/\bnatural\b/i.test(name)) s += 60;                    // Microsoft Edge's neural voices
+  if (/\bpremium\b/i.test(name)) s += 55;                    // Apple's best downloads
+  if (/\b(enhanced|neural)\b/i.test(name)) s += 45;
+  if (/^Google US English/i.test(name)) s += 40;              // Chrome's own voice
+  else if (/^Google\b/i.test(name)) s += 30;
+  if (/^(Ava|Zoe|Allison|Evan|Nathan|Joelle|Noelle|Susan|Tom|Nicky|Aaron)\b/i.test(name)) s += 15;
+  if (/^Samantha\b/i.test(name)) s += 10;
+  if (/^Microsoft (Jenny|Aria|Michelle|Emma|Ava|Andrew|Brian|Guy)\b/i.test(name)) s += 8;   // a teacher's voice
+  if (/^Microsoft Ana\b/i.test(name)) s -= 5;                // a child's voice: offered, not chosen first
+  if (/^Microsoft Zira\b/i.test(name)) s += 6;               // the built-in Windows voice used before
+  else if (/^Microsoft (David|Mark)\b/i.test(name)) s += 5;
+  if (NOVELTY_VOICES.test(name)) s -= 50;
+  if (/^en-US$/i.test(lang)) s += 12; else if (/^en-(GB|CA|AU|IE|NZ)$/i.test(lang)) s += 4;
+  if (v.localService) s += 3;                                 // works offline: it wins a tie
+  return s;
+}
+// A voice that sounds like a person; used to tune speed and pitch.
+const naturalVoice = v => voiceScore(v) >= 40;
+const failedVoices = new Set();   // online voices that failed this visit
+let voicePreview = null;          // a voice the parent is listening to on the dashboard
+function rankVoices(voices) {
+  return (voices || []).filter(v => voiceScore(v) >= 0).sort((a, b) => voiceScore(b) - voiceScore(a));
+}
+// The most natural voice that has not failed: what "Automatic" uses.
+function bestVoice(voices) {
+  if (!voices || !voices.length) return null;
+  const ranked = rankVoices(voices).filter(v => !failedVoices.has(v.name));
+  return ranked[0] || voices.find(v => !failedVoices.has(v.name)) || voices[0];
+}
 function pickVoice(voices) {
   if (!voices || !voices.length) return null;
-  for (const re of VOICE_PREFERENCE) { const v = voices.find(x => re.test(x.name)); if (v) return v; }
-  const en = v => v.lang === 'en-US' || (v.lang && v.lang.startsWith('en'));
-  return voices.find(v => en(v) && v.localService) || voices.find(en) || voices[0];
+  if (voicePreview) { const v = voices.find(x => x.name === voicePreview); if (v) return v; }
+  const chosen = state && state.parent && state.parent.voice;
+  if (chosen && chosen !== 'auto') {
+    const v = voices.find(x => x.name === chosen);
+    if (v && !failedVoices.has(v.name)) return v;
+  }
+  return bestVoice(voices);
 }
 
 // The walkthrough narrates through speakText(), like every 🔊 button and the
@@ -93477,11 +93579,15 @@ function doSpeak(clean, voicesArg, gen) {
       try { window.speechSynthesis.resume(); } catch(e) {}
 
       const utter = new SpeechSynthesisUtterance(clean);
-      utter.rate = 0.85;
-      utter.pitch = 1.05;
-      utter.volume = 1.0;
-
       const preferred = pickVoice(voicesArg || window.speechSynthesis.getVoices());
+      voicePreview = null;
+      // A natural voice already sounds like a person at its own pitch, and a
+      // little slower for a child who is learning to read. The old voices get
+      // the slower, slightly brighter setting they always had.
+      const natural = naturalVoice(preferred);
+      utter.rate = natural ? (earlyReader() ? 0.9 : 0.95) : 0.85;
+      utter.pitch = natural ? 1 : 1.05;
+      utter.volume = 1.0;
       if (preferred) {
         utter.voice = preferred;
         utter.lang = preferred.lang || 'en-US';
@@ -93496,6 +93602,13 @@ function doSpeak(clean, voicesArg, gen) {
         if (err === 'interrupted' || err === 'canceled') return;
         console.warn('[speak] utterance error:', err || e);
         stopSpeakKeepalive();
+        // An online voice failed, so the network is down for all of them: say it
+        // again at once with the best voice built into the device.
+        if (preferred && !preferred.localService && !failedVoices.has(preferred.name) && !stale()) {
+          (window.speechSynthesis.getVoices() || []).forEach(v => { if (!v.localService) failedVoices.add(v.name); });
+          if (window.__currentSpokenText === clean) window.__currentSpokenText = null;
+          doSpeak(clean, null, gen);
+        }
       };
       utter.onend = () => {
         if (window.__currentSpokenText === clean) {
@@ -93762,7 +93875,11 @@ function closeCoach() {
 if (SPEECH_AVAILABLE && typeof window !== 'undefined') {
   window.speechSynthesis.getVoices();
   if (window.speechSynthesis.onvoiceschanged !== undefined) {
-    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+      const list = document.getElementById('voice-list');
+      if (list) list.innerHTML = voiceListHtml();
+    };
   }
 }
 
