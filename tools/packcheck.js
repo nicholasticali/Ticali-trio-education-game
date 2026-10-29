@@ -19,11 +19,26 @@ const APP = 'file://' + path.resolve(process.argv[2] || require('path').join(__d
     for (const profileId of Object.keys(PACKS)) {
       for (const pack of PACKS[profileId]) {
         let qs = [], err = null, firstLen = 0;
+        // The Reading Road is one hidden pack whose round is the stop being
+        // played: check every stop's round, not only the child's current one.
+        const road = pack.tier === 'road' && typeof readingRoad === 'function';
         try {
+          if (road) {
+            const was = pack._readingStop;
+            const sizes = readingRoad().stops.map(s => {
+              pack._readingStop = s.id;
+              const r = getQuestions(pack, profileId) || [];
+              qs.push(...r);
+              return r.length;
+            });
+            pack._readingStop = was;
+            firstLen = sizes.length ? Math.min(...sizes) : 0;
+          } else {
           qs = getQuestions(pack, profileId) || [];
           firstLen = qs.length;
           // Further rounds only add coverage for the why check below.
           for (let r = 0; r < 5 && qs.length; r++) qs.push(...getQuestions(pack, profileId).slice(0, 10));
+          }
         }
         catch (e) { err = e.message; }
         const problems = [];
@@ -33,7 +48,11 @@ const APP = 'file://' + path.resolve(process.argv[2] || require('path').join(__d
         qs.forEach((q, i) => {
           const t = q.type || 'mc';
           if (t === 'mc') {
-            if (!Array.isArray(q.options) || q.options.length !== 4) problems.push(`q${i+1} mc has ${q.options ? q.options.length : 'no'} options`);
+            // Bank questions have four choices. Reading Road items follow the
+            // road's own rule (2-6, checked by reading/readcheck.js): "which
+            // sound changed? first, middle, last" has three.
+            const nOk = road ? n => n >= 2 && n <= 6 : n => n === 4;
+            if (!Array.isArray(q.options) || !nOk(q.options.length)) problems.push(`q${i+1} mc has ${q.options ? q.options.length : 'no'} options`);
             if (typeof q.correct !== 'number' || q.correct < 0 || q.correct >= (q.options || []).length) problems.push(`q${i+1} mc correct index ${q.correct} invalid`);
           } else if (t === 'tf') {
             if (typeof q.answer !== 'boolean') problems.push(`q${i+1} tf answer not boolean`);

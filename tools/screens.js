@@ -5,7 +5,7 @@
 // at the same viewports for overflow and tap-target size.
 const { chromium } = require('playwright');
 const path = require('path');
-const APP = 'file://' + path.resolve(require('path').join(__dirname, '..', 'Ticali_Trio_Family_Edition.html'));
+const APP = 'file://' + path.resolve(process.argv[2] || require('path').join(__dirname, '..', 'Ticali_Trio_Family_Edition.html'));
 
 const VIEWPORTS = [
   { name: 'iPad portrait',  width: 820,  height: 1180 },
@@ -44,6 +44,16 @@ async function audit(page, label, out) {
   r.small.forEach(s => out.push(`[${label}] small target ${s}`));
 }
 
+// With the Brain Buddy module built in, a child's first visit asks her to
+// choose a buddy before the hub. Choose one the way she would: tap a buddy,
+// then the big button (the second press is a new spot, after a screen change,
+// so it is spaced like a person's).
+async function chooseBuddyIfAsked(page) {
+  if (!(await page.locator('.buddy-choose').count())) return;
+  await page.locator('.buddy-tile').first().click(); await page.waitForTimeout(450);
+  await page.locator('.buddy-go').click(); await page.waitForTimeout(450);
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
   const out = [];
@@ -66,13 +76,13 @@ async function audit(page, label, out) {
 
     // ─── Progress chart ───
     await page.goto(APP); await page.waitForTimeout(250);
-    await page.locator('.profile-card').nth(1).click(); await page.waitForTimeout(200);
+    await page.locator('.profile-card').nth(1).click(); await page.waitForTimeout(450); await chooseBuddyIfAsked(page);
     await page.locator('.switch-btn', { hasText: 'PROGRESS' }).click(); await page.waitForTimeout(250);
     await audit(page, `${vp.name}/progress`, out);
 
     // ─── Walkthrough modal ───
     await page.goto(APP); await page.waitForTimeout(250);
-    await page.locator('.profile-card').nth(1).click(); await page.waitForTimeout(200);
+    await page.locator('.profile-card').nth(1).click(); await page.waitForTimeout(450); await chooseBuddyIfAsked(page);
     const tutPack = await page.evaluate(() => {
       const p = PACKS.g3.find(x => TUTORIALS[x.id]);
       return p ? p.id : null;
@@ -97,9 +107,9 @@ async function audit(page, label, out) {
 
     // ─── Scratch pad ───
     await page.goto(APP); await page.waitForTimeout(250);
-    await page.locator('.profile-card').nth(1).click(); await page.waitForTimeout(200);
-    await page.locator('.pack-card').first().click(); await page.waitForTimeout(250);
-    if (await page.locator('.briefing-go').count()) { await page.locator('.briefing-go').click(); await page.waitForTimeout(250); }
+    await page.locator('.profile-card').nth(1).click(); await page.waitForTimeout(450); await chooseBuddyIfAsked(page);
+    await page.locator('.pack-card').first().click(); await page.waitForTimeout(450);
+    if (await page.locator('.briefing-go').count()) { await page.locator('.briefing-go').click(); await page.waitForTimeout(450); }
     await page.locator('.scratch-btn').click(); await page.waitForTimeout(300);
     if (!(await page.locator('#scratch-overlay').count())) out.push(`[${vp.name}] scratch pad did not open`);
     else {
@@ -202,8 +212,8 @@ async function audit(page, label, out) {
     // ─── Briefing card for every child ───
     for (const i of [0, 1, 2]) {
       await page.goto(APP); await page.waitForTimeout(250);
-      await page.locator('.profile-card').nth(i).click(); await page.waitForTimeout(200);
-      await page.locator('.pack-card').nth(2).click(); await page.waitForTimeout(250);
+      await page.locator('.profile-card').nth(i).click(); await page.waitForTimeout(450); await chooseBuddyIfAsked(page);
+      await page.locator('.pack-card').nth(2).click(); await page.waitForTimeout(450);
       if (!(await page.locator('.briefing').count())) out.push(`[${vp.name}] profile ${i}: pack opened without a WHY THIS MATTERS briefing`);
       else await audit(page, `${vp.name}/briefing ${i}`, out);
     }

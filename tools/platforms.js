@@ -116,7 +116,18 @@ async function answer(page, how) {
       try {
         await page.goto(APP); await page.waitForTimeout(250);
         await press(page, dev.how, page.locator('.profile-card').nth(kid));
-        await page.waitForTimeout(250);
+        await page.waitForTimeout(450);   // a press on the same spot within 400 ms of a screen change is a double tap
+        // With the Brain Buddy module built in, a child's first visit asks her
+        // to choose a buddy before the hub. Choose one with this device's own
+        // input, at a person's pace: the app drops a second press on the same
+        // spot within 400 ms of a screen change.
+        if (await page.locator('.buddy-choose').count()) {
+          await press(page, dev.how, page.locator('.buddy-tile').first());
+          await page.waitForTimeout(450);
+          await press(page, dev.how, page.locator('.buddy-go'));
+          await page.waitForTimeout(450);
+          if (!(await page.locator('.hub-name-block').count())) throw new Error('choosing a Brain Buddy did not lead to the hub');
+        }
         // A pack with puzzles, so every input path is exercised.
         const packId = await page.evaluate(() => {
           const pk = PACKS[currentProfile.id].find(p => p.tier === 'now' && (THINK_ITEMS[p.id] || []).length) ||
@@ -124,11 +135,11 @@ async function answer(page, how) {
           return pk.id;
         });
         await press(page, dev.how, page.locator(`.pack-card[onclick="startPack('${packId}')"]`).first());
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(450);
         if (await page.locator('.briefing-go').count()) {
           if (dev.how === 'keys') await page.keyboard.press('Enter');
           else await press(page, dev.how, page.locator('.briefing-go'));
-          await page.waitForTimeout(300);
+          await page.waitForTimeout(450);
         }
         // Make the round deterministic across devices: same questions, every type.
         await page.evaluate(() => {
@@ -148,7 +159,7 @@ async function answer(page, how) {
           const next = page.locator('#fb .next-btn');
           if (!(await next.count())) throw new Error(`q${n + 1} (${types[n]}): answering did not finish the question`);
           if (dev.how === 'keys') await page.keyboard.press('Enter'); else await press(page, dev.how, next);
-          await page.waitForTimeout(250);
+          await page.waitForTimeout(450);
         }
         if (!(await page.locator('.complete').count())) throw new Error('round did not reach the end');
         const result = await page.evaluate(() => ({ score, total: questions.length, fixed: fixedCount }));
@@ -158,7 +169,11 @@ async function answer(page, how) {
         failures.push(`[${label}] ${e.message}`);
       }
     }
-    // Every visible control on the hub can be reached and is big enough.
+    // Every visible control on the hub can be reached and is big enough,
+    // measured once entrance animations (a sticker flipping in) have ended;
+    // looping ones (a buddy bobbing) never end and do not change the size.
+    await page.waitForFunction(() => document.getAnimations().every(a => a.playState !== 'running' ||
+      (a.effect && a.effect.getComputedTiming && a.effect.getComputedTiming().iterations === Infinity)), null, { timeout: 10000 }).catch(() => {});
     const audit = await page.evaluate(() => {
       const small = [];
       document.querySelectorAll('button, [role="button"], .choice, .pack-card').forEach(el => {

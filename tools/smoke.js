@@ -64,6 +64,18 @@ async function auditPage(page, label, results) {
 }
 
 
+// With the Brain Buddy module built in, a child's first visit asks her to
+// choose a buddy before the hub. Choose one the way she would: tap a buddy,
+// then the big button (the second press is a new spot, after a screen change,
+// so it is spaced like a person's).
+async function chooseBuddyIfAsked(page, label, results) {
+  if (!(await page.locator('.buddy-choose').count())) return;
+  await auditPage(page, `${label} / buddy chooser`, results);
+  await page.locator('.buddy-tile').first().click(); await page.waitForTimeout(450);
+  await auditPage(page, `${label} / buddy name`, results);
+  await page.locator('.buddy-go').click(); await page.waitForTimeout(450);
+}
+
 // Answer whatever question is on screen. With `missFirst`, deliberately
 // pick a wrong answer where one exists (to trigger the hint and retry);
 // otherwise answer correctly. Returns false if nothing answerable was found.
@@ -176,7 +188,8 @@ async function answerQuestion(page, missFirst) {
 
     for (let i = 0; i < profileCount; i++) {
       await page.locator('.profile-card').nth(i).click();
-      await page.waitForTimeout(250);
+      await page.waitForTimeout(450);   // a press on the same spot within 400 ms of a screen change is a double tap
+      await chooseBuddyIfAsked(page, vp.name, results);
       const name = (await page.locator('.hub-name-block h2').textContent().catch(() => '?')) || '?';
       await auditPage(page, `${vp.name} / hub ${name}`, results);
 
@@ -187,11 +200,11 @@ async function answerQuestion(page, missFirst) {
       if (packs === 0) { results.push(`[${vp.name}] hub ${name}: no packs`); }
       else {
         await page.locator('.pack-card').first().click();
-        await page.waitForTimeout(250);
+        await page.waitForTimeout(450);
         if (await page.locator('.briefing').count()) {
           await auditPage(page, `${vp.name} / ${name} briefing`, results);
           await page.locator('.briefing-go').click();
-          await page.waitForTimeout(250);
+          await page.waitForTimeout(450);
         }
         for (let q = 0; q < 12; q++) {
           if (await page.locator('.complete').count()) break;
@@ -208,7 +221,7 @@ async function answerQuestion(page, missFirst) {
             results.push(`[${vp.name}] ${name} q${q + 1} (${t}): no HERE'S WHY panel`);
           }
           const next = page.locator('.next-btn').first();
-          if (await next.count()) { await next.click(); await page.waitForTimeout(150); }
+          if (await next.count()) { await next.click(); await page.waitForTimeout(450); }
         }
         if (!(await page.locator('.complete').count())) {
           results.push(`[${vp.name}] ${name}: round did not reach the completion screen`);
