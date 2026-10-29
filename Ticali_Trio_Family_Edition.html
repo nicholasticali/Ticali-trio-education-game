@@ -1935,6 +1935,622 @@
 
   /* ═══ FUN MODULE STYLES ═══ */
 
+  /* ─── module: sprint ─── */
+  /* ═══════════════════════════════════════════════════════════════
+     SPEED SPRINTS — hub card, the sprint screen, the results
+     A scoreboard strip (ink) over the cream page, a white problem card
+     and chunky answer buttons. --sprint-bolt is the lightning yellow.
+     ═══════════════════════════════════════════════════════════════ */
+  /* --sprint-b (the second group of dots) is blue, not the teal of a right
+     answer, so the picture never looks like it is giving the answer away. */
+  .sprint-scope { --sprint-bolt: #ffd23f; --sprint-a: var(--user-color); --sprint-b: #0096c7; }
+
+  /* ─── Hub card (play zone, order 50) ─── */
+  .sprint-hubcard .fun-card-body { display: flex; flex-direction: column; gap: 0.5rem; }
+  .sprint-hubcard .fun-card-badge { background: var(--ink); color: var(--sprint-bolt); }
+  .sprint-hub-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.75rem; min-height: 44px; }
+  .sprint-hub-best {
+    flex: 0 0 auto; display: flex; align-items: baseline; gap: 0.4rem; min-width: 0;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.95rem;
+  }
+  .sprint-hub-best-n { font-weight: 400; font-size: 2.3rem; line-height: 1; text-shadow: 3px 3px 0 var(--sprint-bolt); }
+  .sprint-hub-best-none { font-family: 'Fraunces', 'Iowan Old Style', Georgia, serif; font-weight: 700; font-size: 1.02rem; }
+  .sprint-k .sprint-hub-best-n { font-size: 2.7rem; }
+  /* A little framed chart of the recent scores (decoration: the number is the news) */
+  .sprint-hub-bars {
+    flex: 0 1 104px; min-width: 50px; height: 46px; padding: 5px 6px 0; overflow: hidden;
+    display: flex; align-items: flex-end; justify-content: flex-end; gap: 4px;
+    background: var(--bg); border: 2px solid var(--ink); border-bottom-width: 3px;
+  }
+  .sprint-hub-bars i { flex: 0 1 8px; min-width: 3px; min-height: 4px; background: #c9bfa6; }
+  .sprint-hub-bars i.is-last { background: var(--fun-accent); box-shadow: 0 0 0 2px var(--ink); }
+  .sprint-hub-set { font-size: 0.98rem; line-height: 1.3; }
+  .sprint-k .sprint-hub-set { font-size: 1.1rem; }
+  .sprint-hub-what { font-size: 0.86rem; line-height: 1.35; color: var(--muted); }
+  .sprint-hub-actions { display: flex; gap: 0.6rem; align-items: stretch; margin-top: 0.15rem; }
+  .sprint-go {
+    flex: 1 1 auto; min-height: 52px; min-width: 0; cursor: pointer;
+    background: var(--ink); color: var(--sprint-bolt); border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--fun-accent);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.1rem; letter-spacing: 1px;
+    white-space: nowrap; touch-action: manipulation; -webkit-touch-callout: none;
+  }
+  .sprint-k .sprint-go { min-height: 60px; font-size: 1.25rem; }
+  .sprint-go:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--fun-accent); filter: brightness(0.96); }
+  .sprint-hub-say { flex: 0 0 auto; display: flex; }
+  .sprint-hub-foot {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .sprint-go:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--fun-accent); }
+  }
+  @media (max-width: 480px) { .fun-zone > .sprint-hubcard { grid-column: 1 / -1; } }
+
+  /* 🔊 inside this module: big enough for small fingers */
+  .sprint-scope .voice-btn-sm {
+    width: auto; height: auto; min-width: 48px; min-height: 48px; margin: 0;
+    font-size: 1.25rem; padding: 0.3rem 0.5rem;
+  }
+  .sprint-k .voice-btn-sm, .sprint-k.sprint-scope .voice-btn-sm { min-width: 58px; min-height: 58px; font-size: 1.45rem; }
+
+  /* ─── The sprint screen ─── */
+  .sprint-screen {
+    position: relative; max-width: 780px; margin: 0 auto;
+    padding: 1.25rem 1.25rem 2rem;
+  }
+  .sprint-hud {
+    display: flex; align-items: center; gap: 0.75rem;
+    background: var(--ink); color: var(--bg);
+    border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--user-color);
+    padding: 0.5rem 0.65rem;
+  }
+  .sprint-pause {
+    flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+    min-width: 48px; min-height: 48px; padding: 0.35rem 0.75rem; cursor: pointer;
+    background: var(--bg); color: var(--ink); border: 3px solid var(--bg);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.85rem; letter-spacing: 1px;
+    touch-action: manipulation;
+  }
+  .sprint-k .sprint-pause { min-width: 60px; min-height: 60px; font-size: 1rem; }
+  .sprint-pause-icon { display: inline-flex; gap: 4px; height: 0.95em; vertical-align: -0.1em; }
+  .sprint-pause-icon i { display: block; width: 5px; height: 100%; background: currentColor; }
+  .sprint-k .sprint-pause-icon { height: 1.15em; }
+  .sprint-k .sprint-pause-icon i { width: 6px; }
+  .sprint-pause:active { transform: translate(1px, 1px); filter: brightness(0.94); }
+  .sprint-timer {
+    flex: 1 1 auto; min-width: 0; height: 24px; position: relative; overflow: hidden;
+    background: rgba(255, 255, 255, 0.12); border: 3px solid var(--bg);
+  }
+  .sprint-k .sprint-timer { height: 30px; }
+  .sprint-timer-fill {
+    position: absolute; inset: 0; transform-origin: left center;
+    background: var(--user-color); transition: transform 0.12s linear, background-color 0.6s;
+  }
+  .sprint-timer-fill::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.28) 0 7px, transparent 7px 14px);
+  }
+  .sprint-timer-fill.is-low { background: var(--sprint-bolt); }
+  .sprint-secs {
+    flex: 0 0 auto; min-width: 2.6ch; text-align: right;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-weight: 700; font-size: 1.35rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .sprint-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    margin: 1.1rem 0 1rem; min-height: 52px;
+  }
+  .sprint-score {
+    position: relative; display: flex; align-items: center; gap: 0.35rem;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 2.1rem; line-height: 1;
+  }
+  .sprint-score b { font-weight: 400; color: var(--user-color); text-shadow: 3px 3px 0 var(--ink); display: inline-block; min-width: 1ch; }
+  .sprint-score b.is-bump { animation: sprintBump 0.28s cubic-bezier(.3, 1.6, .6, 1); }
+  .sprint-score-bolt { font-size: 1.7rem; }
+  .sprint-plus {
+    position: absolute; left: 100%; top: -0.4rem; margin-left: 0.2rem; pointer-events: none;
+    font-size: 1.1rem; color: var(--success); text-shadow: 1px 1px 0 var(--ink);
+    animation: sprintPlus 0.72s ease-out forwards;
+  }
+  .sprint-combo {
+    display: inline-flex; align-items: baseline; gap: 0.35rem; visibility: hidden;
+    background: var(--ink); color: var(--sprint-bolt); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--user-color);
+    padding: 0.3rem 0.65rem; font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.05rem;
+  }
+  .sprint-combo.is-on { visibility: visible; animation: sprintPop 0.25s cubic-bezier(.3, 1.6, .6, 1); }
+  .sprint-combo.is-hot { animation: sprintHot 0.6s cubic-bezier(.3, 1.6, .6, 1); }
+  .sprint-combo b { font-weight: 400; font-size: 1.25rem; }
+  .sprint-combo-txt { font-size: 0.7rem; letter-spacing: 1px; color: var(--bg); }
+  .sprint-best {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); text-align: right;
+  }
+  .sprint-best b { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-weight: 400; font-size: 1.35rem; color: var(--ink); margin-left: 0.2rem; }
+
+  .sprint-stage { position: relative; }
+  .sprint-card {
+    position: relative; min-height: 210px; padding: 1.4rem 1rem;
+    display: flex; align-items: center; justify-content: center;
+    background: white; border: 4px solid var(--ink); box-shadow: 7px 7px 0 var(--user-color);
+  }
+  .sprint-k .sprint-card { min-height: 280px; padding-top: 1.6rem; }
+  .sprint-card.is-miss { animation: sprintNudge 0.32s ease-out; }
+  .sprint-prob { display: flex; flex-direction: column; align-items: center; gap: 1.1rem; animation: sprintIn 0.18s ease-out; max-width: 100%; }
+  .sprint-eq {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.3em;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: clamp(1.8rem, 9.4vw, 3.9rem); line-height: 1.1; color: var(--ink); max-width: 100%;
+  }
+  .sprint-k .sprint-eq { font-size: clamp(2.4rem, 12.3vw, 5.2rem); gap: 0.35em; }
+  .sprint-g5 .sprint-prob--p10 .sprint-eq { font-size: clamp(1.5rem, 8.2vw, 3.4rem); }
+  .sprint-op { color: var(--user-color); }
+  .sprint-q {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 1.5em; padding: 0 0.15em;
+    border: 4px dashed var(--ink); color: var(--muted); line-height: 1.15;
+  }
+  .sprint-q.is-filled { border-style: solid; background: var(--success); color: white; animation: sprintPop 0.22s cubic-bezier(.3, 1.6, .6, 1); }
+  .sprint-frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.05; }
+  .sprint-frac > span { padding: 0.04em 0.12em; min-width: 1.2em; text-align: center; }
+  .sprint-frac-d { border-top: 0.09em solid var(--ink); }
+  .sprint-frac .sprint-q { font-size: 0.86em; margin: 0.06em 0; }
+  .sprint-eq--frac { font-size: clamp(2rem, 6vw, 3.2rem); }
+  .sprint-say { position: absolute; top: 0.6rem; right: 0.6rem; display: flex; }
+
+  /* Kindergarten dot picture */
+  .sprint-dots { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.6rem; min-height: 40px; }
+  .sprint-dotgrp { display: inline-flex; gap: 8px; padding: 6px 8px; background: var(--bg); border: 3px solid var(--ink); border-radius: 999px; }
+  .sprint-dot {
+    position: relative; display: block; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--sprint-a); border: 3px solid var(--ink);
+  }
+  .sprint-dot.is-b { background: var(--sprint-b); }
+  .sprint-dot.is-gone { background: white; border-style: dashed; opacity: 0.85; }
+  .sprint-dot.is-gone::before, .sprint-dot.is-gone::after {
+    content: ''; position: absolute; left: 50%; top: 50%; width: 34px; height: 4px; margin: -2px 0 0 -17px;
+    background: var(--danger); border-radius: 2px; transform: rotate(45deg);
+  }
+  .sprint-dot.is-gone::after { transform: rotate(-45deg); }
+  .sprint-dotplus { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.6rem; color: var(--user-color); }
+
+  /* Answers */
+  .sprint-answers { display: grid; gap: 0.9rem; margin-top: 1.35rem; }
+  .sprint-answers--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .sprint-answers--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; }
+  .sprint-ans {
+    position: relative; min-width: 0; min-height: 86px; padding: 0.55rem 0.4rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    background: white; color: var(--ink); border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: clamp(1.45rem, 3.6vw, 2.1rem); line-height: 1.1;
+    touch-action: manipulation; -webkit-touch-callout: none; transition: transform 0.08s, box-shadow 0.08s, background-color 0.12s;
+  }
+  .sprint-ans.is-long { font-size: clamp(1.1rem, 2.7vw, 1.6rem); }
+  .sprint-ans.is-xlong { font-size: clamp(0.95rem, 2.2vw, 1.3rem); }
+  .sprint-ans-val { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+  .sprint-k .sprint-ans { min-height: 116px; font-size: clamp(3rem, 9vw, 4rem); box-shadow: 6px 6px 0 var(--ink); }
+  .sprint-ans:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
+  .sprint-ans.is-right, .sprint-ans.is-wrong, .sprint-ans.is-answer { transition: none; }
+  .sprint-ans.is-right { background: var(--success); color: white; animation: sprintPop 0.22s cubic-bezier(.3, 1.6, .6, 1); }
+  .sprint-ans.is-wrong { background: #fde3e1; border-color: var(--danger); color: var(--danger); }
+  .sprint-ans.is-answer { background: var(--success); color: white; box-shadow: 0 0 0 4px var(--sprint-bolt), 5px 5px 0 var(--ink); animation: sprintPop 0.3s cubic-bezier(.3, 1.6, .6, 1); }
+  .sprint-screen:not([data-phase="run"]) .sprint-ans { cursor: default; }
+  .sprint-ans-key {
+    display: none; position: absolute; top: 5px; left: 7px;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.72rem; font-weight: 700;
+    padding: 0 0.3rem; border: 2px solid currentColor; opacity: 0.6; line-height: 1.3;
+  }
+  .sprint-keys {
+    display: none; margin-top: 1.1rem; text-align: center;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.72rem; letter-spacing: 1px; color: var(--muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .sprint-ans-key, .sprint-keys { display: block; }
+    .sprint-screen[data-phase="run"] .sprint-ans:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--user-color); }
+    .sprint-pause:hover { background: var(--sprint-bolt); border-color: var(--sprint-bolt); }
+  }
+
+  /* Overlays over the stage: countdown, paused, TIME! */
+  .sprint-overlay {
+    position: absolute; inset: 0; z-index: 6;
+    display: none; align-items: center; justify-content: center;
+    background: white; border: 4px solid var(--ink); box-shadow: 7px 7px 0 var(--user-color);
+    padding: 1.2rem 1rem;
+  }
+  /* While an overlay is up the problem and the answers are not there at all:
+     a pause never gives extra thinking time, and nothing shows through. */
+  .sprint-stage.is-covered > .sprint-card, .sprint-stage.is-covered > .sprint-answers, .sprint-stage.is-covered > .sprint-keys { visibility: hidden; }
+  .sprint-overlay.is-on { display: flex; }
+  .sprint-ov { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.6rem; max-width: 100%; }
+  .sprint-ov-title { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.35rem; letter-spacing: 1px; }
+  .sprint-ov-sub { font-size: 1.05rem; line-height: 1.4; }
+  .sprint-ov-best {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .sprint-ov-best b { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-weight: 400; font-size: 1.3rem; }
+  .sprint-count {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: clamp(6rem, 22vw, 9.5rem); line-height: 1; color: var(--user-color);
+    text-shadow: 6px 6px 0 var(--ink); animation: sprintCount 0.75s cubic-bezier(.3, 1.5, .6, 1);
+  }
+  .sprint-count.is-go { color: var(--sprint-bolt); font-size: clamp(4.5rem, 17vw, 7.5rem); }
+  .sprint-ov-actions { display: flex; flex-wrap: wrap; gap: 0.85rem; justify-content: center; align-items: center; margin-top: 0.5rem; }
+  .sprint-resume, .sprint-quit, .sprint-again, .sprint-home {
+    min-height: 56px; padding: 0.7rem 1.3rem; cursor: pointer; touch-action: manipulation;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.05rem; letter-spacing: 1px;
+    border: 3px solid var(--ink);
+  }
+  .sprint-resume { background: var(--success); color: white; box-shadow: 5px 5px 0 var(--ink); min-width: 190px; font-size: 1.25rem; }
+  .sprint-k .sprint-resume { min-height: 72px; font-size: 1.45rem; }
+  .sprint-quit { background: white; color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+  .sprint-resume:active, .sprint-quit:active, .sprint-again:active, .sprint-home:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+  .sprint-stamp {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: clamp(2.8rem, 10vw, 4.6rem);
+    color: var(--ink); background: var(--sprint-bolt); border: 5px solid var(--ink); box-shadow: 8px 8px 0 var(--user-color);
+    padding: 0.4rem 1.2rem; transform: rotate(-6deg); animation: sprintStamp 0.45s cubic-bezier(.3, 1.6, .6, 1);
+  }
+  .sprint-stamp.is-all { background: var(--success); color: white; }
+
+  /* ─── Results ─── */
+  .sprint-end { max-width: 820px; margin: 0 auto; padding: 1.75rem 1.25rem 2.5rem; text-align: center; }
+  .sprint-end-kicker {
+    display: inline-block; font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.15rem; letter-spacing: 1px;
+    background: var(--ink); color: var(--sprint-bolt); padding: 0.35rem 0.9rem; box-shadow: 4px 4px 0 var(--user-color);
+  }
+  .sprint-end-hero { display: flex; align-items: center; justify-content: center; gap: 1.1rem; margin: 1rem 0 0.5rem; flex-wrap: wrap; }
+  .sprint-end-face { display: flex; animation: sprintBob 1.4s ease-in-out infinite; }
+  .sprint-end-score { display: flex; flex-direction: column; align-items: center; }
+  .sprint-end-num {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: clamp(5rem, 16vw, 7.5rem); line-height: 1;
+    color: var(--user-color); text-shadow: 6px 6px 0 var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .sprint-end-lbl {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 3px; margin-top: 0.45rem;
+  }
+  .sprint-end-say { display: flex; }
+  .sprint-end-banner {
+    display: inline-block; margin: 0.4rem 0 0.2rem; padding: 0.45rem 1rem;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: clamp(1.2rem, 4vw, 1.7rem); letter-spacing: 1px;
+    background: var(--sprint-bolt); border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--user-color);
+    transform: rotate(-2deg); animation: sprintBanner 0.5s 0.2s cubic-bezier(.3, 1.6, .6, 1) both;
+  }
+  .sprint-end-line { font-size: 1.12rem; font-weight: 600; line-height: 1.45; margin: 0.65rem auto 0; max-width: 560px; }
+  .sprint-k .sprint-end-line { font-size: 1.3rem; }
+  .sprint-end-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 0.95rem 0 1.3rem; }
+  .sprint-chip {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.85rem; font-weight: 700;
+    background: white; border: 2px solid var(--ink); padding: 0.3rem 0.65rem; box-shadow: 2px 2px 0 var(--ink);
+  }
+  .sprint-chip--xp { background: var(--ink); color: var(--sprint-bolt); }
+  .sprint-chip--best { background: var(--sprint-bolt); }
+  /* A text star in ink: the ⭐ emoji is yellow and vanishes on the yellow chip and banner. */
+  .sprint-star { color: var(--ink); font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif; font-weight: 900; }
+  .sprint-end-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; text-align: left; }
+  @media (min-width: 760px) { .sprint-end-grid:has(.sprint-chart):has(.sprint-learn) { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: start; } }
+
+  .sprint-chart { margin: 0; background: white; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); padding: 0.75rem 0.9rem 0.8rem; }
+  .sprint-chart figcaption {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+    color: var(--muted); margin-bottom: 0.4rem;
+  }
+  .sprint-chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+  .sprint-chart-col { flex: 1 1 0; min-width: 0; max-width: 44px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: stretch; }
+  .sprint-chart-v {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.72rem; font-weight: 700;
+    text-align: center; white-space: nowrap; line-height: 1.3; letter-spacing: -0.5px;
+  }
+  .sprint-chart-bar { display: block; flex: 0 0 auto; min-height: 4px; max-height: calc(100% - 1.1rem); background: var(--bg-deep); border: 2px solid var(--ink); }
+  .sprint-chart-col.is-now .sprint-chart-bar { background: var(--user-color); animation: sprintGrow 0.6s 0.25s cubic-bezier(.3, 1.3, .6, 1) both; transform-origin: bottom; }
+  .sprint-chart-col.is-best:not(.is-now) .sprint-chart-bar { background: var(--sprint-bolt); }
+  .sprint-chart-note { margin-top: 0.45rem; font-size: 0.85rem; color: var(--muted); }
+
+  .sprint-learn { background: white; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--success); padding: 0.75rem 0.9rem 0.85rem; }
+  .sprint-learn--clean { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.05rem; text-align: center; padding: 1rem; }
+  .sprint-learn-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.55rem;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.95rem; letter-spacing: 0.5px;
+  }
+  .sprint-learn-list { list-style: none; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .sprint-learn-item {
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    background: var(--bg); border: 2px solid var(--ink); padding: 0.35rem 0.6rem; min-width: 0;
+  }
+  .sprint-learn-item .sprint-eq { font-size: 1.35rem; gap: 0.25em; flex-wrap: nowrap; }
+  .sprint-learn-item .sprint-eq--frac { font-size: 1.15rem; }
+  .sprint-learn-item .sprint-q { border-width: 2px; padding: 0 0.2em; min-width: 1.3em; animation: none; }
+  .sprint-learn-item .sprint-dots { min-height: 0; gap: 0.35rem; }
+  .sprint-learn-item .sprint-dotgrp { gap: 4px; padding: 3px 5px; border-width: 2px; }
+  .sprint-learn-item .sprint-dot { width: 16px; height: 16px; border-width: 2px; }
+  .sprint-learn-item .sprint-dot.is-gone::before, .sprint-learn-item .sprint-dot.is-gone::after { width: 18px; height: 3px; margin: -1.5px 0 0 -9px; }
+  .sprint-learn-item .sprint-dotplus { font-size: 1rem; }
+  .sprint-k .sprint-learn-item .sprint-eq { font-size: 1.7rem; }
+  .sprint-learn-say { display: flex; }
+
+  .sprint-end-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 1.6rem; }
+  .sprint-again { background: var(--ink); color: var(--sprint-bolt); box-shadow: 5px 5px 0 var(--user-color); min-width: 200px; font-size: 1.3rem; }
+  .sprint-home { background: white; color: var(--ink); box-shadow: 4px 4px 0 var(--ink); min-width: 200px; }
+  .sprint-k .sprint-again, .sprint-k .sprint-home { min-height: 68px; font-size: 1.35rem; }
+  .sprint-keys--end { margin-top: 1rem; }
+  .sprint-end-set {
+    margin-top: 1.4rem; font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.72rem; letter-spacing: 1px; color: var(--muted); text-transform: uppercase;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .sprint-again:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--user-color); }
+    .sprint-home:hover, .sprint-quit:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+    .sprint-resume:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+  }
+
+  .sprint-toast { white-space: normal; }
+  .sprint-parent-list { margin: 0.6rem 0 0 1.1rem; font-size: 0.92rem; line-height: 1.6; }
+
+  /* Tall screens (an iPad upright): bigger targets, using the room. */
+  @media (min-height: 1000px) and (min-width: 700px) {
+    .sprint-screen { padding-top: 1.6rem; }
+    .sprint-card { min-height: 330px; }
+    .sprint-eq { font-size: 4.6rem; }
+    .sprint-g5 .sprint-prob--p10 .sprint-eq { font-size: 3.9rem; }
+    .sprint-eq--frac { font-size: 3.9rem; }
+    .sprint-answers { margin-top: 1.7rem; gap: 1.1rem; }
+    .sprint-ans { min-height: 136px; font-size: 2.5rem; }
+    .sprint-ans.is-long { font-size: 1.75rem; }
+    .sprint-ans.is-xlong { font-size: 1.4rem; }
+    .sprint-k .sprint-card { min-height: 420px; }
+    .sprint-k .sprint-eq { font-size: 6rem; }
+    .sprint-k .sprint-ans { min-height: 190px; font-size: 5rem; }
+    .sprint-k .sprint-prob { gap: 1.6rem; }
+    /* the problem's dot picture only (the results list keeps its small dots) */
+    .sprint-k .sprint-card .sprint-dotgrp { gap: 10px; padding: 8px 10px; }
+    .sprint-k .sprint-card .sprint-dot { width: 48px; height: 48px; border-width: 4px; }
+    .sprint-k .sprint-card .sprint-dot.is-gone::before, .sprint-k .sprint-card .sprint-dot.is-gone::after { width: 52px; height: 5px; margin: -2.5px 0 0 -26px; }
+    .sprint-k .sprint-card .sprint-dotplus { font-size: 2.2rem; }
+    .sprint-row { margin: 1.5rem 0 1.4rem; }
+    .sprint-score { font-size: 2.6rem; }
+    .sprint-count { font-size: 11rem; }
+  }
+
+  /* ─── Narrow screens ─── */
+  @media (max-width: 600px) {
+    .sprint-screen { padding: 0.9rem 0.8rem 1.5rem; }
+    .sprint-answers--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* Two columns here, so each answer is as wide as on an iPad: the long
+       numbers can stay big (the vw sizes above would make them 15px). */
+    .sprint-ans.is-long { font-size: 1.45rem; }
+    .sprint-ans.is-xlong { font-size: 1.2rem; }
+    .sprint-answers--3 { gap: 0.75rem; }
+    .sprint-pause-txt { display: none; }
+    .sprint-card { min-height: 180px; padding: 1.2rem 0.6rem; }
+    .sprint-k .sprint-card { min-height: 240px; }
+    .sprint-k .sprint-ans { min-height: 100px; }
+    .sprint-dot { width: 24px; height: 24px; }
+    .sprint-dot.is-gone::before, .sprint-dot.is-gone::after { width: 28px; margin-left: -14px; }
+    .sprint-dotgrp { gap: 5px; }
+    .sprint-end { padding: 1.25rem 0.85rem 2rem; }
+    .sprint-again, .sprint-home { min-width: 0; flex: 1 1 100%; }
+    .sprint-chart-bars { height: 84px; }
+    .sprint-combo-txt { display: none; }
+    .sprint-say { top: 0.4rem; right: 0.4rem; }
+    .sprint-k .sprint-card { padding-top: 4.2rem; }
+  }
+
+  @keyframes sprintIn { from { transform: translateX(26px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes sprintPop { 0% { transform: scale(0.86); } 60% { transform: scale(1.07); } 100% { transform: scale(1); } }
+  @keyframes sprintBump { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  @keyframes sprintHot { 0% { transform: scale(1) rotate(0); } 40% { transform: scale(1.3) rotate(-4deg); } 100% { transform: scale(1) rotate(0); } }
+  @keyframes sprintPlus { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-34px); opacity: 0; } }
+  @keyframes sprintNudge { 0%, 100% { transform: translateX(0); } 30% { transform: translateX(-6px); } 65% { transform: translateX(5px); } }
+  @keyframes sprintCount { 0% { transform: scale(0.4); opacity: 0; } 55% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+  @keyframes sprintStamp { 0% { transform: scale(2.1) rotate(-6deg); opacity: 0; } 100% { transform: scale(1) rotate(-6deg); opacity: 1; } }
+  @keyframes sprintBanner { 0% { transform: scale(2) rotate(-2deg); opacity: 0; } 100% { transform: scale(1) rotate(-2deg); opacity: 1; } }
+  @keyframes sprintGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes sprintBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) {
+    .sprint-scope *, .sprint-scope *::before, .sprint-scope *::after { animation: none !important; transition: none !important; }
+  }
+
+
+  /* ─── module: family ─── */
+  /* ═══ FAMILY TEAM GOAL (module: family) ═══ */
+
+  /* ─── Title screen panel, under the three profile cards ─── */
+  .family-panel {
+    position: relative; width: 100%; max-width: 960px; margin-top: 1.6rem;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 0 0.9rem;
+    background: white; border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+    padding: 1.05rem 1rem 0.8rem 1.1rem; overflow: hidden;
+  }
+  .family-band { position: absolute; left: 0; right: 0; top: 0; height: 6px; display: flex; }
+  .family-band > span { flex: 1; }
+  .family-main { min-width: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .family-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.15rem 0.7rem; }
+  .family-title {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+    font-size: 1rem; letter-spacing: 0.5px; white-space: nowrap;
+  }
+  .family-title-icon { font-size: 1.25rem; margin-right: 0.15rem; }
+  .family-reward { font-size: 0.98rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; min-width: 0; }
+  .family-reward-for {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+  }
+
+  .family-progress { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem 0.8rem; }
+  .family-meter {
+    position: relative; flex: 1 1 14rem; min-width: 0; height: 26px; display: flex;
+    border: 3px solid var(--ink); overflow: hidden;
+    background: repeating-linear-gradient(-45deg, var(--bg) 0 7px, var(--bg-deep) 7px 14px);
+  }
+  /* A child's first star still shows: a sliver, never nothing. */
+  .family-seg {
+    display: block; height: 100%; background: var(--seg); flex: 0 0 auto; min-width: 6px;
+    box-shadow: inset 0 4px 0 rgba(255,255,255,0.35);
+    transform-origin: left center;
+  }
+  .family-seg + .family-seg { border-left: 2px solid var(--ink); }
+  .family-flag { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); font-size: 0.95rem; line-height: 1; }
+  .family-count {
+    flex: 0 0 auto; white-space: nowrap;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.78rem; color: var(--muted);
+  }
+  .family-count strong { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-weight: 400; font-size: 1.05rem; color: var(--ink); letter-spacing: 0.5px; }
+
+  .family-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem 0.8rem; }
+  .family-kids { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .family-kid {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    background: var(--kid-soft); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--kid);
+    padding: 0.12rem 0.5rem 0.12rem 0.3rem; min-height: 32px;
+  }
+  /* A key to the meter's colours, not a scoreboard: no per-child numbers here. */
+  .family-kid-dot { width: 11px; height: 11px; flex: 0 0 auto; background: var(--kid); border: 1.5px solid var(--ink); }
+  .family-kid-emoji { font-size: 1.15rem; line-height: 1; }
+  .family-kid-n { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.8rem; letter-spacing: 0.5px; white-space: nowrap; }
+  .family-note { font-size: 0.92rem; line-height: 1.3; flex: 1 1 12rem; min-width: 0; }
+  .family-note strong { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-weight: 400; }
+  .family-goal {
+    flex: 1 1 16rem; min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 0.15rem 0.55rem;
+    background: var(--gold); border: 2px solid var(--ink); padding: 0.3rem 0.6rem; line-height: 1.3;
+  }
+  .family-goal.is-claimed { background: #e6f5f2; border-color: var(--success); }
+  .family-goal-big { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.95rem; white-space: nowrap; }
+  .family-goal-txt { font-size: 0.9rem; overflow-wrap: anywhere; min-width: 0; }
+  .family-last {
+    font-size: 0.85rem; line-height: 1.35; background: #fff6e6; border: 2px dashed var(--gold); padding: 0.3rem 0.55rem;
+    overflow-wrap: anywhere;
+  }
+
+  /* The 🔊: the kindergartener taps it, so 56px. */
+  .family-say { align-self: center; }
+  .family-panel .voice-btn-sm, .family-k .voice-btn-sm {
+    width: 56px; height: 56px; min-width: 56px; min-height: 56px; font-size: 1.4rem; margin: 0;
+  }
+
+  .family-panel.is-reached { background: linear-gradient(180deg, #fff3dc 0%, white 75%); box-shadow: 6px 6px 0 var(--gold), 6px 6px 0 3px var(--ink); }
+  .family-panel.is-reached .family-meter { border-color: var(--ink); box-shadow: 0 0 0 3px var(--gold); }
+  .family-panel.is-claimed { background: white; box-shadow: 6px 6px 0 var(--success); }
+  .family-panel.is-reached .family-flag { animation: familyWave 1.2s ease-in-out infinite; transform-origin: 30% 90%; }
+  @keyframes familyWave { 0%, 100% { transform: translateY(-50%) rotate(0); } 50% { transform: translateY(-50%) rotate(-14deg); } }
+
+  /* New stars fill in, one child's colour after another. */
+  .family-panel.is-grow .family-seg { animation: familyGrow 0.7s cubic-bezier(.3,1.2,.5,1) both; animation-delay: calc(0.15s + var(--i) * 0.22s); }
+  @keyframes familyGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .family-panel.is-cheer { animation: familyCheer 0.9s cubic-bezier(.3,1.6,.5,1) 1; }
+  @keyframes familyCheer { 0% { transform: scale(0.96) rotate(-0.6deg); } 60% { transform: scale(1.02) rotate(0.4deg); } 100% { transform: none; } }
+
+  /* A phone: the 🔊 sits beside the heading only, and the meter and the
+     children get the whole width below it. */
+  @media (max-width: 560px) {
+    .family-panel { padding: 1rem 0.75rem 0.75rem 0.8rem; gap: 0.5rem 0.55rem; margin-top: 1.4rem; }
+    .family-main { display: contents; }
+    .family-head { grid-column: 1; grid-row: 1; align-self: center; }
+    .family-say { grid-column: 2; grid-row: 1; }
+    .family-progress, .family-foot, .family-last { grid-column: 1 / -1; }
+    .family-title { font-size: 0.88rem; }
+    /* Reached or claimed, the gold note already names the reward: say it once. */
+    .family-panel.is-reached .family-reward { display: none; }
+    .family-meter { flex-basis: 100%; }
+    .family-count strong { font-size: 0.95rem; }
+  }
+
+  /* ─── Hub card ─── */
+  .fun-card.family-card { gap: 0.55rem; }
+  .family-card .fun-card-badge { background: var(--gold); color: var(--ink); white-space: nowrap; }
+  .family-card .fun-card-body { display: flex; flex-direction: column; gap: 0.5rem; flex: 1 1 auto; }
+  .family-card-meter {
+    height: 16px; display: flex; border: 2px solid var(--ink); overflow: hidden;
+    background: repeating-linear-gradient(-45deg, var(--bg) 0 6px, var(--bg-deep) 6px 12px);
+  }
+  .family-card-meter .family-seg + .family-seg { border-left-width: 1.5px; }
+  .family-card-row { display: flex; align-items: center; gap: 0.6rem; }
+  .family-card-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+  .family-card-line { font-size: 0.95rem; line-height: 1.3; }
+  .family-card-line strong { font-weight: 800; white-space: nowrap; }
+  .family-card-mine { color: var(--muted); font-size: 0.85rem; }
+  /* The reward, as a ticket waiting to be used. */
+  .family-card-ticket {
+    margin-top: auto; display: flex; align-items: center; gap: 0.45rem;
+    background: #fff8ec; border: 2px dashed var(--gold); padding: 0.35rem 0.55rem;
+    font-size: 0.88rem; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere;
+  }
+  .family-card-ticket-icon { font-size: 1.15rem; line-height: 1; flex: 0 0 auto; }
+  .family-card.is-reached .family-card-ticket { background: var(--gold); border-style: solid; border-color: var(--ink); }
+  .family-card-say { flex: 0 0 auto; }
+  .fun-card.family-card.is-reached { background: linear-gradient(180deg, #fff3dc 0%, white 80%); }
+  /* Narrow phones: the play zone goes two-up; the team goal takes the full row. */
+  @media (max-width: 480px) { .fun-card.family-card { grid-column: 1 / -1; } }
+
+  /* ─── Round complete strip ─── */
+  .family-done {
+    display: flex; align-items: center; gap: 0.75rem; text-align: left;
+    background: white; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--gold);
+    padding: 0.6rem 0.8rem; margin: 0 0 1.25rem;
+  }
+  .family-done-icon { font-size: 1.7rem; line-height: 1; flex: 0 0 auto; }
+  .family-done-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  .family-done-txt { font-size: 0.95rem; line-height: 1.35; overflow-wrap: anywhere; }
+  .family-done-count {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.75rem; color: var(--muted);
+  }
+  .family-nb { white-space: nowrap; }
+  .family-done-big { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.15rem; letter-spacing: 0.5px; }
+  .family-done.is-reached { background: linear-gradient(180deg, #fff3dc 0%, white 85%); box-shadow: 5px 5px 0 var(--gold); }
+  .family-done.is-reached .family-done-icon { animation: familyCheer 0.9s cubic-bezier(.3,1.6,.5,1) 0.6s 1 both; font-size: 2.1rem; }
+  .family-done-say { flex: 0 0 auto; }
+  /* A phone: the count gets its own line instead of breaking mid-number. */
+  @media (max-width: 480px) { .family-done-count { display: block; margin-top: 0.15rem; } }
+
+  /* ─── Parent dashboard ─── */
+  .family-parent-about { font-size: 0.9rem; line-height: 1.55; margin-bottom: 0.9rem; }
+  .family-parent-week { margin-bottom: 1rem; }
+  .family-parent-status { font-size: 0.92rem; line-height: 1.45; margin: 0.6rem 0; }
+  .family-parent-claim { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 0.75rem; }
+  .family-parent-hint { font-size: 0.82rem; color: var(--muted); }
+  .family-parent-last {
+    margin-top: 0.75rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 0.75rem;
+    font-size: 0.9rem; line-height: 1.4; background: #fff6e6; border: 2px dashed var(--gold); padding: 0.5rem 0.65rem;
+  }
+  .family-btn {
+    min-height: 48px; padding: 0.55rem 1rem; cursor: pointer;
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.85rem; letter-spacing: 0.5px;
+    background: var(--ink); color: white; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--gold);
+  }
+  .family-btn-claim { background: var(--success); }
+  .family-btn-quiet { background: white; color: var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 0.78rem; }
+  .family-btn:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--gold); }
+  .family-btn-quiet:active:not(:disabled) { box-shadow: 1px 1px 0 var(--ink); }
+  .family-btn:disabled { background: var(--bg-deep); color: var(--muted); border-color: var(--muted); box-shadow: none; cursor: default; }
+  @media (hover: hover) and (pointer: fine) {
+    .family-btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--gold); }
+    .family-btn-quiet:hover:not(:disabled) { box-shadow: 4px 4px 0 var(--ink); }
+  }
+  .family-form {
+    display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: end; gap: 0.6rem 0.75rem;
+    border-top: 2px dashed rgba(0,0,0,0.15); padding-top: 0.9rem; margin-bottom: 1rem;
+  }
+  .family-form .mini-label { grid-column: 1 / -1; margin: 0; }
+  .family-field { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; font-size: 0.85rem; font-weight: 700; }
+  .family-field input {
+    width: 100%; min-height: 48px; padding: 0.5rem 0.65rem; font: inherit; font-size: 16px; font-weight: 400;
+    background: white; color: var(--ink); border: 3px solid var(--ink); border-radius: 0;
+    user-select: text; -webkit-user-select: text;
+  }
+  .family-field input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(214,40,40,0.2); }
+  .family-saved { grid-column: 1 / -1; min-height: 1.2em; font-size: 0.88rem; color: var(--success); font-weight: 700; }
+  .family-saved.is-error { color: var(--danger); }
+  .family-hist-row > span:first-child { display: flex; flex-direction: column; gap: 0.1rem; }
+  .family-hist-each { font-size: 0.78rem; color: var(--muted); }
+  .family-hist-row .val { text-align: right; padding-left: 0.5rem; }
+  .family-parent-none { font-size: 0.85rem; color: var(--muted); }
+  @media (max-width: 640px) {
+    .family-form { grid-template-columns: minmax(0, 1fr); }
+    .family-form .family-btn { justify-self: start; }
+  }
+
+
+
   /* ─── module: buddy ─── */
   /* ═══════════════════════════════════════════════════════════════
      BRAIN BUDDY
@@ -75512,6 +76128,1858 @@ FUN.on('roundEnd', s => {
 });
 
 /* ═══ FUN MODULES ═══ */
+
+// ─── module: sprint ───
+// ═══════════════════════════════════════════════════════════════
+// SPEED SPRINTS (module: sprint) — fact fluency against your own best
+// A timed run of quick facts: as many as you can before the bar runs out.
+// Each child races only their own best; siblings are never compared.
+//
+//   k   "Quick Count": add and take away within 5 (Maryland's kindergarten
+//       fluency goal), numerals AND a dot picture, 3 big answers, 90 s.
+//       Each problem is read aloud when her autoRead is on, and always has
+//       a 🔊.
+//   g3  multiplication and division facts within 100, 4 answers, 60 s.
+//   g5  ×/÷ facts to 12 × 12; × and ÷ by 10, 100 and 1,000 (whole numbers
+//       and decimals); equivalent fractions. 4 answers, 60 s.
+//
+// Right: funSound('tick') (the kindergartener hears the app's own 'right'
+// chime), +1, a combo counter (a 'streak' fanfare at every 5). Wrong:
+// funSound('buzz') ('wrong', the gentle one, for the kindergartener), the
+// right answer shows for about 600 ms, then the next problem. Nothing else,
+// ever. The clock only runs while a problem is waiting for an answer: it
+// stops while a right or wrong answer shows (except after a guess: a wrong
+// answer tapped faster than the problem can be read, 3rd and 5th grade
+// only), and stops by itself when the page is hidden (a RESUME button
+// brings it back).
+// No problem comes up twice in one run, and every problem is checked
+// (sprintVerify) before it is shown.
+//
+//   screen        own screen via render(), root has data-own-keys:
+//                 keys 1-4 (1-3 for K) answer, Esc ends, Enter = again
+//   hubTop        order 50   ⚡ SPEED SPRINT card (Best: N, recent scores)
+//   parentExtra   order 50   each child's best and recent scores
+//   emits         sprintDone { profileId, score, best, isBest }
+//   trophy        ⚡ LIGHTNING: 20 in a sprint (12 for the kindergartener)
+//   globals       sprintStart() and everything else prefixed sprint/SPRINT_
+//   store         FUN.store(pid, 'sprint') = { best, scores: [last 10],
+//                 runs, xp, last, bestAt, pending? }
+// ═══════════════════════════════════════════════════════════════
+
+const SPRINT_CFG = {
+  secs: { k: 90, g3: 60, g5: 60 },   // length of a sprint
+  choices: { k: 3, g3: 4, g5: 4 },   // answer buttons
+  countStep: 800,                    // ms per beat of 3 · 2 · 1 · GO
+  rightMs: 240,                      // the green flash after a right answer (clock stopped)
+  wrongMs: 600,                      // the right answer shows this long after a miss (clock stopped)
+  wrongMsK: 900,                     // a little longer for the kindergartener to see it
+  stampMs: 1100,                     // the TIME! stamp before the results
+  keep: 10,                          // scores kept for the chart
+  // A wrong answer this soon after its problem appeared is a guess (nobody
+  // reads "7 × 8" and four answers that fast): its reveal does not stop the
+  // clock, so tapping at random is never quicker than thinking. 3rd and 5th
+  // grade only; the kindergartener's clock always waits.
+  guessMs: 600,
+  // Taps on an answer this soon after an overlay closes (GO!, RESUME) are
+  // the second tap of a double tap meant for the overlay, not an answer.
+  settleMs: 300,
+};
+const SPRINT_LIGHTNING = { k: 12, g3: 20, g5: 20 };
+// No real sprint comes near this (60 s at a superhuman 0.2 s an answer); a
+// bigger stored score, or pending score, is damage and is dropped.
+const SPRINT_MAX = 300;
+const SPRINT_SETS = {
+  k:  { name: 'Quick Count', what: 'Add and take away, up to 5', icon: '🔢',
+        say: 'Quick Count! Add and take away, up to 5.' },
+  g3: { name: 'Multiply & Divide', what: '× and ÷ facts within 100', icon: '✖️',
+        say: 'Multiplication and division facts.' },
+  g5: { name: 'Mixed Facts', what: '× ÷ to 12 · × ÷ by 10, 100, 1,000 · equivalent fractions', icon: '🧮',
+        say: 'Mixed facts: times tables to 12, powers of 10, and equivalent fractions.' },
+};
+
+let sprintRun = null;     // the sprint on screen, or null
+let sprintLast = null;    // the sprint just finished, for its results screen
+let sprintSerial = 0;
+
+// ─── Small helpers ───
+function sprintTone(pid) { return SPRINT_SETS[pid] ? pid : 'g3'; }
+function sprintIsK(pid) { return sprintTone(pid) === 'k'; }
+function sprintEsc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function sprintAutoRead(pid) { return !!(state.profiles[pid] && state.profiles[pid].autoRead); }
+function sprintVoice(text) { return typeof speakBtn === 'function' ? speakBtn(text, false) : ''; }
+function sprintInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+function sprintPick(list) { return list[Math.floor(Math.random() * list.length)]; }
+function sprintShuffle(list) {
+  const a = list.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+// An index picked with these weights.
+function sprintWeighted(weights) {
+  const total = weights.reduce((s, w) => s + w, 0);
+  let x = Math.random() * total;
+  for (let i = 0; i < weights.length; i++) { x -= weights[i]; if (x < 0) return i; }
+  return weights.length - 1;
+}
+function sprintXpPer(pid) {
+  const p = (currentProfile && currentProfile.id === pid) ? currentProfile : PROFILES[pid];
+  const v = Number(p && p.xpPer);
+  return Number.isFinite(v) && v > 0 ? v : 10;
+}
+function sprintXpFor(pid, score) { return Math.ceil(Math.max(0, score) * sprintXpPer(pid) / 5); }
+
+// ─── Exact numbers: value = m × 10^e (m a whole number) ───
+// Decimals never go through floating point, so 0.1 × 3 can never show
+// 0.30000000000000004 and every answer can be checked exactly.
+function sprintV(m, e) { return sprintNorm(m, e || 0); }
+function sprintNorm(m, e) {
+  if (!Number.isInteger(m)) throw new Error('sprint: not a whole mantissa');
+  if (m === 0) return { m: 0, e: 0 };
+  while (m % 10 === 0) { m /= 10; e++; }
+  return { m, e };
+}
+function sprintKey(v) { const n = sprintNorm(v.m, v.e); return n.m + 'e' + n.e; }
+function sprintPlaces(v) { return Math.max(0, -sprintNorm(v.m, v.e).e); }
+function sprintCommas(digits) { return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function sprintFmt(v) {
+  const { m, e } = sprintNorm(v.m, v.e);
+  if (e >= 0) return sprintCommas(String(m) + '0'.repeat(e));
+  const s = String(m).padStart(-e + 1, '0');
+  const cut = s.length + e;
+  return sprintCommas(s.slice(0, cut)) + '.' + s.slice(cut);
+}
+function sprintNum(v) { return v.m * Math.pow(10, v.e); }   // for sizes and sorting only
+function sprintShift(v, k) { return sprintNorm(v.m, v.e + k); }
+
+// "third", "thirds", "twenty-fourths" — fraction names as a teacher says them.
+function sprintOrd(n, plural) {
+  if (n === 2) return plural ? 'halves' : 'half';
+  const ones = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth'];
+  const teens = ['tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth'];
+  const tens = ['', '', 'twent', 'thirt', 'fort', 'fift', 'sixt', 'sevent', 'eight', 'ninet'];
+  let w;
+  if (n < 10) w = ones[n];
+  else if (n < 20) w = teens[n - 10];
+  else if (n % 10 === 0) w = tens[n / 10] + 'ieth';
+  else w = tens[Math.floor(n / 10)] + 'y-' + ones[n % 10];
+  return plural ? w + 's' : w;
+}
+function sprintFracSay(n, d) { return `${n} ${sprintOrd(d, n !== 1)}`; }
+// A problem said as a finished sentence with its answer in it ("7 times 8
+// equals 56", "2 thirds equals 8 twelfths"), for the 🔊 on the results.
+function sprintSayAnswer(p, k) {
+  const a = p.opts[p.correct].s;
+  if (p.kind === 'frac') {
+    const n = Number(a);
+    const right = p.miss === 0 ? sprintFracSay(n, p.R[1]) : sprintFracSay(p.R[0], n);
+    return `${sprintFracSay(p.L[0], p.L[1])} equals ${right}`;
+  }
+  return `${p.say} ${k ? 'is' : 'equals'} ${sprintSayStr(a)}`;
+}
+// A decimal as class reads it, by place value: "4.7" → "4 and 7 tenths",
+// "0.036" → "36 thousandths" (Reveal reads decimals by place value, not
+// "four point seven"). Read from the written text, so "4.70" is "4 and 70
+// hundredths". Whole numbers are left as written.
+function sprintSayStr(s) {
+  const m = /^([\d,]+)\.(\d{1,3})$/.exec(String(s));
+  if (!m) return String(s);
+  const frac = String(parseInt(m[2], 10));
+  const unit = ['tenth', 'hundredth', 'thousandth'][m[2].length - 1] + (frac === '1' ? '' : 's');
+  return m[1] === '0' ? `${frac} ${unit}` : `${m[1]} and ${frac} ${unit}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// THE FACTS
+// A problem: { kind, key (unique in a run), fam (fact family, kept apart),
+//   text (plain), say (spoken), ans (exact value), opts: [{ v, s }],
+//   correct (index), and the numbers it was made from (for sprintVerify) }
+// ═══════════════════════════════════════════════════════════════
+
+// Answer options: the answer plus distractors chosen tier by tier (most
+// plausible first), unique by value, then shuffled.
+function sprintOptions(ans, tiers, caps, n, valid) {
+  const out = [{ v: ans, s: sprintFmt(ans) }];
+  const seen = new Set([sprintKey(ans)]);
+  const okV = o => o && o.v && Number.isInteger(o.v.m) && o.v.m >= 0 && sprintPlaces(o.v) <= 3 && (!valid || valid(o.v));
+  const add = o => {
+    if (out.length >= n || !okV(o)) return false;
+    const k = sprintKey(o.v);
+    if (seen.has(k)) return false;
+    seen.add(k); out.push({ v: o.v, s: o.s || sprintFmt(o.v) }); return true;
+  };
+  tiers.forEach((tier, t) => {
+    let used = 0;
+    for (const o of sprintShuffle(tier)) { if (used >= (caps[t] == null ? n : caps[t])) break; if (add(o)) used++; }
+  });
+  // Whole-number answers can always be padded with near misses.
+  for (let d = 1; out.length < n && d < 50 && ans.e >= 0; d++) {
+    add({ v: sprintV(sprintNum(ans) + d) });
+    add({ v: sprintV(Math.max(0, sprintNum(ans) - d)) });
+  }
+  const opts = sprintShuffle(out);
+  return { opts, correct: opts.findIndex(o => sprintKey(o.v) === sprintKey(ans)) };
+}
+const sprintW = n => ({ v: sprintV(n) });   // a whole-number option
+
+// ─── Kindergarten: add and take away within 5 ───
+function sprintGenK() {
+  const add = Math.random() < 0.5;
+  let a, b;
+  for (;;) {
+    if (add) { a = sprintInt(0, 5); b = sprintInt(0, 5 - a); } else { a = sprintInt(1, 5); b = sprintInt(0, a); }
+    if (add && a + b === 0) continue;
+    // Facts with a zero are real facts, just less to learn from: rarer.
+    if ((a === 0 || b === 0) && Math.random() < 0.65) continue;
+    break;
+  }
+  return sprintMakeK(add, a, b);
+}
+function sprintMakeK(add, a, b) {
+  const ans = add ? a + b : a - b;
+  const sign = add ? '+' : '−';
+  // The likely slips: counting one group only, counting one twice, not taking away.
+  const errs = add ? [a, b, ans + 1, ans - 1] : [a, b, a + b, ans + 1];
+  const vals = sprintKOptions(ans, errs);
+  const opts = vals.map(v => ({ v: sprintV(v), s: String(v) }));
+  return {
+    kind: add ? 'add' : 'sub', a, b, op: sign, left: String(a), right: String(b),
+    key: `k${a}${add ? '+' : '-'}${b}`, fam: add ? `ka${Math.min(a, b)}.${Math.max(a, b)}` : `ks${a}.${b}`,
+    ans: sprintV(ans), text: `${a} ${sign} ${b}`, say: `${a} ${add ? 'plus' : 'take away'} ${b}`,
+    opts, correct: vals.indexOf(ans),
+  };
+}
+// Three numbers in counting order (like a number path), the answer landing
+// first, middle or last equally often; the others within 3 of it.
+function sprintKOptions(ans, errs) {
+  const n = SPRINT_CFG.choices.k;
+  const lo = [], hi = [];
+  for (let v = 0; v <= 7; v++) {
+    if (v === ans || Math.abs(v - ans) > 3) continue;
+    (v < ans ? lo : hi).push(v);
+  }
+  let pos = sprintInt(0, n - 1);
+  pos = Math.min(pos, lo.length);
+  pos = Math.max(pos, n - 1 - hi.length);
+  const weight = v => (errs.includes(v) ? 3 : 1) / Math.abs(v - ans);
+  const take = (list, k) => {
+    const pool = list.slice(), out = [];
+    while (out.length < k && pool.length) out.push(pool.splice(sprintWeighted(pool.map(weight)), 1)[0]);
+    return out;
+  };
+  return take(lo, pos).concat([ans], take(hi, n - 1 - pos)).sort((x, y) => x - y);
+}
+// Every kindergarten fact (40), for when random picks run dry.
+function sprintAllK() {
+  const all = [];
+  for (let a = 0; a <= 5; a++) for (let b = 0; b <= 5 - a; b++) if (a + b) all.push([true, a, b]);
+  for (let a = 1; a <= 5; a++) for (let b = 0; b <= a; b++) all.push([false, a, b]);
+  return all;
+}
+
+// A problem's identity is what it says, so 3 × 4 and 4 × 3 count as one
+// problem, and 12 × 10 is the same problem whichever set it came from.
+function sprintTextKey(left, op, right) {
+  return op === '×' ? 'x:' + [left, right].sort().join('*') : 'd:' + left + '/' + right;
+}
+
+// ─── Multiplication and division facts ───
+// g3: factors 0-10 (0 and 1 rarer); g5: 2-12.
+const SPRINT_FACTOR_W = {
+  g3: [0.25, 0.5, 1, 1, 1, 1, 1, 1, 1, 1, 1],          // 0..10
+  g5: [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],         // 0..12, only 2..12 used
+};
+function sprintFactor(tone) { return sprintWeighted(SPRINT_FACTOR_W[tone]); }
+function sprintMul(tone, a, b) {
+  const P = a * b, n = SPRINT_CFG.choices[tone];
+  let tiers, caps;
+  if (P === 0) {
+    const x = a || b;
+    tiers = [[sprintW(x), sprintW(1), sprintW(x + 1), sprintW(10)]]; caps = [3];
+  } else {
+    // Off by one fact (a neighbouring row or column of the table), then a near miss.
+    tiers = [[sprintW(a * (b + 1)), sprintW(a * (b - 1)), sprintW((a + 1) * b), sprintW((a - 1) * b)],
+             [sprintW(P + 1), sprintW(P - 1), sprintW(P + 2), sprintW(P - 2), sprintW(a + b)],
+             [sprintW(P + 10), sprintW(P - 10)]];
+    caps = [2, 1, 3];
+  }
+  const o = sprintOptions(sprintV(P), tiers, caps, n);
+  const lo = Math.min(a, b), hi = Math.max(a, b);
+  return {
+    kind: 'mul', a, b, op: '×', left: String(a), right: String(b),
+    key: sprintTextKey(String(a), '×', String(b)), fam: `f${lo}x${hi}`, ans: sprintV(P),
+    text: `${a} × ${b}`, say: `${a} times ${b}`, opts: o.opts, correct: o.correct,
+  };
+}
+function sprintDiv(tone, q, b) {
+  const P = q * b, n = SPRINT_CFG.choices[tone];
+  // Off by one fact (the quotient next door), then two away or the divisor itself.
+  const tiers = [[sprintW(q + 1), sprintW(q - 1)], [sprintW(q + 2), sprintW(q - 2), sprintW(b)], [sprintW(q + 3), sprintW(q - 3)]];
+  const o = sprintOptions(sprintV(q), tiers, [2, 1, 3], n);
+  return {
+    kind: 'div', a: P, b, op: '÷', left: String(P), right: String(b),
+    key: sprintTextKey(String(P), '÷', String(b)), fam: `f${Math.min(q, b)}x${Math.max(q, b)}`, ans: sprintV(q),
+    text: `${P} ÷ ${b}`, say: `${P} divided by ${b}`, opts: o.opts, correct: o.correct,
+  };
+}
+function sprintGenG3() {
+  if (Math.random() < 0.55) return sprintMul('g3', sprintFactor('g3'), sprintFactor('g3'));
+  let b; do { b = sprintFactor('g3'); } while (b === 0);   // never divide by zero
+  return sprintDiv('g3', sprintFactor('g3'), b);
+}
+
+// ─── Fifth grade: powers of 10 ───
+// × or ÷ a whole number or a decimal by 10, 100 or 1,000. Answers stay
+// within thousandths. Distractors put the digits in the wrong place (one
+// or two places off, or moved the wrong way), and for a decimal times a
+// power of 10 sometimes the "just add a zero" slip (4.7 × 10 → 4.70).
+function sprintP10() {
+  const mode = sprintPick(['mw', 'md', 'dw', 'dd']);
+  let k = sprintInt(1, 3), n;
+  if (mode === 'mw') n = sprintV(Math.random() < 0.7 ? sprintInt(2, 99) : sprintPick([105, 125, 250, 306, 340, 408, 475, 520, 605, 750]));
+  else if (mode === 'dw') n = sprintV(sprintPick([sprintInt(2, 99), sprintInt(10, 99) * 10, sprintInt(10, 99) * 100, sprintInt(100, 999)]));
+  else {
+    // A decimal with one or two places that does not end in 0.
+    const two = Math.random() < 0.4;
+    let m; do { m = two ? sprintInt(11, 999) : sprintInt(2, 99); } while (m % 10 === 0);
+    n = sprintV(m, two ? -2 : -1);
+    if (mode === 'dd') k = Math.min(k, 3 - sprintPlaces(n));   // stay within thousandths
+  }
+  const times = mode[0] === 'm';
+  const pow = sprintV(1, k);
+  const ans = sprintShift(n, times ? k : -k);
+  const sh = j => ({ v: sprintShift(ans, j) });
+  let tiers = [[sh(1), sh(-1)], [sh(2), sh(-2)], [sh(3), sh(-3)]];
+  if (mode === 'md' && sprintPlaces(n) + k <= 3 && Math.random() < 0.55) {
+    const slip = { v: n, s: sprintFmt(n) + '0'.repeat(k) };   // same value as n, written with zeros tacked on
+    if (k === 1) tiers = [[sh(1), slip], [sh(2), sh(-2)], [sh(3), sh(-1)]];
+    else tiers[1].push(slip);
+  }
+  const valid = v => sprintNum(v) >= 0.001 && sprintNum(v) <= 9999999;
+  const o = sprintOptions(ans, tiers, [2, 1, 3], SPRINT_CFG.choices.g5, valid);
+  const sign = times ? '×' : '÷';
+  return {
+    kind: 'p10', n, k, op: sign, left: sprintFmt(n), right: sprintFmt(pow),
+    key: sprintTextKey(sprintFmt(n), sign, sprintFmt(pow)), fam: `p${sprintKey(n)}`, ans,
+    text: `${sprintFmt(n)} ${sign} ${sprintFmt(pow)}`,
+    say: `${sprintSayStr(sprintFmt(n))} ${times ? 'times' : 'divided by'} ${sprintFmt(pow)}`,
+    opts: o.opts, correct: o.correct,
+  };
+}
+
+// ─── Fifth grade: equivalent fractions ───
+// n/d = ?/D, n/d = N/?, or N/D = ?/d. Distractors: the "add the same
+// number" slip (2/3 = ?/12 → 11), a neighbouring multiple (off by one
+// fact), and one away.
+const SPRINT_FRACS = [[1, 2], [1, 3], [2, 3], [1, 4], [3, 4], [1, 5], [2, 5], [3, 5], [4, 5], [1, 6], [5, 6],
+  [1, 8], [3, 8], [5, 8], [7, 8], [1, 10], [3, 10], [7, 10], [9, 10], [1, 12], [5, 12], [7, 12], [11, 12]];
+function sprintFrac() {
+  const [n, d] = sprintPick(SPRINT_FRACS);
+  let k; do { k = sprintInt(2, 5); } while (d * k > 60);
+  const N = n * k, D = d * k;
+  const variant = sprintPick(['num', 'num', 'den', 'simp']);
+  let L, R, miss, tiers;
+  if (variant === 'num') {          // n/d = ?/D
+    L = [n, d]; R = [N, D]; miss = 0;
+    tiers = [[sprintW(n + (D - d))], [sprintW(n * (k + 1)), sprintW(n * (k - 1))], [sprintW(N + 1), sprintW(N - 1)]];
+  } else if (variant === 'den') {   // n/d = N/?
+    L = [n, d]; R = [N, D]; miss = 1;
+    tiers = [[sprintW(d + (N - n))], [sprintW(d * (k + 1)), sprintW(d * (k - 1))], [sprintW(D + 1), sprintW(D - 1)]];
+  } else {                          // N/D = ?/d
+    L = [N, D]; R = [n, d]; miss = 0;
+    tiers = [[sprintW(N - (D - d))], [sprintW(n + 1), sprintW(n - 1), sprintW(k)], [sprintW(n + 2)]];
+  }
+  const ansN = R[miss];
+  const o = sprintOptions(sprintV(ansN), tiers, [1, 1, 3], SPRINT_CFG.choices.g5, v => v.m > 0);
+  const shown = R.map((x, i) => (i === miss ? '?' : String(x)));
+  const say = miss === 0
+    ? `${sprintFracSay(L[0], L[1])} equals how many ${sprintOrd(R[1], true)}?`
+    : `${sprintFracSay(L[0], L[1])} equals ${R[0]} over what number?`;
+  return {
+    kind: 'frac', L, R, miss, op: '=',
+    key: `q${L.join('/')}=${shown.join('/')}`, fam: `q${n}/${d}`, ans: sprintV(ansN),
+    text: `${L[0]}/${L[1]} = ${shown[0]}/${shown[1]}`, say, opts: o.opts, correct: o.correct,
+  };
+}
+function sprintGenG5() {
+  const r = Math.random();
+  if (r < 0.3) return sprintMul('g5', sprintFactor('g5'), sprintFactor('g5'));
+  if (r < 0.55) return sprintDiv('g5', sprintFactor('g5'), sprintFactor('g5'));
+  if (r < 0.85) return sprintP10();
+  return sprintFrac();
+}
+
+function sprintGen(pid) {
+  const t = sprintTone(pid);
+  return t === 'k' ? sprintGenK() : t === 'g5' ? sprintGenG5() : sprintGenG3();
+}
+
+// Every problem is checked against its own numbers before it is shown:
+// the answer recomputed exactly, the right count of options, all different,
+// exactly one of them right, and the right one marked.
+function sprintVerify(p, pid) {
+  try {
+    let ans;
+    switch (p.kind) {
+      case 'add': ans = sprintV(p.a + p.b); break;
+      case 'sub': if (p.b > p.a) return false; ans = sprintV(p.a - p.b); break;
+      case 'mul': ans = sprintV(p.a * p.b); break;
+      case 'div': if (!p.b || p.a % p.b !== 0) return false; ans = sprintV(p.a / p.b); break;
+      case 'p10': ans = sprintShift(p.n, p.op === '×' ? p.k : -p.k); break;
+      case 'frac': {
+        const [a, b] = p.L, [c, d] = p.R;
+        if (!a || !b || !d) return false;
+        if (p.miss === 0) { if ((a * d) % b) return false; ans = sprintV(a * d / b); }
+        else { if (!c || (b * c) % a) return false; ans = sprintV(b * c / a); }
+        if (a * (p.miss === 1 ? sprintNum(ans) : d) !== b * (p.miss === 0 ? sprintNum(ans) : c)) return false;
+        break;
+      }
+      default: return false;
+    }
+    if (sprintKey(ans) !== sprintKey(p.ans)) return false;
+    const want = SPRINT_CFG.choices[sprintTone(pid)];
+    if (!Array.isArray(p.opts) || p.opts.length !== want) return false;
+    const keys = p.opts.map(o => sprintKey(o.v));
+    if (new Set(keys).size !== want || new Set(p.opts.map(o => o.s)).size !== want) return false;
+    if (keys.filter(k => k === sprintKey(ans)).length !== 1 || keys[p.correct] !== sprintKey(ans)) return false;
+    return p.opts.every(o => Number.isInteger(o.v.m) && o.v.m >= 0 && sprintPlaces(o.v) <= 3 && o.s.length > 0);
+  } catch (e) { return false; }
+}
+
+// The next problem of a run: never one already seen, never the same fact
+// family twice in a row, always verified. null when every fact is used up.
+function sprintNextProblem(r) {
+  const ok = (p, strict) => p && !r.used.has(p.key) && (!strict || p.fam !== r.lastFam) && sprintVerify(p, r.pid);
+  for (let i = 0; i < 600; i++) {
+    let p; try { p = sprintGen(r.pid); } catch (e) { p = null; }
+    if (ok(p, i < 400)) return p;
+  }
+  if (sprintIsK(r.pid)) {
+    for (const [add, a, b] of sprintShuffle(sprintAllK())) {
+      const p = sprintMakeK(add, a, b);
+      if (ok(p, false)) return p;
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STORAGE (FUN.store(pid, 'sprint'))
+//   best     highest score in a finished sprint
+//   scores   the last 10 finished sprints, oldest first
+//   runs     finished sprints, all time
+//   xp       XP earned in sprints, all time (it is in the child's xp too)
+//   last     day of the last finished sprint; bestAt: day of the best
+//   pending  { score } while a sprint is running, so a closed tab never
+//            loses the XP of the answers already given
+// ═══════════════════════════════════════════════════════════════
+function sprintStore(pid) {
+  const d = state.profiles[pid];
+  // FUN.store hands back whatever is saved there; a save damaged into a
+  // string or a list is made an object first (there is nothing in it to keep).
+  if (!d.fun || typeof d.fun !== 'object' || Array.isArray(d.fun)) d.fun = {};
+  if (d.fun.sprint && (typeof d.fun.sprint !== 'object' || Array.isArray(d.fun.sprint))) d.fun.sprint = {};
+  const s = FUN.store(pid, 'sprint');
+  const whole = v => { v = Math.floor(Number(v)); return Number.isFinite(v) && v > 0 ? Math.min(v, 1e6) : 0; };
+  // A real score is a whole number from 0 to a few dozen; anything else in
+  // a stored list is damage, and is dropped rather than shown.
+  const score = v => (typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= SPRINT_MAX ? Math.floor(v) : null);
+  s.scores = (Array.isArray(s.scores) ? s.scores : []).map(score).filter(v => v !== null).slice(-SPRINT_CFG.keep);
+  s.best = Math.max(score(Number(s.best)) || 0, ...s.scores, 0);
+  s.runs = Math.max(whole(s.runs), s.scores.length);
+  s.xp = whole(s.xp);
+  // A pending score is a real sprint's right answers: 0 to SPRINT_MAX. Anything
+  // else (a string of junk, a negative, a billion) is dropped, never paid out.
+  if (s.pending && !(typeof s.pending === 'object' && score(Number(s.pending.score)) !== null)) delete s.pending;
+  return s;
+}
+// Read-only, so a trophy check never creates storage.
+function sprintPeekBest(d) {
+  const s = d && d.fun && d.fun.sprint;
+  if (!s || typeof s !== 'object') return 0;
+  const vals = [Number(s.best)].concat(Array.isArray(s.scores) ? s.scores : []).filter(v => typeof v === 'number' && Number.isFinite(v) && v > 0 && v <= SPRINT_MAX);
+  return vals.length ? Math.floor(Math.max(...vals)) : 0;
+}
+function sprintAddXp(pid, xp) {
+  if (!(xp > 0)) return;
+  const d = state.profiles[pid];
+  const cur = Number(d.xp);
+  d.xp = (Number.isFinite(cur) && cur > 0 ? cur : 0) + xp;
+  sprintStore(pid).xp += xp;
+}
+// XP for the right answers of a sprint that never finished (the tab was
+// closed, or the screen was left another way). No best, no chart.
+function sprintCreditPending(pid) {
+  const s = sprintStore(pid);
+  if (!s.pending) return 0;
+  const score = Math.min(SPRINT_MAX, Math.max(0, Math.floor(Number(s.pending.score)) || 0));
+  delete s.pending;
+  const xp = sprintXpFor(pid, score);
+  sprintAddXp(pid, xp);
+  saveState();
+  return xp;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// THE SPRINT SCREEN
+// ═══════════════════════════════════════════════════════════════
+function sprintScopeCls(pid) { return `sprint-scope sprint-${sprintTone(pid)}${sprintIsK(pid) ? ' sprint-k' : ''}`; }
+
+function sprintStart() {
+  if (!currentProfile || !state.profiles[currentProfile.id]) return;
+  // Leave a round only if one is really on screen. After a finished round
+  // the engine keeps currentPack set; exitToHub() would announce a roundExit
+  // for it, and the Reading Road answers that by opening its stop over the
+  // sprint.
+  if (typeof currentPack !== 'undefined' && currentPack && document.querySelector('.question-frame, .briefing')) { try { exitToHub(); } catch (e) {} }
+  if (sprintRun) sprintAbort();
+  const pid = currentProfile.id, tone = sprintTone(pid);
+  const s = sprintStore(pid);
+  if (s.pending) sprintCreditPending(pid);
+  const secs = SPRINT_CFG.secs[tone];
+  sprintLast = null;
+  sprintRun = {
+    pid, serial: ++sprintSerial, phase: 'count', secs, total: secs * 1000, remaining: secs * 1000, endAt: 0, clockOn: false,
+    score: 0, combo: 0, bestCombo: 0, tries: 0, guesses: 0, missed: [], used: new Set(), lastFam: '', p: null,
+    timers: [], tick: null, bestAtStart: s.best, recorded: false, shownAt: 0, settleUntil: 0,
+  };
+  funSound('tap');
+  render(sprintScreenHtml(sprintRun));
+  sprintCountdown(sprintRun);
+}
+
+function sprintScreenHtml(r) {
+  const pid = r.pid, tone = sprintTone(pid), k = sprintIsK(pid);
+  const n = SPRINT_CFG.choices[tone];
+  const best = r.bestAtStart;
+  const buttons = Array.from({ length: n }, (_, i) =>
+    `<button type="button" class="sprint-ans" data-i="${i}" onclick="sprintAnswer(${i}, event)" aria-label="Answer ${i + 1}"><span class="sprint-ans-key" aria-hidden="true">${i + 1}</span><span class="sprint-ans-val"></span></button>`).join('');
+  return `
+    <div class="sprint-screen ${sprintScopeCls(pid)}" data-own-keys data-phase="count">
+      <div class="sprint-hud">
+        <button type="button" class="sprint-pause" onclick="sprintPause()" aria-label="Pause"><span class="sprint-pause-icon" aria-hidden="true"><i></i><i></i></span><span class="sprint-pause-txt">PAUSE</span></button>
+        <div class="sprint-timer" aria-hidden="true"><div class="sprint-timer-fill" id="sprint-fill"></div></div>
+        <div class="sprint-secs" id="sprint-secs" role="timer" aria-label="Seconds left">${r.secs}</div>
+      </div>
+      <div class="sprint-row">
+        <div class="sprint-score" aria-label="Score"><span class="sprint-score-bolt" aria-hidden="true">⚡</span><b id="sprint-score">0</b></div>
+        <div class="sprint-combo" id="sprint-combo" aria-hidden="true"></div>
+        <div class="sprint-best">${best ? `BEST <b>${best}</b>` : (k ? 'FIRST TRY!' : 'FIRST SPRINT')}</div>
+      </div>
+      <div class="sprint-stage">
+        <div class="sprint-card" id="sprint-card"></div>
+        <div class="sprint-answers sprint-answers--${n}" id="sprint-answers">${buttons}</div>
+        <div class="sprint-keys">Keys 1–${n} answer · Esc ends</div>
+        <div class="sprint-overlay" id="sprint-overlay"></div>
+      </div>
+    </div>`;
+}
+
+// ─── Timers that belong to one run ───
+function sprintAlive() { return !!document.querySelector('.sprint-screen'); }
+function sprintLater(r, fn, ms) {
+  const id = setTimeout(() => {
+    r.timers = r.timers.filter(x => x !== id);
+    if (sprintRun !== r) return;
+    if (!sprintAlive()) { sprintAbort(); return; }
+    fn();
+  }, ms);
+  r.timers.push(id);
+}
+function sprintClearTimers(r) {
+  r.timers.forEach(clearTimeout);
+  r.timers = [];
+}
+function sprintSetPhase(r, phase) {
+  r.phase = phase;
+  const el = document.querySelector('.sprint-screen');
+  if (el) el.setAttribute('data-phase', phase);
+}
+
+// ─── The clock: runs only while a problem waits for an answer ───
+function sprintClockStart(r) {
+  r.endAt = performance.now() + r.remaining;
+  r.clockOn = true;
+  if (!r.tick) r.tick = setInterval(() => sprintTick(r), 100);
+  sprintDrawClock(r);
+}
+function sprintClockStop(r) {
+  if (r.clockOn) r.remaining = Math.max(0, r.endAt - performance.now());
+  r.clockOn = false;
+  sprintDrawClock(r);
+}
+function sprintLeft(r) { return r.clockOn ? Math.max(0, r.endAt - performance.now()) : r.remaining; }
+function sprintDrawClock(r) {
+  const left = sprintLeft(r);
+  const fill = document.getElementById('sprint-fill'), secs = document.getElementById('sprint-secs');
+  if (fill) {
+    fill.style.transform = `scaleX(${Math.max(0, Math.min(1, left / r.total))})`;
+    fill.classList.toggle('is-low', left <= 10000);
+  }
+  if (secs) secs.textContent = String(Math.ceil(left / 1000));
+}
+function sprintTick(r) {
+  if (sprintRun !== r) { clearInterval(r.tick); r.tick = null; return; }
+  if (!sprintAlive()) { sprintAbort(); return; }
+  sprintDrawClock(r);
+  if (r.clockOn && sprintLeft(r) <= 0) {
+    r.remaining = 0; r.clockOn = false;
+    sprintFinish('time');
+  }
+}
+
+// ─── 3 · 2 · 1 · GO ───
+function sprintOverlay(html) {
+  const ov = document.getElementById('sprint-overlay');
+  if (!ov) return null;
+  ov.innerHTML = html || '';
+  ov.classList.toggle('is-on', !!html);
+  if (ov.parentElement) ov.parentElement.classList.toggle('is-covered', !!html);
+  return ov;
+}
+function sprintCountdown(r) {
+  sprintSetPhase(r, 'count');
+  const pid = r.pid, k = sprintIsK(pid), set = SPRINT_SETS[sprintTone(pid)];
+  const best = r.bestAtStart;
+  const beats = ['3', '2', '1', 'GO!'];
+  // Said up front, so the guess rule is never a hidden one.
+  const how = k ? `Tap the right answer, fast!` : `As many as you can in ${r.secs} seconds. Guesses cost time.`;
+  const intro = `${set.name}! ${k ? 'Tap the right answer, as fast as you can.' : how} ${best ? `Your best is ${best}.` : ''}`;
+  const show = i => {
+    sprintOverlay(`
+      <div class="sprint-ov sprint-ov--count">
+        <div class="sprint-ov-title"><span aria-hidden="true">${set.icon}</span> ${sprintEsc(set.name.toUpperCase())}</div>
+        <div class="sprint-ov-sub">${sprintEsc(how)}</div>
+        <div class="sprint-count${i === 3 ? ' is-go' : ''}" aria-live="polite">${beats[i]}</div>
+        <div class="sprint-ov-best">${best ? `Best to beat: <b>${best}</b>` : (k ? 'Your very first sprint!' : 'Set your first best!')}</div>
+        ${k ? `<div class="sprint-ov-say">${sprintVoice(intro)}</div>` : ''}
+      </div>`);
+    funSound(i === 3 ? 'right' : 'tick');
+    if (sprintAutoRead(pid)) { try { speakText(i === 0 ? 'Ready? 3' : i === 3 ? 'Go!' : beats[i]); } catch (e) {} }
+    // The kindergartener's beats are a little longer, so "Ready? 3" is heard whole.
+    const step = Math.round(SPRINT_CFG.countStep * (k && sprintAutoRead(pid) ? 1.25 : 1));
+    if (i < 3) sprintLater(r, () => show(i + 1), step);
+    else sprintLater(r, () => sprintBegin(r), Math.round(step * 0.6));
+  };
+  sprintDrawClock(r);
+  show(0);
+}
+function sprintBegin(r) {
+  sprintOverlay('');
+  r.settleUntil = performance.now() + SPRINT_CFG.settleMs;
+  sprintNext(r);
+}
+
+// ─── Problems ───
+// The problem as it is written. `fill` puts the answer where the ? was.
+function sprintEqHtml(p, fill) {
+  const q = fill != null
+    ? `<span class="sprint-q is-filled">${sprintEsc(fill)}</span>`
+    : `<span class="sprint-q" aria-label="what number">?</span>`;
+  if (p.kind === 'frac') {
+    const fr = (a, b) => `<span class="sprint-frac"><span class="sprint-frac-n">${a}</span><span class="sprint-frac-d">${b}</span></span>`;
+    const rn = p.miss === 0 ? q : p.R[0], rd = p.miss === 1 ? q : p.R[1];
+    return `<div class="sprint-eq sprint-eq--frac" aria-label="${sprintEsc(p.say)}">${fr(p.L[0], p.L[1])}<span class="sprint-op">=</span>${fr(rn, rd)}</div>`;
+  }
+  return `<div class="sprint-eq" aria-label="${sprintEsc(p.say)}"><span class="sprint-n">${sprintEsc(p.left)}</span><span class="sprint-op">${p.op}</span><span class="sprint-n">${sprintEsc(p.right)}</span><span class="sprint-op">=</span>${q}</div>`;
+}
+// Kindergarten: the same problem as a dot picture. Adding: two groups in
+// two colours. Taking away: the dots, with the ones taken away crossed out.
+function sprintDotsHtml(p) {
+  const dot = c => `<i class="sprint-dot ${c}"></i>`;
+  if (p.kind === 'add') {
+    return `<div class="sprint-dots" aria-hidden="true">${p.a ? `<span class="sprint-dotgrp">${dot('is-a').repeat(p.a)}</span>` : ''}${p.a && p.b ? '<span class="sprint-dotplus">+</span>' : ''}${p.b ? `<span class="sprint-dotgrp">${dot('is-b').repeat(p.b)}</span>` : ''}</div>`;
+  }
+  return `<div class="sprint-dots" aria-hidden="true"><span class="sprint-dotgrp">${dot('is-a').repeat(p.a - p.b)}${dot('is-a is-gone').repeat(p.b)}</span></div>`;
+}
+// What the 🔊 on a problem says: the problem, then the choices.
+function sprintProblemSay(p) {
+  const list = p.opts.map(o => sprintSayStr(o.s));
+  return `${p.say}${/\?$/.test(p.say) ? '' : '.'} Is it ${list.slice(0, -1).join(', ')}, or ${list[list.length - 1]}?`;
+}
+function sprintShowProblem(r) {
+  const p = r.p, pid = r.pid, k = sprintIsK(pid);
+  const card = document.getElementById('sprint-card');
+  if (!card) return;
+  const voice = k || sprintAutoRead(pid) ? `<div class="sprint-say">${sprintVoice(sprintProblemSay(p))}</div>` : '';
+  card.classList.remove('is-miss');
+  card.innerHTML = `<div class="sprint-prob sprint-prob--${p.kind}" data-key="${sprintEsc(p.key)}">${sprintEqHtml(p)}${k ? sprintDotsHtml(p) : ''}</div>${voice}`;
+  // One size for the whole set: a single bigger number would stand out like a hint.
+  const len = Math.max(...p.opts.map(o => o.s.length));
+  document.querySelectorAll('#sprint-answers .sprint-ans').forEach((b, i) => {
+    const o = p.opts[i];
+    b.className = 'sprint-ans' + (len > 7 ? ' is-long is-xlong' : len > 5 ? ' is-long' : '');
+    b.querySelector('.sprint-ans-val').textContent = o ? o.s : '';
+    b.setAttribute('aria-label', `Answer ${i + 1}: ${o ? o.s : ''}`);
+  });
+}
+function sprintNext(r) {
+  if (r.clockOn) sprintClockStop(r);   // it ran on through a guess's reveal
+  if (r.remaining <= 0) { sprintFinish('time'); return; }
+  const p = sprintNextProblem(r);
+  if (!p) { sprintFinish('all'); return; }
+  r.used.add(p.key);
+  r.lastFam = p.fam;
+  r.p = p;
+  sprintShowProblem(r);
+  sprintSetPhase(r, 'run');
+  sprintClockStart(r);
+  r.shownAt = performance.now();
+  if (sprintAutoRead(r.pid)) { try { speakText(p.say); } catch (e) {} }
+}
+
+// ─── Answering ───
+function sprintAnswer(i, ev) {
+  const r = sprintRun;
+  if (!r || r.phase !== 'run' || !r.p) return;
+  if (!sprintAlive()) { sprintAbort(); return; }
+  const p = r.p;
+  if (!(i >= 0 && i < p.opts.length)) return;
+  // The second tap of a double tap on GO's 🔊 or RESUME, landing on the
+  // answer that was under it once the overlay went away. Keys and the
+  // keyboard's Enter (detail 0) are never held back.
+  if (ev && ev.detail > 0 && performance.now() < r.settleUntil) return;
+  const thought = performance.now() - r.shownAt;
+  sprintClockStop(r);
+  sprintSetPhase(r, 'reveal');
+  r.tries++;
+  const btns = [...document.querySelectorAll('#sprint-answers .sprint-ans')];
+  const q = document.querySelector('#sprint-card .sprint-q');
+  const fillQ = () => { if (q) { q.textContent = p.opts[p.correct].s; q.classList.add('is-filled'); q.removeAttribute('aria-label'); } };
+  if (i === p.correct) {
+    r.score++; r.combo++;
+    r.bestCombo = Math.max(r.bestCombo, r.combo);
+    funSound(sprintIsK(r.pid) ? 'right' : 'tick');
+    if (r.combo % 5 === 0) sprintLater(r, () => funSound('streak'), 90);
+    if (btns[i]) btns[i].classList.add('is-right');
+    fillQ();
+    sprintBumpScore(r);
+    // So a closed tab never loses these answers' XP.
+    try { sprintStore(r.pid).pending = { score: r.score }; saveState(); } catch (e) {}
+    sprintLater(r, () => sprintNext(r), SPRINT_CFG.rightMs);
+  } else {
+    r.combo = 0;
+    r.missed.push(p);
+    // A guess (3rd and 5th grade): the clock keeps running while the right
+    // answer shows. A wrong answer the child thought about costs no time.
+    if (!sprintIsK(r.pid) && thought < SPRINT_CFG.guessMs) { r.guesses++; sprintClockStart(r); }
+    funSound(sprintIsK(r.pid) ? 'wrong' : 'buzz');
+    if (btns[i]) btns[i].classList.add('is-wrong');
+    if (btns[p.correct]) btns[p.correct].classList.add('is-answer');
+    fillQ();
+    const card = document.getElementById('sprint-card');
+    if (card) card.classList.add('is-miss');
+    sprintBumpScore(r);
+    sprintLater(r, () => sprintNext(r), sprintIsK(r.pid) ? SPRINT_CFG.wrongMsK : SPRINT_CFG.wrongMs);
+  }
+}
+function sprintBumpScore(r) {
+  const sc = document.getElementById('sprint-score');
+  if (sc && sc.textContent !== String(r.score)) {
+    sc.textContent = String(r.score);
+    const wrap = sc.parentElement;
+    const plus = document.createElement('span');
+    plus.className = 'sprint-plus';
+    plus.setAttribute('aria-hidden', 'true');
+    plus.textContent = '+1';
+    wrap.appendChild(plus);
+    setTimeout(() => plus.remove(), 750);
+    sc.classList.remove('is-bump'); void sc.offsetWidth; sc.classList.add('is-bump');
+  }
+  const c = document.getElementById('sprint-combo');
+  if (c) {
+    const n = r.combo;
+    c.innerHTML = n >= 2 ? `<span class="sprint-combo-fire">🔥</span><b>${n}</b><span class="sprint-combo-txt">IN A ROW</span>` : '';
+    c.classList.toggle('is-on', n >= 2);
+    c.classList.remove('is-hot');
+    if (n >= 5 && n % 5 === 0) { void c.offsetWidth; c.classList.add('is-hot'); }
+  }
+}
+
+// ─── Pause (automatic when the page is hidden) ───
+function sprintPause() {
+  const r = sprintRun;
+  if (!r || !['count', 'run', 'reveal'].includes(r.phase)) return;
+  sprintClockStop(r);
+  sprintClearTimers(r);
+  r.pausedFrom = r.phase;
+  sprintSetPhase(r, 'paused');
+  const k = sprintIsK(r.pid);
+  const fromCount = r.pausedFrom === 'count';
+  const say = k ? 'Paused! The clock is stopped. Tap the green button to keep going.' : '';
+  sprintOverlay(`
+    <div class="sprint-ov sprint-ov--paused" role="dialog" aria-label="Paused">
+      <div class="sprint-ov-title"><span class="sprint-pause-icon" aria-hidden="true"><i></i><i></i></span> PAUSED</div>
+      <div class="sprint-ov-sub">The clock is stopped.${fromCount ? '' : ` Score so far: <b>${r.score}</b>`}</div>
+      <div class="sprint-ov-actions">
+        <button type="button" class="sprint-resume" onclick="sprintResume()"><span aria-hidden="true">▶</span> RESUME</button>
+        ${fromCount
+          ? `<button type="button" class="sprint-quit" onclick="sprintQuit()">← BACK TO HUB</button>`
+          : `<button type="button" class="sprint-quit" onclick="sprintFinish('stop')">END SPRINT</button>`}
+        ${k ? sprintVoice(say) : ''}
+      </div>
+    </div>`);
+  // Keyboard, or ⏸ clicked with a mouse: focus RESUME, so Enter or Space
+  // resumes instead of pressing the ⏸ button that kept the focus.
+  const onPause = document.activeElement && document.activeElement.closest && document.activeElement.closest('.sprint-pause');
+  if ((typeof keyboardDriving !== 'undefined' && keyboardDriving) || onPause) focusFirst(['.sprint-resume']);
+}
+function sprintResume() {
+  const r = sprintRun;
+  if (!r || r.phase !== 'paused') return;
+  sprintOverlay('');
+  funSound('tap');
+  if (r.pausedFrom === 'count') { sprintCountdown(r); return; }
+  r.settleUntil = performance.now() + SPRINT_CFG.settleMs;
+  if (r.pausedFrom === 'reveal' || !r.p) { sprintNext(r); return; }   // the feedback was cut short: on to the next
+  sprintSetPhase(r, 'run');
+  sprintClockStart(r);
+  r.shownAt = performance.now();
+  if (sprintAutoRead(r.pid)) { try { speakText(r.p.say); } catch (e) {} }
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) sprintPause(); });
+window.addEventListener('pagehide', () => sprintPause());
+
+// Leave before the sprint has really started: nothing to record.
+function sprintQuit() {
+  const r = sprintRun;
+  if (r) { sprintClearTimers(r); if (r.tick) clearInterval(r.tick); }
+  sprintRun = null;
+  if (r && r.score > 0) { sprintAbort.credit(r); }
+  if (currentProfile) renderHub();
+}
+
+// The screen went away some other way (another screen was drawn): stop,
+// and keep the XP of any right answers.
+function sprintAbort() {
+  const r = sprintRun;
+  if (!r) return;
+  sprintClearTimers(r);
+  if (r.tick) { clearInterval(r.tick); r.tick = null; }
+  sprintRun = null;
+  sprintAbort.credit(r);
+  // Stopped during the TIME! stamp: the sprint is saved, so it still counts
+  // (after this screen has been drawn).
+  if (r.result) setTimeout(() => sprintAnnounce(r.result), 0);
+}
+sprintAbort.credit = r => {
+  if (r.recorded) return;
+  r.recorded = true;
+  const s = sprintStore(r.pid);
+  delete s.pending;
+  sprintAddXp(r.pid, sprintXpFor(r.pid, r.score));
+  saveState();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// THE END: TIME! → results
+// ═══════════════════════════════════════════════════════════════
+// how: 'time' (the bar ran out), 'all' (every fact used up), 'stop' (Esc or END)
+function sprintFinish(how) {
+  const r = sprintRun;
+  if (!r || r.recorded || !['run', 'reveal', 'paused'].includes(r.phase)) return;
+  sprintClockStop(r);
+  sprintClearTimers(r);
+  if (r.tick) { clearInterval(r.tick); r.tick = null; }
+  sprintSetPhase(r, 'over');
+  const pid = r.pid;
+  if (how === 'stop' && r.tries === 0) { sprintQuit(); return; }
+  // Saved now, before the stamp, so nothing can be lost on the way.
+  const s = sprintStore(pid);
+  const complete = how !== 'stop';
+  const prevBest = s.best;
+  const xp = sprintXpFor(pid, r.score);
+  delete s.pending;
+  sprintAddXp(pid, xp);
+  let isBest = false;
+  if (complete) {
+    s.runs++;
+    s.scores = s.scores.concat([r.score]).slice(-SPRINT_CFG.keep);
+    s.last = FUN.today();
+    if (r.score > prevBest) { isBest = true; s.best = r.score; s.bestAt = FUN.today(); }
+  }
+  r.recorded = true;
+  saveState();
+  sprintLast = {
+    pid, how, complete, score: r.score, tries: r.tries, prevBest, best: s.best, isBest, xp,
+    first: complete && s.runs === 1, scores: s.scores.slice(), missed: r.missed.slice(), bestCombo: r.bestCombo,
+    secsUsed: Math.round((r.total - r.remaining) / 1000),
+  };
+  r.result = sprintLast;
+  if (how === 'stop') { sprintRun = null; sprintShowEnd(); return; }
+  const k = sprintIsK(pid);
+  const word = how === 'all' ? 'ALL DONE!' : (k ? "TIME'S UP!" : 'TIME!');
+  sprintOverlay(`<div class="sprint-ov sprint-ov--stamp"><div class="sprint-stamp${how === 'all' ? ' is-all' : ''}"><span aria-hidden="true">${how === 'all' ? '🎯' : '⏱️'}</span> ${word}</div></div>`);
+  funSound(how === 'all' ? 'win' : 'streak');
+  const L = sprintLast;
+  setTimeout(() => {
+    if (sprintRun !== r) return;
+    sprintRun = null;
+    // Another screen took over during the stamp: the sprint still counts.
+    if (!sprintAlive()) { sprintAnnounce(L); return; }
+    sprintShowEnd();
+  }, SPRINT_CFG.stampMs);
+}
+
+function sprintVerdict(L) {
+  const V = sprintVerdictBase(L);
+  // Every fact in the set answered before the time ran out: say so first.
+  if (L.how === 'all') { const all = 'You did every fact!'; V.line = `${all} ${V.line}`; V.say = `${all} ${V.say || ''}`.trim(); }
+  return V;
+}
+function sprintVerdictBase(L) {
+  const k = sprintIsK(L.pid), g5 = sprintTone(L.pid) === 'g5';
+  if (!L.complete) {
+    return { line: k ? 'You stopped early. That is okay!' : 'Stopped early. A sprint you finish goes on your chart.', say: k ? 'You stopped early. That is okay!' : '' };
+  }
+  if (L.isBest) {
+    const sub = L.prevBest ? `Your old best was ${L.prevBest}.` : (k ? 'Your first best! Now try to beat it!' : 'Your first best. Now beat it.');
+    return { banner: k ? 'WOW! A NEW BEST!' : 'NEW BEST!', line: sub, say: `${k ? 'Wow! A new best!' : 'New best!'} ${sub}` };
+  }
+  if (L.score === 0) {
+    const line = k ? "Good try! Let's look at the answers together." : sprintTone(L.pid) === 'g5' ? 'Warm-up done. Check the answers below and run it again.' : 'Warm-up done! Look at the answers below, then go again.';
+    return { line, say: line };
+  }
+  if (L.score === L.best) return { line: 'You tied your best!', say: 'You tied your best!' };
+  const gap = L.best - L.score;
+  if (gap <= 2) {
+    const line = k ? `So close! Your best is ${L.best}.` : g5 ? `${gap} away from your best (${L.best}).` : `So close! Just ${gap} away from your best of ${L.best}.`;
+    return { line, say: line };
+  }
+  const line = k ? `Great counting! Your best is ${L.best}.` : g5 ? `Solid. Your best is ${L.best}; facts get faster every sprint.` : `Nice work! Your best is ${L.best}. Every sprint makes your facts faster.`;
+  return { line, say: line };
+}
+
+function sprintChartHtml(scores, best, nowIdx) {
+  if (!scores.length) return '';
+  const max = Math.max(1, ...scores);
+  const cols = scores.map((v, i) => `
+    <div class="sprint-chart-col${i === nowIdx ? ' is-now' : ''}${v === best && best > 0 ? ' is-best' : ''}">
+      <span class="sprint-chart-v">${v === best && best > 0 ? '⭐' : ''}${v}</span>
+      <span class="sprint-chart-bar" style="height:${v ? Math.max(9, Math.round(v / max * 100)) : 3}%"></span>
+    </div>`).join('');
+  return `
+    <figure class="sprint-chart" aria-label="Your last ${scores.length} sprint scores: ${scores.join(', ')}">
+      <figcaption>YOUR LAST ${scores.length === 1 ? 'SPRINT' : scores.length}</figcaption>
+      <div class="sprint-chart-bars">${cols}</div>
+      ${scores.length < 3 ? '<div class="sprint-chart-note">Every sprint you finish adds a bar.</div>' : ''}
+    </figure>`;
+}
+
+// The problems that went wrong, each with its right answer: the learning.
+function sprintLearnHtml(L) {
+  const k = sprintIsK(L.pid);
+  if (!L.missed.length) {
+    return L.score > 0 ? `<div class="sprint-learn sprint-learn--clean"><span aria-hidden="true">🎯</span> ${k ? 'Every answer right!' : 'Every answer right. No mistakes.'}</div>` : '';
+  }
+  const items = L.missed.map(p => {
+    const a = p.opts[p.correct].s;
+    const say = sprintSayAnswer(p, k) + '.';
+    return `<li class="sprint-learn-item">${sprintEqHtml(p, a)}${k ? sprintDotsHtml(p) : ''}${k || sprintAutoRead(L.pid) ? `<span class="sprint-learn-say">${sprintVoice(say)}</span>` : ''}</li>`;
+  }).join('');
+  const head = k ? "LET'S LEARN THESE" : sprintTone(L.pid) === 'g5' ? 'REVIEW THESE' : 'LEARN THESE';
+  const sayAll = k ? `<span class="sprint-learn-say">${sprintVoice("Let's learn these. " + L.missed.map(p => sprintSayAnswer(p, true) + '.').join(' '))}</span>` : '';
+  return `
+    <section class="sprint-learn" aria-label="Right answers to learn">
+      <div class="sprint-learn-head"><span><span aria-hidden="true">💡</span> ${head}</span>${sayAll}</div>
+      <ul class="sprint-learn-list">${items}</ul>
+    </section>`;
+}
+
+function sprintEndHtml(L) {
+  const pid = L.pid, k = sprintIsK(pid), set = SPRINT_SETS[sprintTone(pid)];
+  const kicker = L.how === 'all' ? '🎯 ALL DONE!' : L.how === 'stop' ? 'SPRINT STOPPED' : (k ? "⏱️ TIME'S UP!" : '⏱️ TIME!');
+  const V = sprintVerdict(L);
+  let face = '';
+  if (typeof buddyFace === 'function') { try { face = buddyFace(pid, k ? 64 : 56) || ''; } catch (e) { face = ''; } }
+  const chips = [
+    `<span class="sprint-chip"><span aria-hidden="true">⚡</span> ${L.score} right</span>`,
+    // Their own best, always in view (a new best already has the banner).
+    L.best > 0 && !L.isBest ? `<span class="sprint-chip sprint-chip--best"><span class="sprint-star" aria-hidden="true">★</span> best ${L.best}</span>` : '',
+    L.bestCombo >= 2 ? `<span class="sprint-chip"><span aria-hidden="true">🔥</span> ${L.bestCombo} in a row</span>` : '',
+    `<span class="sprint-chip sprint-chip--xp">+${L.xp} XP</span>`,
+  ].filter(Boolean).join('');
+  const nowIdx = L.complete ? L.scores.length - 1 : -1;
+  const allSay = `${L.how === 'all' ? 'All done!' : L.how === 'stop' ? '' : "Time's up!"} You got ${L.score} right! ${V.say || ''} You earned ${L.xp} X P.`;
+  return `
+    <div class="sprint-end ${sprintScopeCls(pid)}${L.isBest ? ' is-best' : ''}" data-own-keys>
+      <div class="sprint-end-kicker">${kicker}</div>
+      <div class="sprint-end-hero">
+        ${face ? `<div class="sprint-end-face">${face}</div>` : ''}
+        <div class="sprint-end-score"><span class="sprint-end-num" id="sprint-end-num">${L.score}</span><span class="sprint-end-lbl">${k ? 'RIGHT!' : 'RIGHT'}</span></div>
+        ${k ? `<div class="sprint-end-say">${sprintVoice(allSay)}</div>` : ''}
+      </div>
+      ${V.banner ? `<div class="sprint-end-banner" role="status"><span class="sprint-star" aria-hidden="true">★</span> ${V.banner} <span class="sprint-star" aria-hidden="true">★</span></div>` : ''}
+      <div class="sprint-end-line">${sprintEsc(V.line)}</div>
+      <div class="sprint-end-chips">${chips}</div>
+      <div class="sprint-end-grid">
+        ${sprintChartHtml(L.scores, L.best, nowIdx)}
+        ${sprintLearnHtml(L)}
+      </div>
+      <div class="sprint-end-actions">
+        <button type="button" class="sprint-again" onclick="sprintAgain()"><span aria-hidden="true">⚡</span> AGAIN</button>
+        <button type="button" class="sprint-home" onclick="sprintHome()">← BACK TO HUB</button>
+      </div>
+      <div class="sprint-keys sprint-keys--end">Enter = again · Esc = back to hub</div>
+      <div class="sprint-end-set"><span aria-hidden="true">${set.icon}</span> ${sprintEsc(set.name)} · ${SPRINT_CFG.secs[sprintTone(pid)]} seconds</div>
+    </div>`;
+}
+
+function sprintShowEnd() {
+  const L = sprintLast;
+  if (!L) return;
+  render(sprintEndHtml(L));
+  const k = sprintIsK(L.pid);
+  // The score counts up.
+  const num = document.getElementById('sprint-end-num');
+  if (num && L.score > 1 && !FUN.reducedMotion()) {
+    const t0 = performance.now(), dur = Math.min(900, 60 * L.score);
+    num.textContent = '0';
+    const step = () => {
+      if (!num.isConnected) return;
+      const f = Math.min(1, (performance.now() - t0) / dur);
+      num.textContent = String(Math.round(L.score * (1 - Math.pow(1 - f, 3))));
+      if (f < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  if (L.isBest) {
+    setTimeout(() => funSound('win'), 150);
+    funConfetti({ count: 90, emoji: ['⚡', '⭐', '🏁', '🎉'] });
+  }
+  if (sprintAutoRead(L.pid)) {
+    const V = sprintVerdict(L);
+    const lead = L.how === 'all' ? 'All done!' : L.how === 'stop' ? '' : "Time's up!";
+    funSay(`${lead} You got ${L.score} right! ${V.say || ''}`.trim(), () => !!document.querySelector('.sprint-end'));
+  }
+  if (typeof keyboardDriving !== 'undefined' && keyboardDriving) focusFirst(['.sprint-again']);
+  sprintAnnounce(L);
+}
+// Once per sprint, whether or not its results screen gets drawn: tell the
+// other modules (a finished sprint only), then trophies (⚡ LIGHTNING, XP
+// trophies) and the buddy's level, after the XP went in.
+function sprintAnnounce(L) {
+  if (!L || L.announced) return;
+  L.announced = true;
+  if (L.complete) FUN.emit('sprintDone', { profileId: L.pid, score: L.score, best: L.best, isBest: L.isBest });
+  setTimeout(() => {
+    if (!currentProfile || currentProfile.id !== L.pid) return;
+    try { if (typeof checkTrophies === 'function') checkTrophies(); } catch (e) {}
+    try { if (typeof buddyCheckLevel === 'function') buddyCheckLevel(L.pid, 'sprint'); } catch (e) {}
+  }, 350);
+}
+
+function sprintAgain() {
+  if (!currentProfile) return;
+  sprintStart();
+}
+function sprintHome() {
+  sprintLast = null;
+  if (sprintRun) sprintAbort();
+  if (currentProfile) renderHub();
+}
+
+// ─── Keys: 1-4 (1-3 for K) answer, Esc ends, Enter on the results = again ───
+document.addEventListener('keydown', e => {
+  if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (document.querySelector('[aria-modal="true"], #exit-modal-backdrop, #coach-overlay, #tut-overlay, #scratch-overlay')) return;
+  const t = e.target;
+  const onControl = !!(t && t.closest && t.closest('button, a, input, select, textarea, [role="button"]'));
+  if (document.querySelector('.sprint-screen[data-own-keys]')) {
+    const r = sprintRun;
+    if (!r) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (r.phase === 'count' || (r.phase === 'paused' && r.pausedFrom === 'count')) sprintQuit();
+      else if (['run', 'reveal', 'paused'].includes(r.phase)) sprintFinish('stop');
+      return;
+    }
+    if (/^[1-9]$/.test(e.key)) {
+      e.preventDefault();
+      if (r.phase === 'run' && r.p && +e.key <= r.p.opts.length) sprintAnswer(+e.key - 1);
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && r.phase === 'paused' && !onControl) { e.preventDefault(); sprintResume(); }
+    return;
+  }
+  if (document.querySelector('.sprint-end[data-own-keys]')) {
+    if (e.key === 'Escape') { e.preventDefault(); sprintHome(); return; }
+    if (e.key === 'Enter' && !onControl) { e.preventDefault(); sprintAgain(); }
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// HUB CARD (hubTop, order 50)
+// ═══════════════════════════════════════════════════════════════
+function sprintHubCardHtml(pid) {
+  const s = sprintStore(pid), tone = sprintTone(pid), set = SPRINT_SETS[tone], k = sprintIsK(pid);
+  const secs = SPRINT_CFG.secs[tone];
+  const recent = s.scores.slice(-8);
+  const max = Math.max(1, ...recent);
+  const bars = recent.length > 1
+    ? `<div class="sprint-hub-bars" aria-hidden="true">${recent.map((v, i) => `<i class="${i === recent.length - 1 ? 'is-last' : ''}" style="height:${Math.max(8, Math.round(v / max * 100))}%"></i>`).join('')}</div>`
+    : '';
+  const say = `Speed sprint! ${set.say} You have ${secs} seconds. ${s.best ? `Your best is ${s.best}. Can you beat it?` : 'Set your first best!'} Tap SPRINT to start.`;
+  const body = `
+    <div class="sprint-hub-row">
+      <div class="sprint-hub-best"><span class="sprint-hub-best-lbl">Best:</span> ${s.runs && s.best > 0 ? `<b class="sprint-hub-best-n">${s.best}</b>` : `<span class="sprint-hub-best-none">${k ? 'not yet!' : 'none yet'}</span>`}</div>
+      ${bars}
+    </div>
+    <div class="sprint-hub-set"><span aria-hidden="true">${set.icon}</span> <b>${sprintEsc(set.name)}</b> · ${secs} sec</div>
+    ${k ? '' : `<div class="sprint-hub-what">${sprintEsc(set.what)}</div>`}
+    <div class="sprint-hub-actions">
+      <button type="button" class="sprint-go" onclick="sprintStart()" aria-label="Start a speed sprint"><span aria-hidden="true">⚡</span> SPRINT!</button>
+      ${k ? `<span class="sprint-hub-say">${sprintVoice(say)}</span>` : ''}
+    </div>
+    <div class="sprint-hub-foot">${s.runs ? `${s.runs} sprint${s.runs === 1 ? '' : 's'} · beat your own best` : (k ? 'Beat your own best!' : 'Race your own best')}</div>`;
+  return funCard({
+    icon: '⚡', title: 'SPEED SPRINT', badge: s.runs ? `${secs}s` : 'NEW', body, accent: '#ffb703',
+    cls: `sprint-hubcard ${sprintScopeCls(pid)}`,
+  });
+}
+FUN.slot('hubTop', data => {
+  const p = data && data.profile;
+  if (sprintRun) sprintAbort();          // the hub is never mid-sprint
+  if (!p || !state.profiles[p.id]) return '';
+  const xp = sprintStore(p.id).pending ? sprintCreditPending(p.id) : 0;
+  if (xp > 0) setTimeout(() => funToast(`<span class="sprint-toast">⚡ +${xp} XP from your last sprint</span>`, 3200), 400);
+  return sprintHubCardHtml(p.id);
+}, 50);
+FUN.slot('titleExtra', () => { if (sprintRun) sprintAbort(); return ''; }, 50);
+
+// ═══════════════════════════════════════════════════════════════
+// PARENT DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+FUN.slot('parentExtra', () => {
+  const rows = Object.values(PROFILES).map(p => {
+    const d = state.profiles[p.id];
+    const s = d && d.fun && d.fun.sprint && typeof d.fun.sprint === 'object' ? d.fun.sprint : {};
+    const scores = Array.isArray(s.scores) ? s.scores.filter(v => typeof v === 'number' && v >= 0 && v <= SPRINT_MAX).map(Math.floor).slice(-5) : [];
+    const runs = Number(s.runs) > 0 ? Math.floor(Number(s.runs)) : 0;
+    const set = SPRINT_SETS[sprintTone(p.id)];
+    return `<li><strong>${p.emoji} ${p.name}</strong> — ${set.name}: ${runs ? `best ${sprintPeekBest(d)} · last ${scores.join(', ')} · ${runs} sprint${runs === 1 ? '' : 's'}` : 'no sprints yet'}</li>`;
+  }).join('');
+  return `
+    <div class="kid-block sprint-parent" style="border-color:var(--ink);">
+      <h3>⚡ Speed Sprints</h3>
+      <p style="font-size:0.9rem;line-height:1.55;">Short timed runs of math facts, raced only against the child's own best
+        (siblings are never compared). Kindergarten: add and take away within 5, with numerals and a dot picture, everything
+        read aloud, 90 seconds. 3rd grade: multiplication and division facts within 100, 60 seconds. 5th grade: facts to
+        12 × 12, multiplying and dividing whole numbers and decimals by 10, 100 and 1,000, and equivalent fractions, 60 seconds.
+        A wrong answer only shows the right one, and the clock waits while it does, unless (3rd and 5th grade) it was a
+        guess tapped faster than the problem can be read: then the clock keeps running, so random tapping never beats
+        thinking. Missed facts are listed with their answers at
+        the end. XP: one fifth of the child's per-question XP for each right answer, rounded up.</p>
+      <ul class="sprint-parent-list">${rows}</ul>
+    </div>`;
+}, 50);
+
+// ═══════════════════════════════════════════════════════════════
+// TROPHY: ⚡ LIGHTNING — 20 in a sprint (12 in the kindergartener's Quick Count)
+// ═══════════════════════════════════════════════════════════════
+FUN.trophy({
+  id: 'sprint_lightning', emoji: '⚡', name: 'LIGHTNING',
+  // The hub shows the note for the child who is looking at it.
+  get note() {
+    const pid = typeof currentProfile !== 'undefined' && currentProfile ? currentProfile.id : null;
+    if (pid === 'k') return `Get ${SPRINT_LIGHTNING.k} in a Quick Count sprint`;
+    if (pid) return `Score ${SPRINT_LIGHTNING[sprintTone(pid)]} in a speed sprint`;
+    return `Score ${SPRINT_LIGHTNING.g3} in a speed sprint (${SPRINT_LIGHTNING.k} in kindergarten)`;
+  },
+}, (d, pid) => sprintPeekBest(d) >= SPRINT_LIGHTNING[sprintTone(pid)]);
+
+
+// ─── module: family ───
+// ═══════════════════════════════════════════════════════════════
+// FAMILY TEAM GOAL (module: family)
+// The three children fill ONE weekly goal together instead of racing each
+// other. Progress is counted in stars, not XP, so grades are fair: a star is
+// one question's worth of XP for that child's grade, so a kindergartener's
+// right answer (5 XP) adds the same star as a fifth grader's (15 XP).
+//
+//   stars this week = floor((xp - base[pid]) / PROFILES[pid].xpPer)
+//
+// Every source of XP counts (rounds, missions bonus, boss battles, sprints),
+// because they all add to d.xp. When FUN.week() (Monday-based) changes, last
+// week's totals go into history (newest 8 kept) and base becomes each
+// child's XP, so the new week starts from zero. Nothing a child earned is
+// ever taken away: XP and levels are untouched; only the weekly counter
+// starts again.
+//
+// No competition: the children appear in a fixed order (K, 3rd, 5th), are
+// never sorted, ranked or compared, and nothing says who added the most.
+//
+//   state.family = { reward, target, week, base:{k,g3,g5}, history:[…], claimedWeek,
+//                    cheered, told, updated }
+//   titleExtra    order 50   FAMILY TEAM GOAL panel under the profile cards
+//   hubTop        order 60   small TEAM GOAL card
+//   completeExtra order 60   "+8 ⭐ for the family team" (and the moment the goal is reached)
+//   parentExtra   order 60   reward, weekly target, this week, past weeks, "Reward claimed ✓"
+//   listens       roundStart answer roundEnd roundExit bossDefeated missionsComplete sprintDone
+// ═══════════════════════════════════════════════════════════════
+
+const FAMILY_DEFAULT_REWARD = 'Family movie night 🎬';
+const FAMILY_DEFAULT_TARGET = 150;
+const FAMILY_MIN_TARGET = 10, FAMILY_MAX_TARGET = 1000;
+const FAMILY_REWARD_MAX = 60;      // characters, emoji count as one
+const FAMILY_HISTORY_KEEP = 8;
+const FAMILY_WEEK_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+let familySeen = null;     // { week, xp:{pid:n} } — XP last seen in this session, for a week that ends mid-round
+let familyRound = null;    // { pid, week, mine, team, serial } at roundStart
+let familyLast = null;     // what the round that just ended added, for the complete screen
+let familySerial = 0;
+let familyShown = null;    // team total last drawn on the title screen (this session), to animate only new stars
+let familyHubTeam = null;  // { week, total } when the hub was last drawn (a speed sprint starts there)
+
+// ─── Small helpers ───
+function familyEsc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+// The children, always in the same order. Never sorted by stars.
+function familyKids() { return Object.keys(PROFILES).filter(pid => state.profiles && state.profiles[pid]); }
+function familyXp(pid) {
+  const d = state.profiles && state.profiles[pid];
+  const x = d ? Number(d.xp) : 0;
+  return Number.isFinite(x) && x > 0 ? x : 0;
+}
+function familyPer(pid) { const p = PROFILES[pid]; return (p && p.xpPer > 0) ? p.xpPer : 10; }
+// A grown-up's reward text: one line, no control characters, at most 60 characters.
+function familyOneLine(s) {
+  return String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f\u2028\u2029]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function familyCleanReward(s) {
+  return Array.from(familyOneLine(s)).slice(0, FAMILY_REWARD_MAX).join('').trim();
+}
+function familyRewardEmoji(reward) {
+  const m = String(reward).match(/\p{Extended_Pictographic}/u);
+  return m ? m[0] : '🎉';
+}
+// The reward as it is read aloud. The app's voice skips emoji, so a reward
+// that is only emoji ("🍕") would be heard as nothing at all.
+function familySayReward(reward) {
+  const r = String(reward == null ? '' : reward);
+  let heard = r;
+  try { if (typeof speechify === 'function') heard = speechify(plainText(r)); } catch (e) {}
+  return /[\p{L}\p{N}]/u.test(heard) ? r : 'your family reward';
+}
+function familyWeekKey(dt) {
+  return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+}
+function familyWeekDate(key) { const [y, m, d] = key.split('-').map(Number); return new Date(y, m - 1, d); }
+function familyPrevWeek(key) { const dt = familyWeekDate(key); dt.setDate(dt.getDate() - 7); return familyWeekKey(dt); }
+// "Oct 19 – 25" / "Oct 26 – Nov 1", for grown-ups.
+function familyWeekLabel(key) {
+  const a = familyWeekDate(key), b = familyWeekDate(key);
+  b.setDate(b.getDate() + 6);
+  const mo = dt => dt.toLocaleDateString('en-US', { month: 'short' });
+  return a.getMonth() === b.getMonth() ? `${mo(a)} ${a.getDate()} – ${b.getDate()}` : `${mo(a)} ${a.getDate()} – ${mo(b)} ${b.getDate()}`;
+}
+function familyInt(v) { const n = Number(v); return typeof v === 'number' && Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0; }
+function familyAutoReadK() { return !!(state.profiles && state.profiles.k && state.profiles.k.autoRead); }
+
+// One history row, cleaned. Anything that is not a sensible week is dropped.
+function familyCleanEntry(e) {
+  if (!e || typeof e !== 'object' || typeof e.week !== 'string' || !FAMILY_WEEK_RE.test(e.week)) return null;
+  const out = { week: e.week };
+  let total = 0;
+  for (const pid of Object.keys(PROFILES)) { out[pid] = familyInt(e[pid]); total += out[pid]; }
+  out.total = total;
+  const t = Number(e.target);
+  out.target = Number.isInteger(t) && t >= FAMILY_MIN_TARGET && t <= FAMILY_MAX_TARGET ? t : FAMILY_DEFAULT_TARGET;
+  out.reached = total >= out.target;
+  out.claimed = e.claimed === true;
+  const r = typeof e.reward === 'string' ? familyCleanReward(e.reward) : '';
+  if (r) out.reward = r;
+  return out;
+}
+
+// ─── The family's data: created if missing, repaired if malformed, rolled over each week ───
+function familyState() {
+  let f = state.family;
+  let changed = false;
+  if (!f || typeof f !== 'object' || Array.isArray(f)) { f = state.family = {}; changed = true; }
+  const wk = FUN.week();
+
+  const reward = typeof f.reward === 'string' ? familyCleanReward(f.reward) : '';
+  if (!reward) { f.reward = FAMILY_DEFAULT_REWARD; changed = true; }
+  else if (reward !== f.reward) { f.reward = reward; changed = true; }
+
+  const t = typeof f.target === 'number' || typeof f.target === 'string' ? Number(f.target) : NaN;
+  if (!Number.isFinite(t) || t <= 0) { f.target = FAMILY_DEFAULT_TARGET; changed = true; }
+  else {
+    const fixed = Math.min(FAMILY_MAX_TARGET, Math.max(FAMILY_MIN_TARGET, Math.round(t)));
+    if (fixed !== f.target) { f.target = fixed; changed = true; }
+  }
+
+  // A week we cannot read starts counting from now.
+  if (typeof f.week !== 'string' || !FAMILY_WEEK_RE.test(f.week)) { f.week = wk; f.base = null; changed = true; }
+  if (!f.base || typeof f.base !== 'object' || Array.isArray(f.base)) { f.base = {}; changed = true; }
+  for (const pid of familyKids()) {
+    const b = f.base[pid], xp = familyXp(pid);
+    // A child the family goal has not seen yet counts from now. XP below the
+    // base (a reset, or a save from another device) starts again from here.
+    if (typeof b !== 'number' || !Number.isFinite(b) || b < 0 || b > xp) { f.base[pid] = xp; changed = true; }
+  }
+
+  if (!Array.isArray(f.history)) { f.history = []; changed = true; }
+  else {
+    const clean = f.history.map(familyCleanEntry).filter(Boolean).slice(-FAMILY_HISTORY_KEEP);
+    if (JSON.stringify(clean) !== JSON.stringify(f.history)) { f.history = clean; changed = true; }
+  }
+  for (const key of ['claimedWeek', 'cheered', 'told']) {
+    if (typeof f[key] !== 'string' || (f[key] && !FAMILY_WEEK_RE.test(f[key]))) { f[key] = ''; changed = true; }
+  }
+  if (typeof f.updated !== 'number' || !Number.isFinite(f.updated)) { f.updated = 0; changed = true; }
+
+  // ─── A new week ───
+  if (f.week !== wk) {
+    if (f.week < wk) {
+      const entry = { week: f.week, target: f.target, reward: f.reward, claimed: f.claimedWeek === f.week };
+      const seen = familySeen && familySeen.week === f.week ? familySeen.xp : null;
+      const base = {};
+      for (const pid of familyKids()) {
+        const xp = familyXp(pid);
+        // XP seen in this session before the week ended belongs to last week;
+        // anything earned after (a round going on past midnight on Sunday) to this one.
+        const s = seen && seen[pid];
+        const edge = typeof s === 'number' && s >= f.base[pid] && s <= xp ? s : xp;
+        entry[pid] = Math.max(0, Math.floor((edge - f.base[pid]) / familyPer(pid)));
+        base[pid] = edge;
+      }
+      f.history.push(familyCleanEntry(entry));
+      f.history = f.history.slice(-FAMILY_HISTORY_KEEP);
+      f.base = base;
+    }
+    // A clock set back keeps counting where it was: nothing to record.
+    f.week = wk;
+    changed = true;
+  }
+  const xpNow = {};
+  for (const pid of familyKids()) xpNow[pid] = familyXp(pid);
+  familySeen = { week: f.week, xp: xpNow };
+  if (changed) saveState();
+  return f;
+}
+
+// This week, worked out: each child's stars, the team total, and where it stands.
+function familyNow() {
+  const f = familyState();
+  const kids = {};
+  let total = 0;
+  for (const pid of familyKids()) {
+    kids[pid] = Math.max(0, Math.floor((familyXp(pid) - f.base[pid]) / familyPer(pid)));
+    total += kids[pid];
+  }
+  const target = f.target;
+  const reached = total >= target;
+  const last = f.history.length ? f.history[f.history.length - 1] : null;
+  const lastOpen = last && last.week === familyPrevWeek(f.week) && last.reached && !last.claimed ? last : null;
+  return { f, kids, total, target, reached, claimed: reached && f.claimedWeek === f.week, left: Math.max(0, target - total), lastOpen };
+}
+
+// ─── Shared pieces ───
+// The meter: three segments in the children's colours, in a fixed order.
+function familySegs(n) {
+  const scale = Math.max(n.total, n.target) || 1;
+  return familyKids().map((pid, i) => {
+    const w = n.kids[pid] / scale * 100;
+    if (!(w > 0)) return '';
+    return `<span class="family-seg" style="width:${w.toFixed(2)}%;--seg:${PROFILES[pid].color};--i:${i}"></span>`;
+  }).join('');
+}
+function familyMeterLabel(n) { return `${n.total} of ${n.target} stars this week`; }
+
+// ─── What is read aloud ───
+function familyTeamSay(n) {
+  const reward = familySayReward(n.f.reward);
+  let s;
+  if (n.claimed) s = `Your family reached the team goal this week, and the reward is claimed. Enjoy ${reward}! On Monday there is a fresh bar to fill.`;
+  else if (n.reached) s = `Hooray! Your family reached the team goal: ${n.total} stars this week! Show a grown-up to claim: ${reward}.`;
+  else if (!n.total) s = `Family team goal! Every right answer adds a star. Fill the bar together to earn: ${reward}. The goal is ${n.target} stars this week.`;
+  else s = `Family team goal! Together, your family has ${n.total} stars this week. The goal is ${n.target} stars, for ${reward}. ${n.left} more ${n.left === 1 ? 'star' : 'stars'} to go! Every right answer adds a star.`;
+  if (n.lastOpen) s += ` And last week your family reached the goal too! Ask a grown-up about: ${familySayReward(n.lastOpen.reward || n.f.reward)}.`;
+  return s;
+}
+function familyReachedSay(n) {
+  return `Hooray! Your family reached the team goal! Show a grown-up to claim: ${familySayReward(n.f.reward)}.`;
+}
+function familyKidSay(n, pid) {
+  const mine = n.kids[pid] || 0;
+  const reward = familySayReward(n.f.reward);
+  let s = `Team goal. Your family has ${n.total} ${n.total === 1 ? 'star' : 'stars'} this week. The goal is ${n.target} stars, for ${reward}.`;
+  if (n.claimed) s = `Team goal reached, and the reward is claimed! Enjoy ${reward}!`;
+  else if (n.reached) s = `Your family reached the team goal! Show a grown-up to claim: ${reward}.`;
+  s += mine ? ` You added ${mine} ${mine === 1 ? 'star' : 'stars'} this week. Thank you!` : ' Every right answer you get adds a star!';
+  return s;
+}
+
+// The kindergartener hears "goal reached" once a week, wherever she first
+// meets it. It counts as heard only when it is actually spoken: the line
+// waits behind whatever the app is reading (the round's results, a new
+// sticker), so she may well have moved on by its turn. One line waits at a
+// time, and it is spoken on whichever screen shows the news when its turn
+// comes (the round's results, then her hub, or the title); if none does, it
+// is dropped and the next screen that shows the news tells her.
+let familyTelling = '';     // the week whose line is waiting in the read-aloud queue
+let familyTellHere = null;  // is a screen showing the news? (the newest one to ask)
+function familyTellReached(n, stillThere) {
+  const week = n.f.week;
+  if (!n.reached || n.claimed || !familyAutoReadK() || n.f.told === week) return;
+  // Before the first tap a browser will not speak (the game just opened): wait for a later visit.
+  if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
+  familyTellHere = stillThere;
+  if (familyTelling === week) return;
+  familyTelling = week;
+  // funSay asks this just before the line is spoken, and drops the line on false.
+  funSay(familyReachedSay(n), () => {
+    const here = familyTellHere;
+    familyTelling = ''; familyTellHere = null;
+    let ok = false;
+    try {
+      const m = familyNow();
+      ok = !!(here && here()) && m.f.week === week && m.reached && !m.claimed && m.f.told !== week;
+      if (ok) { m.f.told = week; saveState(); }
+    } catch (e) { ok = false; }
+    return ok;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TITLE SCREEN (titleExtra, order 50)
+// ═══════════════════════════════════════════════════════════════
+function familyPanelHtml() {
+  const n = familyNow();
+  const f = n.f;
+  const grow = familyShown === null || familyShown !== n.total;
+  // The title screen is shared, so it shows the team, never a scoreboard:
+  // each child's colour in the meter and a key to it, with no per-child
+  // numbers (a "🔥 0⭐" beside a brother's "132⭐" is a ranking). Each child
+  // sees their own stars on their own hub; the grown-up sees all three.
+  const kids = familyKids().map(pid => {
+    const p = PROFILES[pid];
+    return `<span class="family-kid" style="--kid:${p.color};--kid-soft:${p.soft || 'white'}" role="img" aria-label="${familyEsc(p.name.toLowerCase())}"><span class="family-kid-dot" aria-hidden="true"></span><span class="family-kid-emoji" aria-hidden="true">${p.emoji}</span><span class="family-kid-n" aria-hidden="true">${familyEsc(p.short || p.name)}</span></span>`;
+  }).join('');
+  let note;
+  if (n.claimed) note = `<div class="family-goal is-claimed"><span class="family-goal-big">✓ CLAIMED!</span> <span class="family-goal-txt">Enjoy <strong>${familyEsc(f.reward)}</strong> · a fresh bar on Monday</span></div>`;
+  else if (n.reached) note = `<div class="family-goal"><span class="family-goal-big">🎉 GOAL REACHED!</span> <span class="family-goal-txt">Show a grown-up to claim: <strong>${familyEsc(f.reward)}</strong></span></div>`;
+  else if (!n.total) note = `<div class="family-note">Every right answer adds a ⭐. Fill the bar together!</div>`;
+  else note = `<div class="family-note"><strong>${n.left}</strong> more ⭐ to go${n.left <= Math.max(3, Math.ceil(n.target / 10)) ? ' — so close!' : '!'}</div>`;
+  const last = n.lastOpen
+    ? `<div class="family-last">🏆 Last week's goal was reached too! Ask a grown-up about: <strong>${familyEsc(n.lastOpen.reward || f.reward)}</strong></div>` : '';
+  // After the screen is drawn: the week's first look at a reached goal gets confetti.
+  setTimeout(() => familyTitleFx(n.total), 60);
+  return `
+    <section class="family-panel${n.reached ? ' is-reached' : ''}${n.claimed ? ' is-claimed' : ''}${grow && !FUN.reducedMotion() ? ' is-grow' : ''}" aria-label="Family team goal">
+      <div class="family-band" aria-hidden="true">${familyKids().map(pid => `<span style="background:${PROFILES[pid].color}"></span>`).join('')}</div>
+      <div class="family-main">
+        <div class="family-head">
+          <span class="family-title"><span class="family-title-icon" aria-hidden="true">👨‍👩‍👧‍👦</span> FAMILY TEAM GOAL</span>
+          <span class="family-reward"><span class="family-reward-for">for</span> ${familyEsc(f.reward)}</span>
+        </div>
+        <div class="family-progress">
+          <div class="family-meter" role="img" aria-label="${familyMeterLabel(n)}">${familySegs(n)}<span class="family-flag" aria-hidden="true">🏁</span></div>
+          <div class="family-count"><strong>${n.total} / ${n.target} ⭐</strong> this week</div>
+        </div>
+        <div class="family-foot">
+          <div class="family-kids" role="group" aria-label="One team">${kids}</div>
+          ${note}
+        </div>
+        ${last}
+      </div>
+      <div class="family-say">${speakBtn(familyTeamSay(n), false)}</div>
+    </section>`;
+}
+
+function familyTitleFx(total) {
+  const panel = document.querySelector('.family-panel');
+  if (!panel || currentProfile) return;
+  familyShown = total;
+  const n = familyNow();
+  if (n.reached && n.f.cheered !== n.f.week) {
+    n.f.cheered = n.f.week;
+    saveState();
+    funConfetti({ count: 90, emoji: ['⭐', '🎉', familyRewardEmoji(n.f.reward)] });
+    funSound('win');
+    panel.classList.add('is-cheer');
+  }
+  familyTellReached(n, () => !!document.querySelector('.family-panel') && !currentProfile);
+}
+
+FUN.slot('titleExtra', () => familyPanelHtml(), 50);
+
+// ═══════════════════════════════════════════════════════════════
+// HUB CARD (hubTop, order 60)
+// ═══════════════════════════════════════════════════════════════
+function familyHubCardHtml(pid) {
+  const n = familyNow();
+  // The team as the child left the hub: a speed sprint starts from here.
+  familyHubTeam = { week: n.f.week, total: n.total };
+  const k = pid === 'k';
+  const mine = n.kids[pid] || 0;
+  let line;
+  if (n.claimed) line = `<strong>✓ Reward claimed!</strong> Enjoy it. A fresh bar on Monday.`;
+  else if (n.reached) line = `<strong>🎉 GOAL REACHED!</strong> Show a grown-up.`;
+  else if (mine) line = `You added <strong>${mine} ⭐</strong> this week!`;
+  else line = `Every right answer adds a ⭐ for the team!`;
+  if ((n.reached || n.claimed) && mine) line += ` <span class="family-card-mine">You added ${mine} ⭐.</span>`;
+  // The kindergartener hears "goal reached" on her hub if she has not heard it yet this week.
+  if (k) setTimeout(() => {
+    if (!document.querySelector('.family-card') || !currentProfile || currentProfile.id !== pid) return;
+    familyTellReached(familyNow(), () => !!document.querySelector('.family-card') && !!currentProfile && currentProfile.id === pid);
+  }, 700);
+  const body = `
+    <div class="family-card-meter" role="img" aria-label="${familyMeterLabel(n)}">${familySegs(n)}</div>
+    <div class="family-card-row">
+      <div class="family-card-text"><div class="family-card-line">${line}</div></div>
+      ${k ? `<span class="family-card-say">${speakBtn(familyKidSay(n, pid), false)}</span>` : ''}
+    </div>
+    <div class="family-card-ticket"><span class="family-card-ticket-icon" aria-hidden="true">🎁</span><span>${familyEsc(n.f.reward)}</span></div>`;
+  return funCard({
+    icon: '👨‍👩‍👧‍👦', title: 'TEAM GOAL', badge: `${n.total}/${n.target} ⭐`,
+    accent: 'var(--gold)', body,
+    cls: 'family-card' + (k ? ' family-k' : '') + (n.reached ? ' is-reached' : ''),
+  });
+}
+FUN.slot('hubTop', data => {
+  const p = data && data.profile;
+  if (!p || !state.profiles[p.id]) return '';
+  return familyHubCardHtml(p.id);
+}, 60);
+
+// ═══════════════════════════════════════════════════════════════
+// ROUNDS: what this round added, and the moment the goal is reached
+// ═══════════════════════════════════════════════════════════════
+FUN.on('roundStart', e => {
+  if (!e || !e.profileId || !state.profiles[e.profileId]) { familyRound = null; return; }
+  const n = familyNow();
+  familyRound = { pid: e.profileId, week: n.f.week, mine: n.kids[e.profileId] || 0, team: n.total, serial: ++familySerial };
+});
+// Seeing the XP after every answer is what lets a round that runs past
+// Sunday midnight put each answer in the right week.
+FUN.on('answer', () => { familyState(); });
+FUN.on('roundExit', () => { familyState(); familyRound = null; });
+// XP that arrives on the hub (a missions bonus after a sprint, say) shows on the card straight away.
+for (const ev of ['bossDefeated', 'missionsComplete', 'sprintDone']) FUN.on(ev, () => { familyState(); setTimeout(familyRefreshCard, 0); });
+
+// A speed sprint has no round-complete strip, so the sprint that reaches
+// the goal gets its moment on its own results screen: a banner, a fanfare
+// and confetti (and the kindergartener hears it), like a round that does.
+FUN.on('sprintDone', e => {
+  const pid = e && e.profileId;
+  if (!pid || !state.profiles[pid]) return;
+  const n = familyNow();
+  const before = familyHubTeam;
+  familyHubTeam = { week: n.f.week, total: n.total };   // "Again" starts the next sprint from here
+  if (!before || before.week !== n.f.week || before.total >= n.target || !n.reached || n.claimed) return;
+  const here = () => !!document.querySelector('.sprint-end') && !!currentProfile && currentProfile.id === pid;
+  if (!here()) return;
+  funToast(`<strong>🎉 TEAM GOAL REACHED!</strong> Together: ${n.total} / ${n.target} ⭐ · Show a grown-up to claim: <strong>${familyEsc(n.f.reward)}</strong>`, 5200);
+  setTimeout(() => {
+    if (!here()) return;
+    if (!e.isBest) funConfetti({ count: 60, emoji: ['⭐', '🎉', familyRewardEmoji(n.f.reward)] });   // a new best already throws some
+    funSound('levelup');
+  }, 900);
+  if (pid === 'k') familyTellReached(n, here);
+});
+
+// Redraw the hub card where it is (keeps the hub's scroll position).
+function familyRefreshCard() {
+  const card = document.querySelector('.fun-zone .family-card');
+  if (!card || !currentProfile) return;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = familyHubCardHtml(currentProfile.id).trim();
+  if (tmp.firstElementChild) card.replaceWith(tmp.firstElementChild);
+}
+FUN.on('roundEnd', s => {
+  const pid = s && s.profileId;
+  if (!pid || !state.profiles[pid]) { familyLast = null; return; }
+  const n = familyNow();
+  const R = familyRound && familyRound.pid === pid ? familyRound : null;
+  const sameWeek = !!R && R.week === n.f.week;
+  familyLast = {
+    pid, serial: R ? R.serial : ++familySerial,
+    added: Math.max(0, (n.kids[pid] || 0) - (sameWeek ? R.mine : 0)),
+    crossed: sameWeek && R.team < n.target && n.reached && !n.claimed,
+  };
+  familyRound = null;
+});
+
+FUN.slot('completeExtra', data => {
+  const sum = (data && data.summary) || {};
+  const pid = sum.profileId;
+  if (!pid || !state.profiles[pid]) return '';
+  const n = familyNow();
+  const L = familyLast && familyLast.pid === pid ? familyLast : { added: 0, crossed: false, serial: 0 };
+  const k = pid === 'k';
+  let head, say;
+  if (L.crossed) {
+    head = `<div class="family-done-big">🎉 TEAM GOAL REACHED!</div>
+      <div class="family-done-txt">Together: <strong>${n.total} / ${n.target} ⭐</strong> this week. Show a grown-up to claim: <strong>${familyEsc(n.f.reward)}</strong></div>`;
+    say = `Hooray! Your family reached the team goal! ${n.total} stars this week! Show a grown-up to claim: ${familySayReward(n.f.reward)}.`;
+  } else {
+    const added = L.added ? `<strong>+${L.added} ⭐</strong> for the family team!` : 'Family team:';
+    const where = n.claimed ? 'goal reached ✓ · reward claimed' : n.reached ? 'goal reached ✓' : `${n.left} to go`;
+    // Each piece stays whole when a phone wraps the line ("· 94 to go", never "94 / to go" or a dangling "·").
+    head = `<div class="family-done-txt">${added} <span class="family-done-count"><span class="family-nb">${n.total} / ${n.target} ⭐</span> <span class="family-nb">· ${where}</span></span></div>`;
+    say = (L.added ? `You added ${L.added} ${L.added === 1 ? 'star' : 'stars'} for the family team! ` : '') +
+      `Your family has ${n.total} stars this week.` + (n.reached ? ' The team goal is reached!' : ` ${n.left} more to go for ${familySayReward(n.f.reward)}.`);
+  }
+  if (L.crossed && !L.celebrated) {
+    // Once per round, even if the complete screen were drawn again.
+    L.celebrated = true;
+    const serial = L.serial;
+    const still = () => !!document.querySelector('.family-done.is-reached') && !!familyLast && familyLast.serial === serial;
+    // After the round's own celebration has had its moment.
+    setTimeout(() => {
+      if (!still()) return;
+      if (!sum.perfect) funConfetti({ count: 60, emoji: ['⭐', '🎉', familyRewardEmoji(n.f.reward)] });
+      funSound('levelup');
+    }, 1300);
+    if (k) familyTellReached(n, still);
+  }
+  return `
+    <div class="family-done${L.crossed ? ' is-reached' : ''}${k ? ' family-k' : ''}">
+      <span class="family-done-icon" aria-hidden="true">👨‍👩‍👧‍👦</span>
+      <div class="family-done-main">
+        ${head}
+        <div class="family-card-meter" role="img" aria-label="${familyMeterLabel(n)}">${familySegs(n)}</div>
+      </div>
+      ${k ? `<span class="family-done-say">${speakBtn(say, false)}</span>` : ''}
+    </div>`;
+}, 60);
+
+// ═══════════════════════════════════════════════════════════════
+// PARENT DASHBOARD (parentExtra, order 60)
+// ═══════════════════════════════════════════════════════════════
+// What adds XP in this build, for the grown-up's "how stars work".
+function familySources() {
+  const s = ['rounds'];
+  if (typeof readingRoad === 'function') s.push('Reading Road');
+  if (typeof missionsDef === 'function') s.push('the daily-missions bonus');
+  if (typeof bossStart === 'function') s.push('boss battles');
+  if (typeof sprintStart === 'function') s.push('speed sprints');
+  return s.length > 1 ? s.slice(0, -1).join(', ') + ' and ' + s[s.length - 1] : s[0];
+}
+function familyHasExplore() { return typeof GRADE_XP === 'object' && GRADE_XP !== null; }
+function familyParentHtml() {
+  const n = familyNow();
+  const f = n.f;
+  const rows = familyKids().map(pid => {
+    const p = PROFILES[pid];
+    return `<div class="parent-row"><span>${p.emoji} ${p.name}</span><span class="val">${n.kids[pid]} ⭐</span></div>`;
+  }).join('');
+  let status;
+  if (n.claimed) status = `✓ Goal reached and the reward is claimed for this week.`;
+  else if (n.reached) status = `🎉 Goal reached! The children are waiting to claim: <strong>${familyEsc(f.reward)}</strong>`;
+  else status = `${n.left} more ${n.left === 1 ? 'star' : 'stars'} to reach the goal this week.`;
+  let claim;
+  if (n.claimed) claim = `<button type="button" class="family-btn family-btn-quiet" id="family-unclaim" onclick="familyUnclaim()">↩ Undo “claimed”</button>`;
+  // A button says what it does: a green "Reward claimed ✓" read as if it were already claimed.
+  else if (n.reached) claim = `<button type="button" class="family-btn family-btn-claim" id="family-claim" onclick="familyClaim()">Mark as claimed ✓</button><span class="family-parent-hint">Press it once the children have had their reward.</span>`;
+  else claim = `<span class="family-parent-hint">A “Mark as claimed ✓” button appears here once the goal is reached.</span>`;
+  const lastClaim = n.lastOpen
+    ? `<div class="family-parent-last">🏆 Last week's goal (${familyWeekLabel(n.lastOpen.week)}) was reached and not claimed yet.
+         <button type="button" class="family-btn family-btn-claim" id="family-claim-last" onclick="familyClaim('last')">Mark last week's as claimed ✓</button></div>` : '';
+  const hist = f.history.slice().reverse().map(h => {
+    const each = familyKids().map(pid => `${PROFILES[pid].emoji} ${h[pid] || 0}`).join(' · ');
+    const tag = h.reached ? (h.claimed ? 'reached · claimed ✓' : 'reached') : 'not reached';
+    return `<div class="parent-row family-hist-row"><span>${familyWeekLabel(h.week)}<span class="family-hist-each">${each}${h.reward ? ' · ' + familyEsc(h.reward) : ''}</span></span><span class="val">${h.total} / ${h.target} ⭐ · ${tag}</span></div>`;
+  }).join('');
+  return `
+    <div class="kid-block family-parent" style="border-color:var(--gold);">
+      <h3>👨‍👩‍👧‍👦 Family Team Goal</h3>
+      <p class="family-parent-about">The three children fill one weekly goal together. It is counted in
+        <strong>stars</strong>, not XP, so it is fair across grades: a right answer in a child's own grade is one star
+        (kindergarten ${familyPer('k')} XP, 3rd grade ${familyPer('g3')}, 5th grade ${familyPer('g5')}). A right answer on the
+        second try earns half the XP, so about half a star${familyHasExplore() ? `, and a pack from another grade (Explore Any
+        Grade) is worth that grade's XP, so an easier grade's answer is part of a star` : ''}. Every kind of XP counts:
+        ${familySources()}. The count starts again each Monday (the reward and target stay until you change them); XP and
+        levels are never touched. The children see the team's
+        total and their own stars only, never a ranking.</p>
+      <div class="family-parent-week">
+        <div class="mini-label">This week (${familyWeekLabel(f.week)})</div>
+        <div class="parent-row"><span><strong>Family total</strong></span><span class="val">${n.total} / ${n.target} ⭐</span></div>
+        ${rows}
+        <p class="family-parent-status">${status}</p>
+        <div class="family-parent-claim">${claim}</div>
+        ${lastClaim}
+      </div>
+      <form class="family-form" onsubmit="familySaveSettings(); return false;" novalidate>
+        <div class="mini-label">Set the goal</div>
+        <label class="family-field"><span>Reward (up to ${FAMILY_REWARD_MAX} characters)</span>
+          <input id="family-reward" type="text" maxlength="${FAMILY_REWARD_MAX * 2}" value="${familyEsc(f.reward)}" autocomplete="off" enterkeyhint="done"></label>
+        <label class="family-field"><span>Stars a week (${FAMILY_MIN_TARGET}–${FAMILY_MAX_TARGET})</span>
+          <input id="family-target" type="number" inputmode="numeric" min="${FAMILY_MIN_TARGET}" max="${FAMILY_MAX_TARGET}" step="1" value="${f.target}" enterkeyhint="done"></label>
+        <button type="submit" class="family-btn" id="family-save">SAVE GOAL</button>
+        <div id="family-saved" class="family-saved" role="status" aria-live="polite"></div>
+      </form>
+      <div class="mini-label">Past weeks</div>
+      ${hist || '<p class="family-parent-none">No finished weeks yet. Totals appear here each Monday (the last 8 weeks are kept).</p>'}
+    </div>`;
+}
+FUN.slot('parentExtra', () => familyParentHtml(), 60);
+
+// The app drops a second tap on the spot of a tap that changed the screen,
+// within 400 ms (render() arms that guard). The parent block is redrawn in
+// place, not through render(), so it arms the same guard itself: a quick
+// double tap on "Reward claimed ✓" must not land on the "Undo" button that
+// takes its place. Keyboard presses are never held back.
+function familyArmTapGuard() {
+  try {
+    if (typeof lastTap !== 'undefined' && lastTap && performance.now() - lastTap.t < 150) {
+      screenTap = { x: lastTap.x, y: lastTap.y, t: performance.now() };
+    }
+  } catch (e) {}
+}
+
+// Redraw the parent block where it is (keeps the dashboard's scroll), then
+// show a message and put focus back on a sensible control.
+function familyRefreshParent(msg, isError, focusId) {
+  const el = document.querySelector('.family-parent');
+  familyArmTapGuard();
+  if (el) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = familyParentHtml().trim();
+    if (tmp.firstElementChild) el.replaceWith(tmp.firstElementChild);
+  }
+  const note = document.getElementById('family-saved');
+  if (note && msg) { note.textContent = msg; note.classList.toggle('is-error', !!isError); }
+  if (focusId) {
+    const t = document.getElementById(focusId) || document.getElementById('family-save');
+    if (t && !t.disabled) { try { t.focus({ preventScroll: true }); } catch (e) { t.focus(); } }
+  }
+}
+
+function familySaveSettings() {
+  const f = familyState();
+  const rIn = document.getElementById('family-reward'), tIn = document.getElementById('family-target');
+  if (!rIn || !tIn) return false;
+  const typed = familyOneLine(rIn.value);
+  const reward = familyCleanReward(typed);
+  const raw = String(tIn.value).trim();
+  const target = Number(raw);
+  rIn.removeAttribute('aria-invalid'); tIn.removeAttribute('aria-invalid');
+  const note = document.getElementById('family-saved');
+  const fail = (input, msg) => {
+    input.setAttribute('aria-invalid', 'true');
+    if (note) { note.textContent = msg; note.classList.add('is-error'); }
+    try { input.focus({ preventScroll: false }); } catch (e) { input.focus(); }
+    return false;
+  };
+  if (!reward) return fail(rIn, 'Please type a reward, like “Family movie night 🎬”.');
+  // Never cut a grown-up's words off without saying so.
+  const len = Array.from(typed).length;
+  if (len > FAMILY_REWARD_MAX) return fail(rIn, `Please keep the reward to ${FAMILY_REWARD_MAX} characters (it has ${len}).`);
+  if (!/^\d+$/.test(raw) || !Number.isInteger(target) || target < FAMILY_MIN_TARGET || target > FAMILY_MAX_TARGET) {
+    return fail(tIn, `The weekly target must be a whole number from ${FAMILY_MIN_TARGET} to ${FAMILY_MAX_TARGET}.`);
+  }
+  f.reward = reward;
+  f.target = target;
+  f.updated = Date.now();
+  saveState();
+  familyRefreshParent(`✓ Saved. This week's goal: ${target} ⭐ for ${reward}.`, false, keyboardDriving ? 'family-save' : null);
+  return false;
+}
+
+function familyClaim(which) {
+  const n = familyNow();
+  const f = n.f;
+  if (which === 'last') {
+    if (!n.lastOpen) return;
+    n.lastOpen.claimed = true;
+    f.updated = Date.now();
+    saveState();
+    familyRefreshParent('✓ Last week\'s reward is marked as claimed.', false, keyboardDriving ? 'family-claim' : null);
+    return;
+  }
+  if (!n.reached || n.claimed) return;
+  f.claimedWeek = f.week;
+  f.updated = Date.now();
+  saveState();
+  funSound('win');
+  familyRefreshParent(`✓ Claimed! Enjoy ${f.reward}.`, false, keyboardDriving ? 'family-unclaim' : null);
+}
+
+function familyUnclaim() {
+  const f = familyState();
+  if (f.claimedWeek !== f.week) return;
+  f.claimedWeek = '';
+  f.updated = Date.now();
+  saveState();
+  familyRefreshParent('Marked as not claimed yet.', false, keyboardDriving ? 'family-claim' : null);
+}
+
+// ─── Two tabs, one save ───
+// The app merges each child's progress when another tab saves; the family
+// goal's settings and claims are merged the same way: the newer one wins.
+// Returns true when something of the other tab's was taken. It does not
+// repair or count anything: that waits until the app has merged the
+// children's XP too (a base from the other tab checked against this tab's
+// older XP would be "repaired" down, inventing stars).
+function familyMergeDisk(raw) {
+  let disk;
+  try { disk = JSON.parse(raw); } catch (e) { return false; }
+  const theirs = disk && disk.family;
+  if (!theirs || typeof theirs !== 'object' || Array.isArray(theirs)) return false;
+  const before = JSON.stringify(state.family);
+  const mine = state.family;
+  if (!mine || typeof mine !== 'object' || Array.isArray(mine)) { state.family = theirs; return JSON.stringify(state.family) !== before; }
+  if (typeof theirs.updated === 'number' && theirs.updated > (Number(mine.updated) || 0)) {
+    for (const key of ['reward', 'target', 'claimedWeek', 'updated']) mine[key] = theirs[key];
+    if (Array.isArray(theirs.history) && Array.isArray(mine.history) && typeof theirs.week === 'string' && theirs.week === mine.week) {
+      // Claims on past weeks travel with the settings.
+      for (const h of theirs.history) {
+        if (!h || typeof h !== 'object' || h.claimed !== true) continue;
+        const m = mine.history.find(x => x && x.week === h.week);
+        if (m) m.claimed = true;
+      }
+    }
+  }
+  if (typeof theirs.week === 'string' && FAMILY_WEEK_RE.test(theirs.week) && (typeof mine.week !== 'string' || theirs.week > mine.week)) {
+    mine.week = theirs.week; mine.base = theirs.base; mine.history = theirs.history;
+  }
+  for (const key of ['cheered', 'told']) {
+    if (typeof theirs[key] === 'string' && theirs[key] > (typeof mine[key] === 'string' ? mine[key] : '')) mine[key] = theirs[key];
+  }
+  return JSON.stringify(state.family) !== before;
+}
+// Anything taken from the other tab is written back to the save, or the
+// next tab to close could leave the old goal (or an un-claimed reward) on
+// disk. The app's own merge of the children's progress runs after this
+// one (and may save at once, with the goal already merged); the check and
+// the save here wait for it, so they see the merged XP and never write this
+// tab's older copy of a child.
+let familyMergeTimer = null, familyMergeTook = false;
+function familyMergeNow(raw) {
+  try { familyMergeTook = familyMergeDisk(raw) || familyMergeTook; } catch (e) { return; }
+  if (familyMergeTimer) return;
+  familyMergeTimer = setTimeout(() => {
+    familyMergeTimer = null;
+    const took = familyMergeTook;
+    familyMergeTook = false;
+    try { familyState(); } catch (e) {}
+    if (took) saveState();
+  }, 0);
+}
+function familyDiskRaw() {
+  try { return typeof STORAGE_KEY !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null; } catch (e) { return null; }
+}
+// Capture phase, so these run before the app's own listeners.
+window.addEventListener('storage', e => {
+  if (typeof STORAGE_KEY !== 'undefined' && e.key === STORAGE_KEY && e.newValue) familyMergeNow(e.newValue);
+}, true);
+// A tab asleep in the background (iPad Safari) misses those events: catch up
+// when it comes back, before the child's next answer saves over the claim.
+window.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') { const raw = familyDiskRaw(); if (raw) familyMergeNow(raw); }
+}, true);
+window.addEventListener('pageshow', e => {
+  if (e.persisted) { const raw = familyDiskRaw(); if (raw) familyMergeNow(raw); }
+}, true);
+
+
 
 // ─── module: buddy ───
 // ═══════════════════════════════════════════════════════════════
