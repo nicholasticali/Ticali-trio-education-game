@@ -494,6 +494,7 @@
   }
   .passage strong { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1.1rem; display: block; margin-bottom: 0.5rem; }
   .passage em { font-style: italic; }
+  .passage th, .passage td { padding: 0.2rem 0.6rem; }
 
   /* MC choices */
   .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
@@ -1747,7 +1748,7 @@
   /* ─── PICK ALL ─── */
   .choice.multi-choice .choice-letter { background: white; color: var(--ink); }
   .choice.multi-choice.picked {
-    background: var(--bg-deep); border-color: var(--ink);
+    background: var(--bg-deep); border-color: var(--ink); color: var(--ink);
     box-shadow: 4px 4px 0 var(--user-color);
   }
   .choice.multi-choice.picked .choice-letter { background: var(--user-color); color: white; }
@@ -1807,7 +1808,7 @@
   @media (hover: hover) and (pointer: fine) {
   .order-item:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
   .order-slot.filled:not(.locked):not(.right):not(.wrong):hover { background: var(--bg-deep); }
-  .sort-btn:hover:not(:disabled) { background: var(--bg-deep); }
+  .sort-btn:not(.on):hover:not(:disabled) { background: var(--bg-deep); }
   .sort-btn.on:hover:not(:disabled) { filter: brightness(1.05); }
   }
   .order-item:active, .sort-btn:active:not(:disabled), .order-slot.filled:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
@@ -70011,7 +70012,7 @@ const G2_SHAPES = [
 
   { type:'typed',
     text:'How many vertices, or corners, does a circle have?',
-    acceptedAnswers:['0', 'zero', 'none', 'no vertices', '0 vertices', 'zero vertices', 'no corners'],
+    acceptedAnswers:['0', 'zero', 'none', 'no vertices', '0 vertices', 'zero vertices', 'no corners', '0 corners', 'zero corners'],
     why:'A circle has 0 vertices. A vertex is a point where two straight sides meet, and a circle has no straight sides at all, just one smooth curve.',
     hint:'A vertex is where two straight sides meet. Trace a circle in the air and count the points like that.',
     how:{ name:'Count the Vertices', steps:['A vertex is a corner, a point where two straight sides meet.', 'Trace the edge of a round plate with your finger. Do you ever turn at a sharp point?', 'Now count the vertices you found and type that number.'] } },
@@ -70050,7 +70051,7 @@ const G2_SHAPES = [
     text:'What 2-D shape is every face of a cube?',
     options:['triangle', 'square', 'circle', 'hexagon'],
     correct:1,
-    why:'Every face of a cube is a square. All of its edges are the same length, so each flat face has 4 equal sides and 4 square corners.',
+    why:'Every face of a cube is a square: 4 sides all the same length and 4 square corners. Equal sides alone are not enough, because a rhombus has those too.',
     hint:'Picture a number cube or a block. Trace one flat face. How many sides, and are they equal?',
     how:{ name:'Look at the Faces', steps:['Picture a cube, like a block or a number cube. Find one flat face.', 'Trace that face with your finger. How many sides does it have? Are they all the same length?', 'Now pick the 2-D shape that matches that face.'] } },
 
@@ -70102,7 +70103,7 @@ const G2_SHAPES = [
 
   { type:'typed',
     text:'A pyramid has a square on the bottom and a point on top. How many vertices does it have in all?',
-    acceptedAnswers:['5', 'five', '5 vertices', 'five vertices'],
+    acceptedAnswers:['5', 'five', '5 vertices', 'five vertices', '5 corners', 'five corners'],
     why:'The square on the bottom has 4 vertices, one at each corner. The point on top is 1 more vertex. 4 + 1 = 5 vertices.',
     hint:'Count the corners of the square bottom first. Then look up. Is there another vertex?',
     how:{ name:'Count the Vertices', steps:['A vertex is a point where edges meet.', 'Count the corners of the square on the bottom. Each one is a vertex.', 'Now add the point at the very top. How many vertices in all?'] } },
@@ -70205,7 +70206,7 @@ const G2_SHAPES = [
   { type:'typed',
     text:'A chocolate bar 🍫 has 4 rows of same-size squares, with 5 squares in each row. How many squares are there in all?',
     acceptedAnswers:['20', 'twenty', '20 squares', 'twenty squares'],
-    why:'Add 5 for each of the 4 rows: 5 + 5 + 5 + 5 = 20. Skip counting by 5s works too: 5, 10, 15, 20 squares to share.',
+    why:'Add 5 for each of the 4 rows: 5 + 5 + 5 + 5 = 20. Skip counting by 5s works too: 5, 10, 15, 20 squares.',
     hint:'Add 5 once for every row, or skip count by 5s, one count for each row.',
     how:{ name:'Add Each Row', steps:['The bar has 4 rows, and each row has 5 squares.', 'Skip count by 5s, one count for each row: 5, 10, 15.', 'Now count the last row. How many squares in all?'] } },
 
@@ -70737,7 +70738,7 @@ Sunday: 🦀🦀🦀🦀🦀🦀🦀</p>`,
     acceptedAnswers:['41', 'forty-one', 'forty one', '41 children', '41 second graders', '41 votes'],
     why:'Add the four bars: 8 + 12 + 15 + 6. Pair them up: 8 + 12 = 20 and 15 + 6 = 21. Then 20 + 21 = 41 children.',
     hint:'Add all four bars. Look for two numbers that are easy to add first.',
-    how:{ name:'Add More Than Two Numbers', steps:['Find where each bar ends: 8, 12, 15 and 6.', 'Add friendly pairs first. 8 + 12 lands right on a ten. Then add 15 + 6.', 'Now add the two sums together. How many children in all?'] } },
+    how:{ name:'Add More Than Two Numbers', steps:['Find where each bar ends: 8, 12, 15 and 6.', 'Add friendly pairs first. 8 + 12 makes 2 tens with no ones left over. Then add 15 + 6.', 'Now add the two sums together. How many children in all?'] } },
 
   { type:'tf',
     passage:`<strong>Favorite Recess Snack 🍿</strong>
@@ -72272,7 +72273,7 @@ const G4_MEASURE = [
     how:{ name:'Add Like Fractions', steps:['Add the two lengths: 6/8 + 6/8. You are adding eighths, so the denominator stays 8.', 'Count the eighths you have in all. Remember that 8/8 makes 1 whole inch.', 'Now take out 1 whole and see how many eighths are left. How long are the two sprouts together?'] } },
 
   { type:'mc',
-    passage:'<strong>Puppy Walk Line Plot</strong><p>Mia walked her puppy once a day for 10 days. Her line plot of how far each walk was, in miles, is shown as a table. Each X stands for one walk.</p><table border="1" cellpadding="4" cellspacing="0"><tr><th>Distance (mile)</th><th>Walks</th></tr><tr><td>1/4</td><td>X X X</td></tr><tr><td>2/4</td><td>X X X X X</td></tr><tr><td>3/4</td><td>X X</td></tr></table>',
+    passage:'<strong>Puppy Walk Line Plot</strong><p>Mia walked her puppy once a day for 10 days. Her line plot of how far each walk was, in miles, is shown as a table. Each X stands for one walk.</p><table border="1" cellpadding="4" cellspacing="0"><tr><th>Distance (miles)</th><th>Walks</th></tr><tr><td>1/4</td><td>X X X</td></tr><tr><td>2/4</td><td>X X X X X</td></tr><tr><td>3/4</td><td>X X</td></tr></table>',
     text:'Use Mia\'s line plot. How much farther was her longest walk than her shortest walk? 🐾',
     options:['4/4 mile', '1/4 mile', '3/4 mile', '2/4 mile'],
     correct:3,
@@ -72281,7 +72282,7 @@ const G4_MEASURE = [
     how:{ name:'Line Plot', steps:['Find the longest distance that has an X, and the shortest distance that has an X.', 'To compare the two walks, find the difference: the longer walk minus the shorter walk.', 'Now subtract the fourths. The denominator stays 4. How much farther was the longest walk?'] } },
 
   { type:'showwork',
-    passage:'<strong>Puppy Walk Line Plot</strong><p>Mia walked her puppy once a day for 10 days. Her line plot of how far each walk was, in miles, is shown as a table. Each X stands for one walk.</p><table border="1" cellpadding="4" cellspacing="0"><tr><th>Distance (mile)</th><th>Walks</th></tr><tr><td>1/4</td><td>X X X</td></tr><tr><td>2/4</td><td>X X X X X</td></tr><tr><td>3/4</td><td>X X</td></tr></table>',
+    passage:'<strong>Puppy Walk Line Plot</strong><p>Mia walked her puppy once a day for 10 days. Her line plot of how far each walk was, in miles, is shown as a table. Each X stands for one walk.</p><table border="1" cellpadding="4" cellspacing="0"><tr><th>Distance (miles)</th><th>Walks</th></tr><tr><td>1/4</td><td>X X X</td></tr><tr><td>2/4</td><td>X X X X X</td></tr><tr><td>3/4</td><td>X X</td></tr></table>',
     text:'Use Mia\'s line plot. What is the total distance of all 10 walks, in miles?<br><br><em>✏️ Show your work on paper, then type the answer.</em>',
     acceptedAnswers:['4 3/4', '19/4', '4-3/4', '4 and 3/4', '4.75', '4 3/4 miles', '19/4 miles', '4.75 miles', 'four and three fourths'],
     workPrompt:'Line plot: three 1/4 mi, five 2/4 mi, two 3/4 mi walks. Total = ?',
@@ -72976,8 +72977,8 @@ const G4_SS_MD_LAND = [
 //                 sort into groups, pick all that apply, and two-part
 //                 "answer it, then prove it" — the item styles Maryland's
 //                 MSTAR test uses beside plain multiple choice. Two land in
-//                 each round of the pack; all of them feed the Big Thinker
-//                 Challenge.
+//                 each round of the pack; those of this year's packs (tier
+//                 now or misa) also feed the Big Thinker Challenge.
 // ═══════════════════════════════════════════════════════════════
 const PACK_WHY = {
   g2_shapes: 'Shapes are everywhere: home plate is a pentagon, a soup can is a cylinder, and sharing a pizza fairly means equal shares. This year, halves, thirds and fourths become fractions you write, and rows of squares become area. Reviewing sides, faces and equal shares now makes those new ideas click.',
@@ -103254,6 +103255,8 @@ function numpadKeysFor(q) {
   if (joined.includes('%')) extras.push('%');
   if (joined.includes(',')) extras.push(',');
   if (joined.includes('(')) { extras.push('('); extras.push(')'); }
+  // A mixed number such as 4 3/4 needs a space; without it the pad makes 43/4.
+  if (accepted.filter(isNumeric).some(a => /\d \d+\/\d/.test(a))) extras.push(' ');
   return extras;
 }
 
@@ -103297,7 +103300,7 @@ function typedAnswerHtml(q, submitFn, opts) {
       ['1', '2', '3'].map(d => key(d)).join(''),
       key('CLR', 'clear', ' CLEAR') + key('0') + key('&#9003;', 'back', ' BACK'),
     ];
-    if (extras.length) rows.push(extras.map(e => key(e, 'util')).join(''));
+    if (extras.length) rows.push(extras.map(e => e === ' ' ? key('SPACE', 'util', ' ') : key(e, 'util')).join(''));
 
     pad =
       '<div class="numpad" id="numpad">' + rows.join('') + '</div>' +
@@ -104070,11 +104073,11 @@ function toggleShowWorkSubmit() {
     input.disabled = false;
     btn.disabled = false;
     // Only pull focus when a physical keyboard is the likely input. On a
-    // touchscreen this would either throw up the keyboard unasked or, in
-    // number-pad mode, do nothing useful.
-    const padMode = input.classList.contains('padmode');
+    // touchscreen this would throw up the keyboard unasked. A number-pad box is
+    // readonly and raises nothing; focusing it keeps a typed space (4 3/4)
+    // off this checkbox, which the space would untick.
     const fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (!padMode && fine) input.focus();
+    if (fine) input.focus();
     else input.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   } else {
     input.disabled = true;
@@ -105775,7 +105778,7 @@ function closeCoach() {
   if (q && ['typed', 'fib', 'showwork'].includes(q.type) && back && back.classList && back.classList.contains('help-btn')) {
     const box = document.getElementById('typedInput');
     const noKeyboardPopup = box && (box.classList.contains('padmode') || NO_TOUCH || POINTER_FINE);
-    if (focusFirst(noKeyboardPopup ? ['#workDone', '#typedInput:not([disabled])', '.question-frame'] : ['.question-frame'])) return;
+    if (focusFirst(noKeyboardPopup ? ['#workDone:not(:checked)', '#typedInput:not([disabled])', '.question-frame'] : ['.question-frame'])) return;
   }
   if (back && back.isConnected && back !== document.body) {
     try { back.focus({ preventScroll: true }); } catch (e) { back.focus(); }
@@ -105981,7 +105984,7 @@ function focusAnswerArea(q) {
   if (!keyboardDriving) return;
   // The question, not its first answer: a doubled, held or stray Enter must
   // never pick choice A. Letters and numbers still pick; Tab reaches each answer.
-  focusFirst(['#workDone', '#typedInput:not([disabled])', '.question-frame']);
+  focusFirst(['#workDone:not(:checked)', '#typedInput:not([disabled])', '.question-frame']);
 }
 
 // Enter or Space on a role="button" element presses it, as on a real
@@ -106084,6 +106087,7 @@ document.addEventListener('keydown', e => {
     if (pad && pad.classList.contains('padmode') && !pad.disabled) {
       if (key === 'Backspace') { e.preventDefault(); numpadPress(' BACK'); return; }
       if (key.length === 1 && /[0-9.,:\/$%()\-]/.test(key)) { e.preventDefault(); numpadPress(key); return; }
+      if (key === ' ' && !(t && t.id === 'workDone') && document.querySelector('#numpad .numpad-key[aria-label="SPACE"]')) { e.preventDefault(); numpadPress(' '); return; }
     }
     // A word answer: a key typed while focus is elsewhere (after clicking
     // 🔊 Read it) goes into the answer box instead of nowhere.
