@@ -28,6 +28,7 @@ Or one at a time:
 | `node speech.js` | the speech, focus and pop-up rules: blends are said sound by sound and emoji are never read out; a screen change drops a pending auto-read; Enter, Space or a tap on a 🔊 inside an answer reads it and never picks it, and a swipe that starts on one reads nothing; a double click, a double CHECK or the same wrong typed answer twice costs one try, not two; auto-read reads the story before the question. A walkthrough or the scratch pad makes the page behind it inert and gives focus back on Esc; every button is in the Tab order. The kindergartener's pack cards, exit pop-up and round-complete card are read to her |
 | `node voice.js` | with the voice lists of four devices faked (an iPad with and without a premium voice, Edge with online voices, Chrome on Windows), the most natural English voice is chosen and speaks at the right pace; when an online voice fails the line goes to a built-in one; the parent's voice picker starts with Automatic, has 44px rows, saves and previews the choice, and keeps it after a reload |
 | `node about.js` | the grown-ups' About page opens from the title screen on an iPad (both ways), a laptop and a phone, never scrolls sideways, has 44px targets on touch screens, lists each grade's subjects, and Esc goes back. Screenshots in `out/shots/about/` |
+| `node title-grades.js` | every grade on the title screen: under the three cards, a button for each grade, K to 5, with its pack count, laid out at 390x844, 820x1180, 1180x820 and 1366x625 (where the three cards stay on the first screen). A button opens Who is playing? (the three children and Just looking), which Esc, the ✕ and a tap outside close; a quick double tap on a grade, the ✕ or outside it, or a doubled Enter, picks nobody. A child opens the grade as that child, and a round there adds XP to that child only. Just looking plays a whole round (right and wrong answers, SHOW ME HOW, the exit pop-up) with no storage write at all and the save byte-identical, and ← ALL GRADES goes back to the title screen with the same XP and trophies. By mouse, keyboard only and touch (iPad). Screenshots in `out/shots/title-grades/` |
 | `node reset.js` | RESET in the parent dashboard wipes the children's progress, the undo then brings all of it back, and after that the undo goes away |
 | `node boss-example.js` | in a boss battle, where the questions come from many packs, SHOW ME HOW ends by offering the worked example of the pack each question came from, wherever that pack has one |
 | `node generators.js` | every random math generator, run 300 times (`RUNS=` to change): each question's SHOW ME HOW steps fit the child's word limit, have no symbol the voice cannot say for the kindergartener, end with "Now…", and never give away the answer (a true/false step never says only "true" or "false"); every generated pack still returns full rounds |
@@ -79,10 +80,10 @@ Every browser check launches Chromium from `/opt/pw-browsers/chromium`. Set
 `CHROMIUM_PATH` if yours lives elsewhere.
 
 One at a time, everything takes about 80 minutes: the module suites 5 to 11
-minutes each, `platforms.js` about 14, `smoke.js` about 6, `screens.js` about 2
-and the rest under a minute each. `JOBS=3 ./run-all.sh` takes about 30 minutes
-on a 4-core machine; more jobs than cores can make the timed module checks slow
-enough to fail.
+minutes each, `platforms.js` about 14, `smoke.js` about 6, `screens.js` about 2,
+`title-grades.js` about 1.5 and the rest under a minute each. `JOBS=3 ./run-all.sh`
+takes about 30 minutes on a 4-core machine; more jobs than cores can make the
+timed module checks slow enough to fail.
 
 Real Safari is not available on this machine. The iPad runs above are Chromium with
 touch input at iPad screen sizes, so try a round on the real iPads after a big change.

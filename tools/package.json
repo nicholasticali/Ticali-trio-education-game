@@ -17,6 +17,7 @@
     "readaloud": "node readaloud.js",
     "voice": "node voice.js",
     "about": "node about.js",
+    "title-grades": "node title-grades.js",
     "reset": "node reset.js",
     "boss-example": "node boss-example.js",
     "generators": "node generators.js",

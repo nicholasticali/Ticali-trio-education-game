@@ -14,7 +14,8 @@ saved in the browser on the device it is played on.
     Ticali_Trio_Family_Edition.html
 
 What is in it: 237 packs from kindergarten to 5th grade (counting the
-kindergartener's pre-K review and each child's puzzle mix); 10,400+ written
+kindergartener's pre-K review and each child's puzzle mix), with a button for
+every grade on the first screen; 10,400+ written
 questions, each with its own explanation and SHOW ME HOW steps; 780 thinking
 puzzles; 11 math packs that make fresh questions every round; and a Reading Road of
 40 stops in 11 lands.
@@ -23,6 +24,10 @@ On the title screen, just above the three profile cards, is **ℹ️ For grown-u
 about this game**. It is a page written for teachers and principals: what
 the game is and what it is for, what it follows, how it was made and its limits,
 privacy, how to try it, and every grade's packs.
+
+Below the cards, **📚 Every grade, K–5** has a button for each grade. Pick who is
+playing (the XP is that child's), or **👀 Just looking** to try any grade without
+saving anything: the children's progress stays exactly as it was.
 
 For the school, `for-school/` holds a two-page executive summary (Word and PDF) and
 a short PowerPoint brief. Replace "[Your name]" in both, then export the PDF again
@@ -54,7 +59,7 @@ somewhere else starts fresh and never touches the children's progress.
 | ⚡ 3rd Grade | 3 | this year, gentler warm-ups, 2nd grade review |
 | 🔥 5th Grade | 5 | this year, 🔬 also on the science test (4th grade science, because Maryland's grade 5 science test covers grades 3-5), warm-ups, 4th grade review |
 
-Near the bottom of every hub, just above the trophies, **📚 Explore Any Grade** opens
+Near the bottom of every hub, just above the trophies, **📚 Explore Any Grade** also opens
 every pack from kindergarten to 5th grade. Each hub also has **📈 PROGRESS**, a chart
 of that child's recent rounds. Profiles move up a grade each September; a save
 written under last year's keys is re-keyed on load, so XP, trophies and history carry

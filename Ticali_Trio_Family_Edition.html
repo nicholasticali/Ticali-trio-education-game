@@ -195,9 +195,17 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* On the title screen the page scrolls above a thin strip at the bottom, and
+     the faint "parent" link sits in that strip, so it can never cover a
+     profile card or a grade button. */
+  body.on-title .app {
+    height: calc(100vh - 3.5rem);
+    height: calc(100dvh - 3.5rem - env(safe-area-inset-bottom));
+  }
+
   /* Title screen */
   .title-screen {
-    min-height: 100vh;
+    min-height: 100%;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     padding: 2rem;
@@ -1908,6 +1916,95 @@
     font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.9rem; letter-spacing: 1px; cursor: pointer;
   }
   @media (max-width: 480px) { .grade-chips { grid-template-columns: 1fr 1fr; } }
+
+  /* ─── Every grade, K-5, on the title screen (under the three cards) ───
+     The hub's grade chips, laid out three by two like the cards above them;
+     two across on a narrow screen, with the icon on top on a phone. */
+  .title-grades { width: 100%; max-width: 960px; margin-top: 1.8rem; }
+  .title-grades-head {
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-weight: 400;
+    font-size: 1.1rem; letter-spacing: 0; margin: 0 0 0.3rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .title-grades-head::after { content: ''; flex: 1; height: 3px; background: var(--ink); }
+  .title-grades-tag {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.78rem; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 0.9rem;
+  }
+  .title-grade-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem 1rem; }
+  .grade-chip.title-grade { flex-direction: row; align-items: center; gap: 0.75rem; min-height: 64px; min-width: 0; padding: 0.6rem 0.9rem; }
+  .title-grade .grade-chip-icon { font-size: 1.7rem; flex: none; }
+  .title-grade-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+  .title-grade .grade-chip-label { white-space: nowrap; }
+  @media (max-width: 699px) { .title-grade-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 540px) {
+    .grade-chip.title-grade { flex-direction: column; align-items: flex-start; gap: 0.3rem; padding: 0.65rem 0.7rem; }
+    .title-grade .grade-chip-label { font-size: 0.8rem; }
+  }
+  @media (max-width: 360px) {
+    .grade-chip.title-grade { padding: 0.6rem 0.55rem; }
+    .title-grade .grade-chip-label { font-size: 0.7rem; }
+  }
+
+  /* ─── "Who is playing?": a grade picked on the title screen ───
+     The exit pop-up's look: a cream card with a heavy ink frame. */
+  .who-backdrop {
+    position: fixed; inset: 0; z-index: 99999;
+    background: rgba(26, 26, 46, 0.75);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem; animation: fadeIn 0.15s ease-out;
+  }
+  .who-modal {
+    position: relative; width: 100%; max-width: 440px; max-height: 100%; overflow-y: auto;
+    background: var(--bg); border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--ink);
+    padding: 1.3rem 1.25rem 1.25rem; text-align: center;
+  }
+  /* It takes focus only so a doubled Enter has somewhere harmless to go: no ring. */
+  .who-backdrop .who-modal:focus, .who-backdrop .who-modal:focus-visible { outline: none; }
+  .who-close {
+    position: absolute; top: 0.45rem; right: 0.45rem; width: 44px; height: 44px;
+    background: white; color: var(--ink); border: 3px solid var(--ink); font-size: 1.1rem; line-height: 1; cursor: pointer;
+  }
+  .who-grade {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.75rem; letter-spacing: 1.5px; color: var(--muted); padding: 0.35rem 2.8rem 0;
+  }
+  .who-title { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-weight: 400; font-size: 1.35rem; margin: 0.3rem 0 0.15rem; }
+  .who-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1rem; }
+  .who-kids { display: flex; flex-direction: column; gap: 0.75rem; }
+  .who-kid {
+    display: flex; align-items: center; gap: 0.8rem; width: 100%; min-height: 60px;
+    padding: 0.45rem 0.8rem 0.45rem 0.45rem; text-align: left;
+    background: var(--card-soft); color: var(--ink); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+    cursor: pointer; font: inherit;
+  }
+  .who-kid-emoji {
+    width: 46px; height: 46px; flex: none; display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; line-height: 1; background: var(--card-color); border: 2px solid var(--ink);
+  }
+  .who-kid-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .who-kid-name { font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 1rem; }
+  .who-kid-meta { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.72rem; color: var(--muted); letter-spacing: 1px; }
+  .who-guest {
+    width: 100%; min-height: 52px; margin-top: 1rem; padding: 0.6rem 0.9rem;
+    background: white; color: var(--ink); border: 3px dashed var(--ink); cursor: pointer;
+    font: inherit; font-size: 1rem; font-weight: 700;
+  }
+  .who-kid:active, .who-guest:active, .who-close:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+  .who-guest:active, .who-close:active { box-shadow: none; }
+  @media (hover: hover) and (pointer: fine) {
+  .who-kid:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+  .who-guest:hover { background: var(--bg-deep); }
+  }
+
+  /* ─── Just looking: nothing is saved ─── */
+  .guest-note {
+    margin: 0 0 1rem; padding: 0.7rem 0.9rem; background: white;
+    border: 3px dashed var(--showwork); font-weight: 700; line-height: 1.4;
+  }
+  /* The parent dashboard shows the children's progress and settings; a
+     visitor who is just looking goes back to the title screen first. */
+  body.guest-mode .parent-link { display: none; }
 
 
   /* ─── Keyboard: where focus is, on every control ───
@@ -37991,6 +38088,11 @@ const STORAGE_KEY = 'tapChampions_v3';
 // started the children from zero and their next answer saved over their
 // real progress.
 const PROFILE_MIGRATIONS = { prek: 'k', g2: 'g3', g4: 'g5' };
+// "Just looking" (the title screen's EVERY GRADE row): a visitor plays any
+// grade from an in-memory copy and nothing is written. Declared before the
+// first loadState() call for the same reason as PROFILE_MIGRATIONS: saveState()
+// reads it. It is never switched back off; leaving reloads the page.
+let guestMode = false;
 
 let state = loadState();
 let currentProfile = null;
@@ -38068,6 +38170,8 @@ function newProfile(autoRead) {
 }
 
 function saveState() {
+  // Just looking: the visit plays from this tab's copy and is never saved.
+  if (guestMode) return true;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; }
   catch (e) {
     // Storage is full (or switched off). Show-your-work items are the only
@@ -38102,6 +38206,9 @@ function saveState() {
 // more answers recorded. If this tab's copy of a child is the newer one,
 // save the merged game straight back. A reset in another tab reloads this one.
 function mergeSavedProgress(raw) {
+  // Just looking: this tab's copy is thrown away on the way out, so there is
+  // nothing to merge (and the visitor's blank profile stays blank).
+  if (guestMode) return;
   let disk = null;
   try { disk = JSON.parse(raw || localStorage.getItem(STORAGE_KEY)); } catch (e) { return; }
   if (!disk || !disk.profiles || typeof disk.profiles !== 'object') return;
@@ -80794,6 +80901,8 @@ FUN.slot('completeExtra', data => {
   const sum = (data && data.summary) || {};
   const pid = sum.profileId;
   if (!pid || !state.profiles[pid]) return '';
+  // Just looking (the title screen's EVERY GRADE row): no stars reach the family.
+  if (typeof guestMode !== 'undefined' && guestMode) return '';
   const n = familyNow();
   const L = familyLast && familyLast.pid === pid ? familyLast : { added: 0, crossed: false, serial: 0 };
   const k = pid === 'k';
@@ -83684,8 +83793,12 @@ FUN.on('roundStart', e => {
   missionsLast = null;
 });
 
+// Just looking (the title screen's EVERY GRADE row): a visitor's round does
+// no child's missions, so nothing here is counted, said or shown.
+const missionsGuest = () => typeof guestMode !== 'undefined' && guestMode;
+
 FUN.on('answer', e => {
-  if (!e || !e.profileId || !state.profiles[e.profileId]) return;
+  if (!e || !e.profileId || !state.profiles[e.profileId] || missionsGuest()) return;
   const s = missionsStore(e.profileId);
   if (e.isRight && !e.fixed && typeof e.streak === 'number' && e.streak > s.c.run) s.c.run = e.streak;
   const t = e.q && e.q.type;
@@ -83695,7 +83808,7 @@ FUN.on('answer', e => {
 
 // 🔊 taps on a question (not on the hub), one per question.
 FUN.on('speak', e => {
-  if (!e || !missionsRound || missionsRound.pid !== e.profileId) return;
+  if (!e || !missionsRound || missionsRound.pid !== e.profileId || missionsGuest()) return;
   if (!document.querySelector('.question-frame')) return;
   const s = missionsStore(e.profileId);
   const key = missionsRound.serial + ':' + (typeof qIdx === 'number' ? qIdx : 0);
@@ -83721,7 +83834,7 @@ function missionsIsReview(pack, pid) {
 }
 
 FUN.on('roundEnd', e => {
-  if (!e || !e.profileId || !state.profiles[e.profileId]) return;
+  if (!e || !e.profileId || !state.profiles[e.profileId] || missionsGuest()) return;
   const pid = e.profileId;
   const s = missionsStore(pid);
   const c = s.c;
@@ -83930,7 +84043,7 @@ function missionsGo(i) {
 FUN.slot('completeExtra', data => {
   const sum = (data && data.summary) || {};
   const pid = sum.profileId;
-  if (!pid || !state.profiles[pid]) return '';
+  if (!pid || !state.profiles[pid] || missionsGuest()) return '';
   const s = missionsStore(pid);
   const L = missionsLast && missionsLast.pid === pid ? missionsLast : { newly: [], streakUp: false };
   const k = pid === 'k';
@@ -102880,6 +102993,7 @@ document.addEventListener('click', e => {
 function render(html) {
   screenTap = lastTap && performance.now() - lastTap.t < 150 ? { x: lastTap.x, y: lastTap.y, t: performance.now() } : null;
   stopSpeech();
+  document.body.classList.toggle('on-title', html.includes('class="title-screen"'));
   app.innerHTML = html;
   app.scrollTop = 0;
   // If the focused control went with the old screen, focus the screen
@@ -102890,6 +103004,8 @@ function render(html) {
 }
 
 function renderProfileSelect() {
+  // Leaving "just looking" by any road reloads the page (see leaveGuest).
+  if (guestMode) { leaveGuest(); return; }
   currentProfile = null;
   document.body.style.setProperty('--user-color', 'var(--p-g5)');
 
@@ -102920,6 +103036,7 @@ function renderProfileSelect() {
       <div class="brand-tag">Math · Reading · Science · Puzzles</div>
       <button class="about-link" onclick="renderAbout()">ℹ️ For grown-ups: about this game</button>
       <div class="profiles">${cards}</div>
+      ${titleGradesHtml()}
       ${FUN.html('titleExtra', {})}
     </div>
   `);
@@ -102929,6 +103046,148 @@ function pickProfile(id) {
   currentProfile = PROFILES[id];
   document.body.style.setProperty('--user-color', currentProfile.color);
   renderHub();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EVERY GRADE ON THE TITLE SCREEN
+// The Explore Any Grade library, one tap from the first screen: pick a
+// grade, then who is playing. A child plays it exactly as from their hub
+// (the XP is theirs); "Just looking" plays it with nothing saved.
+// ═══════════════════════════════════════════════════════════════
+function titleGradesHtml() {
+  const chips = GRADES.map(g => {
+    const n = gradePacks(g.key).length;
+    if (!n) return '';
+    return `<button type="button" class="grade-chip title-grade" data-grade="${g.key}" aria-haspopup="dialog" onclick="openWhoPlays('${g.key}')">
+        <span class="grade-chip-icon" aria-hidden="true">${g.icon}</span>
+        <span class="title-grade-text"><span class="grade-chip-label">${g.label}</span><span class="grade-chip-count">${n} packs</span></span>
+      </button>`;
+  }).join('');
+  return `
+    <section class="title-grades" aria-labelledby="title-grades-head">
+      <h2 class="title-grades-head" id="title-grades-head">📚 EVERY GRADE, K–5</h2>
+      <p class="title-grades-tag">Pick a grade, then who is playing.</p>
+      <div class="title-grade-row">${chips}</div>
+    </section>`;
+}
+
+// "Who is playing?": the three children, and Just looking.
+let whoPlaysBack = null;   // the grade button that opened it, for focus on the way back
+function openWhoPlays(key) {
+  const g = GRADES.find(x => x.key === key);
+  if (!g) return;
+  closeWhoPlays(true);
+  const kids = Object.values(PROFILES).map(p => {
+    const d = state.profiles[p.id];
+    const level = Math.floor(d.xp / 150) + 1;
+    return `<button type="button" class="who-kid" style="--card-color:${p.color};--card-soft:${p.soft};" onclick="playGradeAs('${key}', '${p.id}')">
+        <span class="who-kid-emoji" aria-hidden="true">${p.emoji}</span>
+        <span class="who-kid-text"><span class="who-kid-name">${p.name}</span><span class="who-kid-meta">LV ${level} · ${d.xp} XP${OWN_GRADE[p.id] === key ? ' · MY GRADE' : ''}</span></span>
+      </button>`;
+  }).join('');
+  const wrap = document.createElement('div');
+  wrap.id = 'who-backdrop';
+  wrap.className = 'who-backdrop';
+  wrap.setAttribute('data-own-keys', '');   // the game's own keys stand aside while it is open
+  wrap.innerHTML = `
+    <div class="who-modal" role="dialog" aria-modal="true" aria-labelledby="who-title" aria-describedby="who-sub" tabindex="-1">
+      <div class="who-grade"><span aria-hidden="true">${g.icon}</span> ${g.label} · ${gradePacks(key).length} PACKS</div>
+      <h2 class="who-title" id="who-title">WHO IS PLAYING?</h2>
+      <p class="who-sub" id="who-sub">The XP goes to the child you pick.</p>
+      <div class="who-kids">${kids}</div>
+      <button type="button" class="who-guest" onclick="playGradeAsGuest('${key}')">👀 Just looking: nothing is saved</button>
+      <button type="button" class="who-close" aria-label="Close" onclick="closeWhoPlays()">✕</button>
+    </div>`;
+  wrap.addEventListener('click', e => { if (e.target === wrap) closeWhoPlays(); });
+  whoPlaysBack = document.activeElement;
+  // A quick double tap on a grade would land its second tap on the child
+  // the pop-up put under the finger: drop it, as render() does for a screen.
+  screenTap = lastTap && performance.now() - lastTap.t < 150 ? { x: lastTap.x, y: lastTap.y, t: performance.now() } : null;
+  document.body.appendChild(wrap);
+  app.inert = true;
+  // Focus goes to the pop-up itself, not its first child: a doubled Enter on
+  // a grade must not pick the kindergartener. Tab reaches the children first
+  // (the ✕ comes last in the Tab order, though it is drawn at the top).
+  focusFirst(['#who-backdrop .who-modal']);
+}
+
+function closeWhoPlays(silent) {
+  const o = document.getElementById('who-backdrop');
+  if (!o) return;
+  o.remove();
+  app.inert = false;
+  // A quick double tap on ✕ or outside the pop-up would land its second tap
+  // on the title screen under it (a child's card): drop it, as render() does.
+  if (!silent) screenTap = lastTap && performance.now() - lastTap.t < 150 ? { x: lastTap.x, y: lastTap.y, t: performance.now() } : null;
+  const back = whoPlaysBack;
+  whoPlaysBack = null;
+  if (!silent && back && back.isConnected && back !== document.body) {
+    try { back.focus({ preventScroll: true }); } catch (e) { back.focus(); }
+  }
+}
+
+// Esc closes it; Tab stays inside it.
+document.addEventListener('keydown', e => {
+  const o = document.getElementById('who-backdrop');
+  if (!o) return;
+  if (e.key === 'Escape') { e.preventDefault(); closeWhoPlays(); return; }
+  if (e.key === 'Tab') {
+    const f = [...o.querySelectorAll('button')].filter(el => el.offsetParent !== null);
+    if (!f.length) return;
+    const i = f.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && (i === -1 || i === f.length - 1)) { e.preventDefault(); f[0].focus(); }
+  }
+});
+
+// A child: the grade's library as that child, as Explore Any Grade opens it.
+function playGradeAs(key, pid) {
+  if (!PROFILES[pid]) return;
+  closeWhoPlays(true);
+  currentProfile = PROFILES[pid];
+  document.body.style.setProperty('--user-color', currentProfile.color);
+  renderGrade(key);
+}
+
+// Just looking: the grade is played as the child whose year is nearest
+// (reading level, read-aloud and XP work as usual), on a blank profile that
+// lives only in this tab. saveState() writes nothing while guestMode is set,
+// renderHub() comes back to the grade instead of a child's hub, and the
+// title screen reloads the page.
+const GUEST_HOST = { K: 'k', 1: 'k', 2: 'g3', 3: 'g3', 4: 'g5', 5: 'g5' };
+function playGradeAsGuest(key) {
+  const host = GUEST_HOST[key];
+  if (!host || !PROFILES[host]) return;
+  closeWhoPlays(true);
+  guestMode = true;
+  state.profiles[host] = newProfile(host === 'k');
+  currentProfile = PROFILES[host];
+  document.body.classList.add('guest-mode');
+  document.body.style.setProperty('--user-color', 'var(--showwork)');
+  renderGrade(key);
+}
+
+// Leaving just looking reloads the page, so the visit's copy is thrown away
+// and the children's saved progress is read back exactly as it was. The
+// address names the grade, so the title screen opens at the grade row.
+function leaveGuest(key) {
+  app.inert = true;   // nothing more is pressed on the way out
+  try {
+    history.replaceState(null, '', location.pathname + location.search + '#grades' + (key ? '-' + key : '') + (keyboardDriving ? '-key' : ''));
+  } catch (e) {}
+  location.reload();
+}
+
+// Back from just looking: open the title screen at the grade row, with focus
+// on the grade just tried if the keyboard was driving.
+function titleGradesReturn() {
+  const m = /^#grades(?:-([K1-5]))?(-key)?$/.exec(location.hash || '');
+  if (!m) return;
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  const row = document.querySelector('.title-grades');
+  if (row) row.scrollIntoView({ block: 'center' });
+  const btn = document.querySelector(`.title-grade[data-grade="${m[1] || 'K'}"]`);
+  if (btn && m[2]) { keyboardDriving = true; try { btn.focus({ preventScroll: true }); } catch (e) { btn.focus(); } }
 }
 
 // libraryView: shown in Explore Any Grade, where "review" or "next year"
@@ -102969,6 +103228,8 @@ function renderPackCard(pk, libraryView) {
 }
 
 function renderHub() {
+  // Just looking: there is no child's hub to go back to, only the grade.
+  if (guestMode) { renderGrade(libraryGrade || 'K'); return; }
   libraryGrade = null;
   const p = currentProfile;
   const d = state.profiles[p.id];
@@ -103125,7 +103386,9 @@ function renderGrade(key) {
   const known = new Set(SUBJECT_SECTIONS.map(sc => sc.key));
   const rest = packs.filter(pk => !known.has(pk.subject));
   if (rest.length) html += `<div class="section-head sub-head">✨ MORE</div>` + grid(rest);
-  const mine = OWN_GRADE[p.id] === key;
+  const mine = !guestMode && OWN_GRADE[p.id] === key;
+  const who = guestMode ? 'just looking · nothing is saved'
+    : mine ? 'your grade' : `playing as ${p.name.toLowerCase()} · +${GRADE_XP[key]} XP a question`;
   render(`
     <div class="hub">
       <div class="hub-header">
@@ -103133,11 +103396,12 @@ function renderGrade(key) {
           <div class="hub-avatar">${g.icon}</div>
           <div class="hub-name-block">
             <h2>${g.label}</h2>
-            <p>${packs.length} packs · ${mine ? 'your grade' : `playing as ${p.name.toLowerCase()} · +${GRADE_XP[key]} XP a question`}</p>
+            <p>${packs.length} packs · ${who}</p>
           </div>
         </div>
         <div class="hub-stats">
-          <button class="switch-btn" onclick="renderHub()">← MY HUB</button>
+          ${guestMode ? `<button class="switch-btn" onclick="leaveGuest('${key}')">← ALL GRADES</button>`
+            : `<button class="switch-btn" onclick="renderHub()">← MY HUB</button>`}
         </div>
       </div>
       ${html}
@@ -104370,8 +104634,10 @@ function showFeedback(isRight, correctAnswer, opts) {
   let head, msg = '', fbClass;
   if (t === 'showwork') {
     fbClass = isRight ? 'yes' : 'no';
-    head = isRight ? (opts.fixed ? '🛠️ FIXED IT! (parent will verify)' : '⚡ LOOKS RIGHT! (parent will verify)') : 'CHECK AGAIN';
-    msg = isRight
+    const verify = guestMode ? '' : ' (parent will verify)';
+    head = isRight ? (opts.fixed ? '🛠️ FIXED IT!' + verify : '⚡ LOOKS RIGHT!' + verify) : 'CHECK AGAIN';
+    msg = guestMode ? `Expected answer: <strong>${correctAnswer}</strong>. Just looking: your work is not saved.`
+      : isRight
       ? `Expected answer: <strong>${correctAnswer}</strong>. Your work has been saved for parent review.`
       : `Expected answer: <strong>${correctAnswer}</strong>. Your work was saved for parent review anyway — sometimes your work is right even if the final number is off.`;
   } else if (opts.parts) {
@@ -104489,7 +104755,8 @@ function finishPack() {
             ${e.why ? `<div class="lb-why"><span>💡 ${e.why}</span>${speakBtn(e.why, false)}</div>` : ''}
           </div>`).join('')}
       </div>`;
-  const reviewNotice = pendingReviews > 0
+  const reviewNotice = guestMode ? `<div class="guest-note">👀 Just looking: nothing from this round is saved.</div>`
+    : pendingReviews > 0
     ? `<div class="review-notice"><strong>✏️ ${pendingReviews} SHOW-YOUR-WORK NEEDS REVIEW</strong>Parent can check the work paper in the parent dashboard.</div>`
     : '';
 
@@ -104664,7 +104931,7 @@ function confirmExit() {
         color: var(--ink, #1a1a2e);
         margin-bottom: 1.5rem;
         line-height: 1.4;
-      ">Your XP so far is saved. You'll go back to the pack list.${earlyReader() ? ' ' + speakBtn(EXIT_SAY, false) : ''}</div>
+      ">${guestMode ? 'Just looking: nothing is saved.' : 'Your XP so far is saved.'} You'll go back to the pack list.${earlyReader() ? ' ' + speakBtn(EXIT_SAY, false) : ''}</div>
       <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
         <button id="exit-modal-stay" style="
           background: var(--user-color, #0096c7); color: white;
@@ -104935,7 +105202,9 @@ function renderAbout() {
           <li>Go back and click a card: <strong>Kindergarten</strong>, <strong>3rd Grade</strong> or <strong>5th Grade</strong>. Each
             hub groups that grade's packs by subject: this year's work and last year's review (the kindergartener's also has a
             look ahead at 1st grade).</li>
-          <li><strong>Explore Any Grade</strong>, near the bottom of every hub (just above the trophies), opens every pack from
+          <li><strong>Every grade, K–5</strong>: the grade buttons below the children's cards on the first screen. Pick who is
+            playing, or <strong>👀 Just looking</strong> to try any grade without saving anything.</li>
+          <li><strong>Explore Any Grade</strong>, near the bottom of every hub (just above the trophies), also opens every pack from
             kindergarten to 5th grade.</li>
           <li>Start a pack to play a round of ten. Give a wrong answer to see the hint and second try, and tap
             <strong>💡 SHOW ME HOW</strong> on any question.</li>
@@ -104962,6 +105231,7 @@ function renderAbout() {
 // ═══════════════════════════════════════════════════════════════
 
 function parentGate() {
+  if (guestMode) return;   // just looking: the parent link is hidden too
   const pin = prompt('Parent PIN:');
   if (pin !== '0000') {
     if (pin !== null) alert('Wrong PIN');
@@ -106118,6 +106388,7 @@ document.addEventListener('keydown', e => {
 // profile and grade can be settled once.
 allPacks();
 renderProfileSelect();
+titleGradesReturn();
 </script>
 </body>
 </html>
