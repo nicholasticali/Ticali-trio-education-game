@@ -102,7 +102,8 @@ async function answerQuestion(page, missFirst) {
     if (await page.locator('.numpad-key').count() && /^[0-9.,:/$%()\- ]+$/.test(value)) {
       await page.locator('.numpad-key.clear').click();
       for (const ch of value) {
-        const key = page.locator('.numpad-key', { hasText: new RegExp('^\\' + ch + '$') }).first();
+        // Escape only what a regex treats as special: '\\' + '4' would be an octal escape, not "4".
+        const key = page.locator('.numpad-key', { hasText: new RegExp('^' + ch.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '$') }).first();
         if (await key.count()) await key.click();
       }
     } else {

@@ -31,6 +31,13 @@
 // - Old saves: a save from before the year plan (no version, no unitNow), last
 //   year's profile keys, broken unitNow values, a newer version, and scores of
 //   packs that are hidden now all load, keep their progress and play.
+// - No repeats: the Big Thinker never deals a puzzle twice (a topic shares its
+//   puzzles with the pack they came from), no topic pack asks a question twice
+//   in a round (a topic gathers questions from several packs), grade 4's mixed
+//   fraction generators stay in their topic's unit, and a Mix & Match round
+//   counts for the picked packs that dealt a question in it, not the rest. A
+//   quick double tap on a path's SHOW button or a review subject opens it and
+//   does nothing else; the kindergartener's Mix & Match has a 🔊 on each pack.
 // - The hub and a library at 390x844, 820x1180 and 1366x768, the picker too:
 //   no sideways scrolling, and on the touch screens no tap target under 44px.
 //   Screenshots in out/shots/units/.
@@ -331,6 +338,34 @@ async function integrity(browser) {
   console.log('  ' + Object.entries(r.grades).map(([g, x]) => `grade ${g}: ${x.topics} topics, ${x.packs} packs, ${x.soon} coming soon`).join(' · '));
   r.problems.forEach(p => console.log('       ' + p));
   ok(!r.problems.length, `${total.topics} topics: ${total.packs} packs, ${total.soon} coming soon; ${r.rounds} rounds dealt; ${r.hubCards} hub cards and ${r.libCards} library cards checked`);
+  // A topic waiting for its questions (none may be, once every gap is written):
+  // one topic of the unit now taken out of the packs, as if it had too few.
+  const soonTile = await page.evaluate(() => {
+    const res = [];
+    for (const pid of ['k', 'g5']) {
+      const grade = OWN_GRADE[pid];
+      const b = yearBlocks(grade)[0];
+      const id = yearUnitTopics(yearBlockUnit(grade, b, pid)).find(x => yearPack(x));
+      const list = PACKS[pid], at = list.findIndex(p => p.id === id);
+      const pk = list.splice(at, 1)[0];
+      currentProfile = PROFILES[pid];
+      renderHub();
+      const tiles = [...document.querySelectorAll('.hub .topic-soon')].filter(t => (t.getAttribute('aria-label') || '').startsWith(plainText(YEAR_INFO[id].t)));
+      const card = [...document.querySelectorAll('.hub .pack-card')].some(c => (c.getAttribute('onclick') || '').includes(`'${id}'`));
+      openMixPicker(grade);
+      const offered = [...document.querySelectorAll('#mix-backdrop .mix-opt input')].some(i => i.value === id);
+      closeMixPicker(true);
+      list.splice(at, 0, pk);
+      res.push({ pid, id, card, offered,
+        inStrip: tiles.some(t => t.closest('.now-strip')), inPath: tiles.some(t => t.closest('.yunit')),
+        openable: tiles.some(t => t.matches('[onclick], [role="button"], .pack-card') || t.querySelector('.pack-card, [onclick*="startPack"]')),
+        voice: pid !== 'k' || (tiles.length > 0 && tiles.every(t => !!t.querySelector('.pack-voice'))) });
+    }
+    renderHub();
+    return res;
+  });
+  for (const x of soonTile) ok(x.inStrip && x.inPath && !x.openable && !x.card && x.voice && !x.offered,
+    `${x.pid}: a topic with too few questions (${x.id}, simulated) is a coming-soon tile in NOW IN CLASS and in its unit, cannot be opened${x.pid === 'k' ? ', keeps its 🔊' : ''} and is not in Mix & Match (${JSON.stringify(x)})`);
   await ctx.close();
   return total;
 }
@@ -433,7 +468,7 @@ async function parent(browser) {
   ok(d.unitNow && d.unitNow.math === info.pick, `math set by hand to ${info.pick}: saved (${JSON.stringify(d.unitNow)})`);
   ok(await page.evaluate(() => document.activeElement && document.activeElement.id === 'unitnow-g5-math'), 'focus stays on the menu');
   const said = { msg: await page.locator('#unitnow-saved').innerText(), auto: await page.locator('.unitnow-auto').count() };
-  ok(/Saved/.test(said.msg) && said.auto === 1, `it says it is saved, and offers BACK TO AUTOMATIC (${JSON.stringify(said)})`);
+  ok(/saved/i.test(said.msg) && said.auto === 1, `it says it is saved, and offers BACK TO AUTOMATIC (${JSON.stringify(said)})`);
   await page.selectOption('#unitnow-g5-reading', info.readPick); await wait(page, 300);
   await page.screenshot({ path: path.join(OUT, 'parent-set-by-hand.png') });
   // The hub follows it, after a reload too.
@@ -650,7 +685,73 @@ async function oldSaves(browser) {
   await ctx.close();
 }
 
-// ─── 8. Layout: the hub and a library at three sizes ───
+// ─── 8. No repeats, rounds that stay in their unit, a double tap on a path ───
+async function repeats(browser) {
+  console.log('\n▶ no repeats; rounds stay in their unit; Mix & Match counts packs that dealt; a double tap on a path; the kindergartener\'s 🔊 in Mix & Match');
+  const { ctx, page } = await open(browser, { name: 'repeats', width: 820, height: 1180, touch: true });
+  const r = await page.evaluate(() => {
+    const text = q => plainText(q.text || q.statement || (q.partA && q.partA.text) || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const sorted = a => JSON.stringify((a || []).map(x => typeof x === 'object' ? JSON.stringify(x) : String(x)).sort());
+    const same = q => [q.type || 'mc', text(q), sorted(q.options), sorted(q.items), q.partA ? sorted(q.partA.options) : ''].join('|');
+    // A question asked twice: the same words, unless they are about two different passages.
+    const twice = qs => qs.some((q, i) => qs.some((o, j) => j < i && text(o) && text(o) === text(q) && !(o.passage && q.passage && o.passage !== q.passage)));
+    const out = { think: {}, topics: [], gens: [], mix: null };
+    for (const pid of Object.keys(PACKS)) {
+      currentProfile = PROFILES[pid];
+      let n = 0;
+      for (let i = 0; i < 100; i++) { const qs = getQuestions(findPack('think_mix'), pid); if (new Set(qs.map(same)).size < qs.length) n++; }
+      out.think[pid] = n;
+    }
+    for (const pk of allPacks().filter(p => p.topic)) {
+      currentProfile = PROFILES[pk.home];
+      for (let i = 0; i < 5; i++) if (twice(getQuestions(pk, pk.home))) { out.topics.push(pk.id); break; }
+    }
+    // Grade 4's mixed generators, narrowed to the topic's unit.
+    const off = { g4m_frac_addsub: q => /Convert|Multiply/.test(q.text || ''), g4m_frac_equiv: q => /\d\.\d|[+−]/.test(q.statement || '') };
+    for (const [id, bad] of Object.entries(off)) {
+      const fns = [...(MATH_GENERATORS[id] || []), ...(NONMC_MATH_GENERATORS[id] || [])];
+      let n = 0; for (const f of fns) for (let i = 0; i < 300; i++) if (bad(f())) n++;
+      if (n) out.gens.push(`${id}: ${n} from another unit`);
+    }
+    // Twelve packs picked: a round counts for the ten-odd that dealt a question, not the rest.
+    currentProfile = PROFILES.g5;
+    const ids = Object.keys(YEAR_TOPICS).filter(t => YEAR_TOPICS[t].g === '5' && yearPack(t)).slice(0, 12);
+    const d = state.profiles.g5, before = Object.assign({}, d.rounds);
+    mixState = { pid: 'g5', grade: '5', ids };
+    startPack(MIX_PACK_ID);
+    const dealt = new Set(questions.map(q => q._mixPack));
+    score = 5; finishPack();
+    out.mix = { picked: ids.length, dealt: dealt.size, ok: ids.every(id => (d.rounds[id] || 0) - (before[id] || 0) === (dealt.has(id) ? 1 : 0)) };
+    mixState = null;
+    return out;
+  });
+  ok(Object.values(r.think).every(n => n === 0), `Big Thinker: no puzzle twice in a round, 100 rounds each (${JSON.stringify(r.think)})`);
+  ok(!r.topics.length, `no topic pack asks a question twice in a round, five rounds each${r.topics.length ? ': ' + r.topics.slice(0, 6).join(', ') : ''}`);
+  ok(!r.gens.length, `grade 4 fractions: generated questions stay in their unit${r.gens.length ? ': ' + r.gens.join('; ') : ''}`);
+  ok(r.mix && r.mix.ok, `Mix & Match of ${r.mix && r.mix.picked} packs: a round for each of the ${r.mix && r.mix.dealt} that dealt a question, none for the rest`);
+  // A quick double tap on a path's SHOW button or a review subject: it opens, and that is all.
+  for (const [pid, sel, what] of [['g3', '.ypath-own .ypath-more:not(.ypath-earlier)', 'the 3rd grader\'s "more units"'], ['g5', '.ypath-fold', 'a 4th grade review subject']]) {
+    await page.evaluate(pid => { buddyAsked[pid] = true; mixState = null; pickProfile(pid); }, pid); await wait(page, 400);
+    const b = page.locator(sel).first();
+    await b.scrollIntoViewIfNeeded();
+    const box = await b.boundingBox();
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2); await wait(page, 90);
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2); await wait(page, 450);
+    const st = await page.evaluate(() => ({ open: Object.values(yearOpen).filter(Boolean).length, round: !!document.querySelector('.quiz') }));
+    ok(st.open === 1 && !st.round, `a double tap on ${what}: it opens, no round starts (${JSON.stringify(st)})`);
+    await page.evaluate(() => { for (const k of Object.keys(yearOpen)) delete yearOpen[k]; });
+  }
+  // The kindergartener picks packs by ear: a 🔊 on each, which ticks nothing.
+  await page.evaluate(() => { buddyAsked.k = true; pickProfile('k'); openMixPicker('K'); }); await wait(page, 400);
+  const k = await page.evaluate(() => { const o = [...document.querySelectorAll('#mix-backdrop .mix-opt')]; return { n: o.length, say: o.filter(x => x.querySelector('.js-speak')).length }; });
+  await page.locator('#mix-backdrop .mix-opt .js-speak').first().tap(); await wait(page, 300);
+  const ticked = await page.evaluate(() => document.querySelectorAll('#mix-backdrop input:checked').length);
+  const a = await audit(page, true);
+  ok(k.n > 0 && k.say === k.n && !ticked && !a.small.length, `the kindergartener's Mix & Match: a 🔊 on all ${k.n} packs, a tap on one ticks nothing (${ticked}), every target 44px or more ${a.small.slice(0, 3).join(', ')}`);
+  await ctx.close();
+}
+
+// ─── 9. Layout: the hub and a library at three sizes ───
 async function layout(browser) {
   console.log('\n▶ layout: hubs and a library at 390x844, 820x1180 and 1366x768');
   for (const vp of [{ name: 'phone', width: 390, height: 844, touch: true }, { name: 'ipad', width: 820, height: 1180, touch: true }, { name: 'laptop', width: 1366, height: 768 }]) {
@@ -679,13 +780,13 @@ async function layout(browser) {
   const browser = await chromium.launch({ executablePath: CHROMIUM });
   const t0 = Date.now();
   let total = { topics: 0, packs: 0, soon: 0 };
-  for (const [name, fn] of [['integrity', integrity], ['dates', dates], ['parent', parent], ['touch', touchMix], ['keys', keyboardMix], ['guest', guestMix], ['saves', oldSaves], ['layout', layout]]) {
+  for (const [name, fn] of [['integrity', integrity], ['dates', dates], ['parent', parent], ['touch', touchMix], ['keys', keyboardMix], ['guest', guestMix], ['saves', oldSaves], ['repeats', repeats], ['layout', layout]]) {
     try { const r = await fn(browser); if (name === 'integrity' && r) total = r; } catch (e) { ok(false, `${name}: ${e.message.split('\n')[0]}`); }
   }
   await browser.close();
   ok(!errors.length, `no JS errors${errors.length ? ': ' + errors.slice(0, 5).join(' | ') : ''}`);
   const secs = Math.round((Date.now() - t0) / 1000);
   console.log(bad ? `units: FAIL — ${bad} of ${good + bad} checks failed (${secs}s)`
-    : `units: PASS — ${good} checks: ${total.topics} unit topics (${total.packs} packs, ${total.soon} coming soon), the unit now on six dates, the parent's setting, Mix & Match by touch, keyboard and just looking, old saves (${secs}s)`);
+    : `units: PASS — ${good} checks: ${total.topics} unit topics (${total.packs} packs, ${total.soon} coming soon), the unit now on six dates, the parent's setting, Mix & Match by touch, keyboard and just looking, old saves, no repeats in a round (${secs}s)`);
   process.exit(bad ? 1 : 0);
 })();

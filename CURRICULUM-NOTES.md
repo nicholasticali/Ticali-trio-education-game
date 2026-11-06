@@ -54,7 +54,7 @@ routines, K-5) and the 1st grade research files.
   are named in AACPS releases through 2025-26; nothing found suggests a change for
   2026-27, so "still current" is a strong inference rather than a quoted fact.
 - **The CKLA unit sequences** for each grade (2nd Edition curriculum maps), which the
-  reading packs follow, with one exception in grade 5 (below):
+  reading packs follow:
   - **Kindergarten** (12 Knowledge domains): Nursery Rhymes and Fables · The Five
     Senses · Stories · Plants · Farms · Native Americans · Kings and Queens ·
     Seasons and Weather · Columbus and the Pilgrims · Colonial Towns · Taking Care
@@ -68,8 +68,9 @@ routines, K-5) and the 1st grade research files.
     Poetry · Don Quixote · Renaissance · Reformation · A Midsummer Night's Dream ·
     Native Americans · Chemical Matter. Amplify's map puts The House on Mango Street
     in grade 4 (Unit 6), so the game's Mango Street pack sits with grade 4, on the 5th
-    grader's 4th grade review shelf. There is no separate Chemical Matter reading pack;
-    the 5th grade science pack Matter and Its Properties practices the same science.
+    grader's 4th grade review shelf. Chemical Matter had no reading pack of its own
+    until November 2026; it now has one, in grade 5's Unit 9 (see "The school year,
+    unit by unit" below).
 - **Maryland's revised math standards are real and in effect this year.** The
   "Revised Maryland College and Career Ready Standards for Mathematics" were adopted
   29 July 2025; MSDE's crosswalks read "Implementation: SY 2026-2027" for PreK-8.
@@ -138,8 +139,9 @@ routines, K-5) and the 1st grade research files.
   a 3rd Edition for 2025-26 with a reorganized Knowledge sequence (a new Geography
   unit, district-choice units, a research unit). AACPS newsletters from 2024-25 match
   the 2nd Edition; nothing from 2025-26 or 2026-27 settles it. The reading packs
-  follow the 2nd Edition units listed above (with the grade 5 exception noted
-  there); the 1st grade packs use topics common to both editions.
+  follow the 2nd Edition units listed above. The first 1st grade packs used topics
+  common to both editions; since November 2026, 1st grade follows the 2nd Edition's
+  order too.
 - **AACPS's health scope and sequence for K, 3 and 5.** Not found. The health packs
   are written to general elementary health content and deliberately omit
   reproduction and family-life material, which is taught with parent notice and
@@ -171,7 +173,7 @@ routines, K-5) and the 1st grade research files.
 ## SHOW ME HOW: whose methods
 
 The coach walks a stuck child through the method the programs teach, with the
-question's own numbers and words. Every written question (10,400+) has its own
+question's own numbers and words. Every written question (13,100+) has its own
 steps, written and then reviewed beside its question; math questions generated each
 round build theirs from their own numbers; each pack also has its method as a
 fallback. Math follows Reveal Math's strategies grade by grade and respects when
@@ -205,12 +207,14 @@ are the 2013 Core Knowledge edition, whose wording Amplify may have changed.
 
 ## 1st grade
 
-The kindergartener's "look ahead" packs (34) follow Maryland's revised grade 1 math
-standards (adopted July 2025: counting to 120 now includes counting backward) and
-Reveal grade 1, CKLA grade 1 Skills and Knowledge topics common to the 2nd and 3rd
-Editions, Maryland's NGSS-based grade 1 science (light and sound, plant and animal
-structures, sky patterns) and Maryland grade 1 social studies and health. Research
-with sources and confidence tags is in research/.
+The kindergartener's "look ahead" packs (34 when first written) follow Maryland's
+revised grade 1 math standards (adopted July 2025: counting to 120 now includes
+counting backward) and Reveal grade 1, CKLA grade 1 Skills and Knowledge topics
+common to the 2nd and 3rd Editions, Maryland's NGSS-based grade 1 science (light and
+sound, plant and animal structures, sky patterns) and Maryland grade 1 social studies
+and health. Research with sources and confidence tags is in research/. Since November
+2026, 1st grade is laid out unit by unit like every grade (below): 47 unit topics,
+with CKLA in the 2nd Edition's order, and 9 all-year packs.
 
 ## 2nd and 4th grade
 
@@ -225,7 +229,42 @@ and words in research/COACH-MATH.md; the Maryland pack follows the grade 4 socia
 studies framework revised in 2025 and leaves Maryland's history to the existing 4th
 grade social studies pack. Each new pack has 40 questions, every one with a why and
 its own SHOW ME HOW steps, a hint wherever a second try is offered, and 5 puzzles.
-Every child can open them from Explore Any Grade.
+Since November 2026 their questions sit in the matching unit topics, which every
+child can open from Explore Any Grade.
+
+## The school year, unit by unit (November 2026)
+
+In November 2026 every grade, K-5, was laid out unit by unit in the order class
+teaches it, and each topic inside a unit became a small pack of its own: 259 units
+and 288 unit topics across the six grades (5th grade's Unit 4, Add and Subtract
+Decimals, is one pack).
+
+- **Where each grade's unit order comes from.** Math follows Reveal Math's national
+  order for each grade, from McGraw Hill's published editions and the sources above,
+  not an AACPS pacing document. Reading follows Amplify CKLA 2nd Edition: the Skills
+  and Knowledge units in kindergarten to grade 2, and in grades 3-5 each unit with
+  the grammar, morphology and spelling taught inside it. No AACPS order for science,
+  social studies and health was found, so their order is **estimated**, following
+  Maryland's NGSS-based standards, the social studies framework revised in June 2025
+  and the health framework adopted in February 2026.
+- **How the unit class is on now is estimated.** 📍 NOW IN CLASS counts school days
+  on the AACPS 2026-27 calendar (above) from the first day, skipping weekends,
+  holidays and breaks, and walks them through each unit's usual length. Unit lengths
+  come from McGraw Hill's pacing and another district's pacing guide for math and
+  from Amplify's CKLA K-5 Program Guide for reading. No AACPS pacing guide was found
+  or used, so the unit shown is an estimate, and classes move at their own pace.
+- **A parent can set it by hand.** On the parent dashboard, **📍 Where is class
+  now?** sets each child's unit in each subject; **↺ BACK TO AUTOMATIC** goes back to
+  the calendar.
+- **New practice for units that had none.** 2,352 questions and 387 puzzles were
+  written for the units with no practice yet. Each was written by an AI assistant to
+  the unit's topic and then re-solved by a second AI reviewer. Each has a why and its
+  own SHOW ME HOW steps, and the checks in `tools/` (`units.js`, `coach.js`) run over
+  them as over everything else.
+- **Packs named in older sections.** The broad packs of earlier versions, whose
+  questions now all sit in unit topics, are hidden; their saved best scores and round
+  counts are kept. Some topics keep an old pack's name, such as Matter and Its
+  Properties; others, such as Ways to Make 10, are now spread over several topics.
 
 ## Changed after an AI review from the school's point of view (October 2026)
 

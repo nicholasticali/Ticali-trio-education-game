@@ -240,9 +240,10 @@ async function runFull(browser, vp, pid) {
       rounds.push({ n: qs.length, packs: qs.map(q => q._bossPack), allNow: qs.every(q => nowIds.has(q._bossPack)), from: qs.every(q => !!q._from) });
     }
     const viaEngine = getQuestions(pk, pid);
-    // A child with only three packs still gets a full-ish round, from those three.
+    // A child with only three packs still gets a full-ish round, from those three
+    // (three the child can see: an old pack now split into unit topics is hidden).
     const saved = PACKS[pid];
-    PACKS[pid] = saved.filter(p => p.tier === 'now' && !p.quest).slice(0, 3);
+    PACKS[pid] = saved.filter(p => p.tier === 'now' && !p.quest && !p.hidden).slice(0, 3);
     const few = bossBuildRound(pid);
     PACKS[pid] = saved;
     return {

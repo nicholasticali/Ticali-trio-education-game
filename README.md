@@ -13,12 +13,12 @@ saved in the browser on the device it is played on.
 
     Ticali_Trio_Family_Edition.html
 
-What is in it: 237 packs from kindergarten to 5th grade (counting the
-kindergartener's pre-K review and each child's puzzle mix), with a button for
-every grade on the first screen; 10,400+ written
-questions, each with its own explanation and SHOW ME HOW steps; 780 thinking
-puzzles; 11 math packs that make fresh questions every round; and a Reading Road of
-40 stops in 11 lands.
+What is in it: 370+ packs from kindergarten to 5th grade, most of them one unit's
+topic, laid out in the order class teaches the year (counting the kindergartener's
+pre-K review and each child's puzzle mix), with a button for every grade on the
+first screen; 13,100+ written questions, each with its own explanation and SHOW ME
+HOW steps; 1,100+ thinking puzzles; 14 math packs that make fresh questions every
+round; and a Reading Road of 40 stops in 11 lands.
 
 On the title screen, just above the three profile cards, is **ℹ️ For grown-ups:
 about this game**. It is a page written for teachers and principals: what
@@ -55,15 +55,55 @@ somewhere else starts fresh and never touches the children's progress.
 
 | Profile | Grade | Hub sections |
 |---|---|---|
-| 🌈 Kindergarten | K | this year, Pre-K review, 🚀 a look ahead at 1st grade |
-| ⚡ 3rd Grade | 3 | this year, gentler warm-ups, 2nd grade review |
-| 🔥 5th Grade | 5 | this year, 🔬 also on the science test (4th grade science, because Maryland's grade 5 science test covers grades 3-5), warm-ups, 4th grade review |
+| 🌈 Kindergarten | K | 📍 now in class, this year unit by unit, Pre-K review, 🚀 a look ahead at 1st grade |
+| ⚡ 3rd Grade | 3 | 📍 now in class, this year unit by unit, gentler warm-ups, 2nd grade review |
+| 🔥 5th Grade | 5 | 📍 now in class, this year unit by unit, 🔬 also on the science test (4th grade science, because Maryland's grade 5 science test covers grades 3-5), warm-ups, 4th grade review |
 
 Near the bottom of every hub, just above the trophies, **📚 Explore Any Grade** also opens
 every pack from kindergarten to 5th grade. Each hub also has **📈 PROGRESS**, a chart
 of that child's recent rounds. Profiles move up a grade each September; a save
 written under last year's keys is re-keyed on load, so XP, trophies and history carry
 over.
+
+## The school year, unit by unit
+
+Each grade is laid out unit by unit in the order class teaches it: Reveal Math's
+units for math and Amplify CKLA's for reading (2nd edition order; in grades 3-5,
+CKLA's word work and its knowledge units are shown together, unit by unit), with
+science, social studies and health in an estimated order, because AACPS has not
+published one. The topics inside a unit are small packs of their own: 5th grade's
+Unit 4, Add and Subtract Decimals, is its own pack in the math section. A topic
+whose questions are still being written shows as *coming soon* and cannot be opened.
+
+- **📍 NOW IN CLASS**, at the top of each hub, holds the packs of the unit class is
+  probably on in every subject. The game estimates it from the AACPS 2026-2027
+  calendar: school days since the first day (31 August for kindergarten, 24 August
+  for grades 1-5), skipping weekends, holidays and breaks, walked through each
+  unit's usual length. Before the first day it shows the first units; after the last
+  day, the last ones.
+- **MY GRADE THIS YEAR** runs each subject's units in class order: the unit now is
+  marked 📍 THIS UNIT, earlier ones ✓ DONE IN CLASS · REVIEW and later ones COMING UP.
+  All of them stay open; the earlier and later units fold away behind a button
+  until opened.
+- Last year's review and the kindergartener's look ahead use the same unit order,
+  each subject folded until opened. Explore Any Grade shows every unit of a grade,
+  and marks the unit a child in that grade is on.
+- Packs that are not one unit (themed packs, reading quests, test practice,
+  technology), the warm-ups and the 5th grader's MISA packs keep their own
+  sections. The broad packs of earlier versions, whose questions now all sit in unit
+  topics, are hidden; their saved best scores and round counts are kept, and the
+  parent dashboard still lists those a child has played.
+- **Class moves at its own pace.** On the parent dashboard, **📍 Where is class
+  now?** shows each child's unit in each subject, with a menu to set it by hand when
+  the teacher says class is ahead or behind; **↺ BACK TO AUTOMATIC** goes back to
+  the calendar.
+- **🎛️ MIX & MATCH**, in each hub's NOW IN CLASS strip and at the top of every grade
+  library, lists that grade's packs by subject and unit with tick boxes (📍 THIS
+  UNIT ticks the packs of the units class is on). PLAY deals one round of ten
+  spread evenly over the packs picked, with at most two puzzles. The XP goes to the
+  child playing, and the round counts toward the rounds of each picked pack that dealt
+  a question in it, but never its best score. The picker remembers the last pick until the page is closed. Just
+  looking, it saves nothing.
 
 ## A round
 
@@ -77,7 +117,7 @@ says why the topic matters. Then, for every question:
 - **💡 SHOW ME HOW** walks through the method step by step, the way the programs
   teach it, with the question's own numbers and words (make a ten, the area model,
   arm blending, look back in the story), then hands the question back. Every one of
-  the 10,400+ written questions has its own steps, and math questions made fresh
+  the 13,100+ written questions has its own steps, and math questions made fresh
   each round build theirs from their own numbers.
 
 Question types: multiple choice, true/false, type the answer (with an on-screen
@@ -85,9 +125,10 @@ number pad for math), fill in the blank, show your work on paper, and four puzzl
 types similar to the kinds of items on Maryland's new MSTAR tests: **pick every
 answer that fits, put in order, sort into groups, and answer-then-prove**. Choices
 are mixed on every replay, and each round draws its questions at random from the
-pack. Eleven math packs (pre-K counting, and the 2nd and 4th grade review packs for
-adding, subtracting, place value, word problems, money, time, fractions, decimals,
-multiplying and dividing) make fresh questions every round.
+pack. Fourteen math packs (pre-K counting, and 2nd and 4th grade review topics:
+place value, patterns, story problems, adding, subtracting, money, time, fractions,
+decimals, multiplying and dividing) make fresh questions every round; the unit
+topics among them mix those with written questions.
 
 ## For children who cannot read yet
 
@@ -163,6 +204,8 @@ The small **parent** link (bottom right) opens the parent dashboard. Its PIN is
 - what the questions are written to, and this spring's tests;
 - second tries on or off;
 - the read-aloud voice;
+- where class is now: each child's unit in each subject, from the calendar or set
+  by hand;
 - each child's daily missions and day streak;
 - the Reading Road: move a child to any stop, or unlock every stop;
 - each child's stickers, boss battles and speed sprint scores;
@@ -214,7 +257,11 @@ The limits:
   were PDF copies on public file-storage links.
 - It did not use AACPS pacing guides, teacher editions or other licensed classroom
   materials. Math unit order follows McGraw Hill's national editions; how AACPS maps
-  Reveal Math onto Maryland's revised standards has not been published.
+  Reveal Math onto Maryland's revised standards has not been published. Science,
+  social studies and health unit order is estimated. Unit lengths come from
+  published pacing (McGraw Hill's, another district's and Amplify's program guide),
+  so the unit marked 📍 NOW IN CLASS is an estimate; the parent dashboard can
+  correct it.
 - Amplify published a 3rd edition of CKLA for 2025-26 with a different order of
   units. Which edition AACPS classrooms use this year could not be confirmed; the
   reading packs follow the 2nd edition's units.
@@ -255,6 +302,18 @@ The app is plain JavaScript in one `<script>`; screens are drawn by `render(html
 - **Generated math** comes from the generator functions registered in
   `MATH_GENERATORS` and `NONMC_MATH_GENERATORS`; each builds its why, hint and coach
   steps from its own numbers.
+- **The year plan** sits between the `// ═══ YEAR PLAN ═══` and
+  `// ═══ END YEAR PLAN ═══` markers: `YEAR_CALENDAR`, `YEAR_PLAN` (per grade:
+  subjects, their units in class order with each unit's school days, and the units'
+  topic ids), `TOPIC_REFS` (each topic's questions, by reference to the banks they
+  already live in), the `TU_` banks written for topics, and `YEAR_HIDDEN`, the old
+  packs to hide. It is generated data: change the plan and run its data step again
+  (it replaces the block) rather than editing it by hand. The `YEAR PLAN ENGINE`
+  section after it makes each topic with a full round's worth of questions a pack
+  (`topic: true`, `unit`, bank `T_<topic>` holding the same question objects) in the
+  profile that owns its grade, and works out the unit now with `classClockNow()`,
+  the one clock the year plan reads, which a check can replace. A unit set by hand is
+  saved in `state.profiles[pid].unitNow`; saves carry `version: 2`.
 - **Fun modules** (buddy, stickers, boss, missions, speed sprints, family goal, and
   the Reading Road with its data) sit after the `/* ═══ FUN MODULES ═══ */` marker,
   each opening with a `// ─── module: <name> ───` line, and talk to the game only
@@ -277,7 +336,8 @@ at a time, and `./run-all.sh repo`, `extras` or `modules` runs one group. After 
 change, run at least `node packcheck.js` and `node smoke.js`. After an engine or
 input change, also `screens.js`, `platforms.js`, `saves.js` and `speech.js`; after
 changing questions or coaching steps, `coach.js`, and for K and 1st grade
-`readaloud.js`; after changing a math generator, `generators.js`. After changing a
+`readaloud.js`; after changing a math generator, `generators.js`; after changing
+the year plan, the hub or Mix & Match, `units.js`. After changing a
 fun module, run its own suite in `tools/modules/`; after changing the Reading Road's
 content, `node modules/readcheck.js` and `node modules/reading.test.js`. The iPad
 runs are Chromium with touch input at iPad screen sizes, not real Safari, so try a

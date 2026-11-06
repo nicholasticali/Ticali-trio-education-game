@@ -113,11 +113,13 @@ async function answer(page, how, wrong) {
       if (pad && !/^[0-9.,:/$%()\- ]+$/.test(value) && how !== 'keys') await press(page, how, page.locator('.numpad-toggle'));
       if (!(await page.locator('.numpad-key').count()) || how !== 'keys') await page.locator('#typedInput').focus();
       if (!pad || how !== 'keys') await page.locator('#typedInput').fill('');
-      await page.keyboard.type(value.replace(/ /g, ''));
+      await page.keyboard.type(value);   // a mixed number keeps its space (the pad has a SPACE key for it)
       return page.keyboard.press('Enter');
     }
     await press(page, how, page.locator('.numpad-key.clear'));
-    for (const ch of value.replace(/ /g, '')) {
+    for (const ch of value) {
+      // A mixed number such as 4 3/4 gets a SPACE key on the pad.
+      if (ch === ' ') { const sp = page.locator('.numpad-key[aria-label="SPACE"]'); if (await sp.count()) await press(page, how, sp.first()); continue; }
       const pat = new RegExp('^' + ch.replace(/[.*+?^${}()|[\]\\/$]/g, '\\$&') + '$');
       await press(page, how, page.locator('.numpad-key', { hasText: pat }).first());
     }
@@ -125,6 +127,8 @@ async function answer(page, how, wrong) {
   }
   if (t === 'order') {
     for (let pos = 0; pos < q.items.length; pos++) {
+      // A second try keeps the pieces already in the right spot (locked), as smoke.js knows.
+      if (await page.locator('.order-slot').nth(pos).evaluate(el => el.classList.contains('locked') || el.classList.contains('filled'))) continue;
       const want = wrong ? q.shuffle[pos] : pos;
       const item = page.locator(`.order-item[onclick="orderPlace(${want})"]`);
       if (await item.count()) await press(page, how, item); else await press(page, how, page.locator('.order-item').first());
