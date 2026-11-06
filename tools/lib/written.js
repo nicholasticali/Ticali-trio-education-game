@@ -20,12 +20,16 @@
 //
 // `q` is what to show (a passage question carries its passage); `src` is the
 // question object in the bank, the same for every pack that shares the bank.
+// A unit topic pack (the year plan) holds the same objects as the packs its
+// questions came from, so it adds no new `src`; its copy of a reading-passage
+// question carries `_ref`, the original, which is its `src`.
 'use strict';
 
 module.exports.install = () => {
   const take = (out, list, extra) => {
     if (!Array.isArray(list)) return;
-    for (const src of list) out.push({ q: extra ? Object.assign({}, src, extra) : src, src });
+    // A unit topic's copy of a passage question points back at the original (_ref).
+    for (const src of list) out.push({ q: extra ? Object.assign({}, src, extra) : src, src: (src && src._ref) || src });
   };
   window.ttWritten = pk => {
     allPacks();   // gives every pack its home profile and grade

@@ -130,8 +130,11 @@ async function answer(page, how) {
         }
         // A pack with puzzles, so every input path is exercised.
         const packId = await page.evaluate(() => {
-          const pk = PACKS[currentProfile.id].find(p => p.tier === 'now' && (THINK_ITEMS[p.id] || []).length) ||
-                     PACKS[currentProfile.id].find(p => p.tier === 'now');
+          // One with a card on the hub: a hidden pack has none, and a unit's
+          // topic packs are drawn only while that unit is shown.
+          const onHub = p => !p.hidden && !!document.querySelector(`.pack-card[onclick="startPack('${p.id}')"]`);
+          const pk = PACKS[currentProfile.id].find(p => p.tier === 'now' && (THINK_ITEMS[p.id] || []).length && onHub(p)) ||
+                     PACKS[currentProfile.id].find(p => p.tier === 'now' && onHub(p));
           return pk.id;
         });
         await press(page, dev.how, page.locator(`.pack-card[onclick="startPack('${packId}')"]`).first());
