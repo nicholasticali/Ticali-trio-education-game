@@ -8,7 +8,7 @@
 #
 # Groups:
 #   repo     packcheck saves smoke screens platforms
-#   extras   coach readaloud voice about title-grades reset boss-example generators speech units
+#   extras   coach readaloud voice about title-grades reset boss-example generators speech units sounds
 #   modules  readcheck buddy stickers boss missions sprint family reading
 #
 # Each check's whole output goes to out/logs/<check>.log; the line printed here
@@ -20,7 +20,7 @@ CALLER="$(pwd)"
 cd "$(dirname "$0")" || exit 2
 
 REPO="packcheck saves smoke screens platforms"
-EXTRAS="coach readaloud voice about title-grades reset boss-example generators speech units"
+EXTRAS="coach readaloud voice about title-grades reset boss-example generators speech units sounds"
 MODULES="readcheck buddy stickers boss missions sprint family reading"
 
 APP=""

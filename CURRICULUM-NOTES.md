@@ -173,7 +173,7 @@ routines, K-5) and the 1st grade research files.
 ## SHOW ME HOW: whose methods
 
 The coach walks a stuck child through the method the programs teach, with the
-question's own numbers and words. Every written question (13,100+) has its own
+question's own numbers and words. Every written question (13,200+) has its own
 steps, written and then reviewed beside its question; math questions generated each
 round build theirs from their own numbers; each pack also has its method as a
 fallback. Math follows Reveal Math's strategies grade by grade and respects when
@@ -266,6 +266,72 @@ Decimals, is one pack).
   counts are kept. Some topics keep an old pack's name, such as Matter and Its
   Properties; others, such as Ways to Make 10, are now spread over several topics.
 
+## 🔈 Letter sounds, the way class teaches them (November 2026)
+
+The children's principal asked that the game emphasize proper pronunciation and
+phonetic sounds, reinforcing what is taught in school. What was checked, and what
+changed:
+
+- **What the school and the state use.** Amplify CKLA Skills is the only K-2 phonics
+  and phonemic awareness program found for AACPS since 2024-25 (confirmed). Before
+  that, K-2 used Wilson Fundations or Fountas & Pinnell's Phonics, Spelling, and Word
+  Study (confirmed, from AACPS documents read in full), so the two older children may
+  have learned their first sounds there. Intervention uses Orton-Gillingham and other
+  multisensory programs, Fundations, the Wilson Reading System and Amplify's mCLASS
+  Intervention. Heggerty Phonemic Awareness was found in AACPS pre-K only. The K-3
+  screener is mCLASS with DIBELS 8th Edition, three times a year: letter names,
+  splitting a spoken word into its sounds, and reading make-believe words. Maryland's
+  State Board banned the three-cueing model in October 2024, and its revised
+  screening regulation (COMAR 13A.03.08) requires phonemic awareness screening K-3.
+  Every one of these programs teaches each consonant sound without an "uh" after it.
+  No AACPS or Maryland resource that shows families how to say the sounds was found;
+  the one curriculum-tied resource is the Sound Library inside Amplify's own site.
+- **How CKLA says each sound.** From CKLA's 2nd Edition curriculum maps and the 2013
+  Core Knowledge teacher guides (Amplify may have changed their wording): 44 sounds
+  (and /zh/, not taught in K-2); stop sounds said once, short, with nothing after
+  them ("a clipped /b/ and not /buuu/"); /h/ "almost like a breath of air"; /r/ "as
+  clipped as possible"; /x/ and /qu/ each one quick unit; /ng/ a single sound; two
+  /th/ sounds and two /oo/ sounds; /o/ the open "ah" of hop, not /aw/; and the
+  notation (sounds in slashes, spellings in quotes, a letter "stands for" a sound).
+  CKLA does not teach key-word mnemonics in kindergarten: the teacher says the sound
+  itself. The research is in `research/COACH-ELA.md`.
+- **Every sound is now a recording.** No device voice can say a sound alone, so the
+  game plays a recording of each of the 45 wherever it names one, and sounds out a
+  word sound by sound. The recordings were cut from words said by an open speech
+  model and checked by measurement (`tools/phonics-audio/README.md`), **not yet by a
+  teacher's ear**: the parent dashboard's 🔈 HEAR ALL 45 SOUNDS is there so a teacher
+  or parent can listen.
+- **The words around the sounds.** Every question, explanation, hint, coaching step
+  and walkthrough that names a sound or a spelling was rewritten to CKLA's notation
+  and terms, by an AI writer and then an AI reviewer told to assume defects exist,
+  and checked by `tools/sounds.js`. The audits flagged 1,626 items; 1,272 of them were
+  changed (2,793 text edits, and 228 spoken-only forms such as a choice that is a spelling
+  read as its letters), and the rest were left as they were, each with a reason. A last AI
+  pass made the changed items consistent with one another ("stands for", letter teams, key
+  words); older text the audits did not flag can still say a vowel "says its name". No
+  hint tells a child to guess a word from a picture or from what would make sense.
+- **Words the voice would get wrong.** The game also corrects, before the voice reads them:
+  units ("6 cm"), "7 x 5", degrees, brackets and exponents in math, word parts ("-ly",
+  "-ion"), a lone letter a ("the a and r team up"), spellings in quotes or with hyphens
+  ('ow', u-n-i), words said two ways where only one reading fits (the past tense of read,
+  striped bass, traces of lead), and local and Native names (Anne Arundel, Piscataway).
+  Every respelling was checked with a second speech engine (eSpeak), not yet by ear on
+  the family's devices.
+- **🔊 Sound Lab** (all year, kindergarten and 1st grade): first, middle and last
+  sounds, blending, counting sounds, putting sounds in order, changing one sound to
+  make a new word, and silly (make-believe) words, as the standards and the screener
+  ask: 46 questions and 6 put-the-sounds-in-order puzzles for kindergarten, 44 and 6
+  for 1st grade. Each word's sounds were checked against a pronouncing dictionary and a
+  second speech engine; words whose sounds differ by accent (log, dog) are left out of
+  middle-sound questions, and no silly word is a real word. An AI reviewer re-solved
+  every item and fixed 57 of the 102, most of them hints or explanations that would
+  have played the answer's sounds aloud.
+- **Not changed:** kindergarten questions still call a letter by its name ("the
+  letter B"). CKLA keeps letter names out of its lessons until Kindergarten Unit 6,
+  but the DIBELS screener asks kindergarteners to name letters from the fall, so the
+  names stay; what the game says a letter stands for is always the sound itself. The
+  recordings are in a different voice from the device voice that reads the words.
+
 ## Changed after an AI review from the school's point of view (October 2026)
 
 Three AI review passes, one reading as a principal, one as a K-2 literacy and math
@@ -292,11 +358,10 @@ own research. These were AI passes, not people. What changed:
   They use a key word, as the Reading Road already did: "the same quick sound as
   bed", "the quick sound at the start of tag". The pre-K "What sound does B make?"
   items for the stop sounds now ask which word starts with that sound.
-- **One limit of read-aloud.** When the game sounds out a word for blending
-  ("c... a... t..."), the speech engine still says "kuh, aaa, tuh": no speech engine
-  can say a clipped stop sound, and naming a key word for each sound would turn a
-  three-sound blend into a listening puzzle. A grown-up can model the clipped sounds.
-  The game's About page says this too, under "Limits".
+- **One limit of read-aloud (fixed in November 2026).** When the game sounded out a
+  word for blending ("c... a... t..."), the speech engine said "kuh, aaa, tuh": no
+  speech engine can say a clipped stop sound. Since November the game plays a
+  recording of each sound instead (see Letter sounds, above).
 - **Spelling choices** ("noh / nu / nou / no") are read letter by letter, so the four
   choices no longer all sound like "no". Kindergarten and 1st grade answer tiles show
   the number the voice names ("Choice 1"). Where the answers are numbers or pictures to count, the

@@ -16,9 +16,10 @@ saved in the browser on the device it is played on.
 What is in it: 370+ packs from kindergarten to 5th grade, most of them one unit's
 topic, laid out in the order class teaches the year (counting the kindergartener's
 pre-K review and each child's puzzle mix), with a button for every grade on the
-first screen; 13,100+ written questions, each with its own explanation and SHOW ME
+first screen; 13,200+ written questions, each with its own explanation and SHOW ME
 HOW steps; 1,100+ thinking puzzles; 14 math packs that make fresh questions every
-round; and a Reading Road of 40 stops in 11 lands.
+round; a Reading Road of 40 stops in 11 lands; and every letter sound as a recording
+of that sound alone, said the way CKLA teaches it (see 🔈 Letter sounds below).
 
 On the title screen, just above the three profile cards, is **ℹ️ For grown-ups:
 about this game**. It is a page written for teachers and principals: what
@@ -117,7 +118,7 @@ says why the topic matters. Then, for every question:
 - **💡 SHOW ME HOW** walks through the method step by step, the way the programs
   teach it, with the question's own numbers and words (make a ten, the area model,
   arm blending, look back in the story), then hands the question back. Every one of
-  the 13,100+ written questions has its own steps, and math questions made fresh
+  the 13,200+ written questions has its own steps, and math questions made fresh
   each round build theirs from their own numbers.
 
 Question types: multiple choice, true/false, type the answer (with an on-screen
@@ -144,11 +145,9 @@ default; the AUTO button in the quiz bar turns that on or off for any child.
 - In a "which spelling is right?" question the choices are read letter by letter,
   so "noh", "nu" and "no" do not all sound like "no".
 - Pictures are named in words, because device voices skip emoji.
-- Letter sounds are read as sounds, never letter names. One limit: when the voice
-  sounds out a word for blending ("c... a... t"), it says the short sounds /k/ and
-  /t/ as "kuh" and "tuh", because a speech engine cannot say them short. The written
-  explanations give a key word instead ("the quick sound at the start of tag"), and
-  a grown-up can model the short sounds.
+- Letter sounds are **recordings**, never a voice's guess: see Letter sounds below.
+- A choice that is a spelling ("Which two letters start SHIP?") is read as its letter
+  names ("s, h"), so hearing the choices never gives a spelling answer away.
 
 The game reads with the most natural voice the device has: Apple's Premium and
 Enhanced voices, Microsoft's Natural voices in Edge, Google's voices in Chrome. An
@@ -159,12 +158,47 @@ the game. The parent dashboard also gives the steps for a Mac, lists every voice
 the device with a ▶ sample, and lets you choose. If an online voice fails (no
 network), a built-in voice takes over.
 
+## 🔈 Letter sounds
+
+The principal asked that the game emphasize proper pronunciation and phonetic sounds
+the way the children are taught in school. The school teaches reading with Amplify
+CKLA, and every program the children meet (CKLA, Fundations, Orton-Gillingham, and
+Maryland's science-of-reading training) teaches each sound pure: a clipped /b/ with
+no "uh" after it, a stretched /mmm/. A device's voice cannot say a sound on its own:
+it reads /b/ as "buh" or "slash b slash" and "sss" as "S S S". So:
+
+- **Every sound is a recording.** CKLA's 44 sounds and /zh/, in CKLA's notation, each
+  recorded as that sound alone (`tools/phonics-audio/` says how they were made and
+  checked). Wherever a question, answer, explanation, hint, coach step, walkthrough or
+  Reading Road card names a sound (/m/, /ae/, /th/ as in this) the voice reads the words
+  and the game plays the sound. A blend (/k/ … /a/ … /t/) plays sound by sound, with the
+  pause a teacher leaves, then the word.
+- **A 🔊 row under any text that names sounds** plays each one again (and a blend's sounds
+  in order): full-size buttons, so a small child can tap them.
+- **🔈 MY SOUNDS** (the kindergartener's hub; 🔈 SOUNDS in the K, 1st and 2nd grade
+  libraries) shows all 45 in CKLA's order, grouped by the unit that teaches them, marked
+  ✓ had in class, 📍 in class now or coming up from the year plan. A tap plays the sound and
+  shows how to make it, its spellings, its key word and its "sister" sound (/p/ and /b/).
+- **🔊 Sound Lab** (all year, kindergarten and 1st grade): hear the first, middle or last
+  sound of a word, blend sounds into a word, count a word's sounds, put them in order,
+  change one sound to make a new word, and read silly words, the skills Maryland's
+  standards and the K-3 reading screener ask for.
+- **The text follows CKLA:** sounds in slashes, spellings in single quotes, a letter
+  "stands for" a sound (letters don't make sounds), magic e (never "silent e"), Tricky
+  Words taught the CKLA way, no guessing-from-the-picture hints.
+- **Words said right:** units ("6 cm" is "6 centimeters"), "7 x 5", degrees, a ruler's
+  numeral (Charles I), word parts on their own ("-ly", "re-"), the past tense of read,
+  and Maryland and Native names (Anne Arundel County the local way), as respellings for
+  the device's voice; choices that sound the same when read (their, there) are spelled.
+- **The parent dashboard** has 🔈 HEAR ALL 45 SOUNDS: a teacher's ear is the best check of
+  the recordings, which were made from a speech model's voice and checked by measurement.
+
 ## 📖 Reading Road
 
 A game map from first letter sounds to real comprehension, in the order Amplify
 CKLA teaches the sounds. Kindergarten: Sound Safari (listening only), Letter Lagoon,
 Blend Bridge, Digraph Den, Double Dock and Magic E Mountain; 1st grade: Owl Woods,
-Bossy R Ranch and Switch Station; grades 2-3: Big Word Bay (longer words); grades
+R-Controlled Ranch and Switch Station; grades 2-3: Big Word Bay (longer words); grades
 4-5: Detective Island (comprehension). Each stop teaches one piece of the code (or
 one comprehension skill) with learn cards, then gives a short story (read to the
 child in the first five stops; after that, one the child reads with only what has
@@ -267,8 +301,13 @@ The limits:
   reading packs follow the 2nd edition's units.
 - AACPS's health scope and sequence was not found. Health packs use general
   elementary health content and leave out family-life topics.
-- Read-aloud uses a voice from the device or browser, and it says "kuh" and "tuh"
-  when it sounds out a word (see above).
+- Words are read by a voice from the device or browser; letter sounds are recordings
+  made from a speech model's voice (Kokoro), checked by measurement rather than by a
+  teacher's ear, and a sound can be in a different voice from the words around it.
+  Respelled names (Anne Arundel, Piscataway, Wampanoag) are also not yet checked by ear.
+  Respellings were checked with a second speech engine (eSpeak), which reads them as meant;
+  the same engine still reads a capital letter A before "and" or "in" as the word "a", so a
+  device voice may too ("the A in cat").
 - No question cites a standard code; each is written to the content. A question can
   still be wrong. Corrections are welcome.
 
@@ -337,7 +376,8 @@ change, run at least `node packcheck.js` and `node smoke.js`. After an engine or
 input change, also `screens.js`, `platforms.js`, `saves.js` and `speech.js`; after
 changing questions or coaching steps, `coach.js`, and for K and 1st grade
 `readaloud.js`; after changing a math generator, `generators.js`; after changing
-the year plan, the hub or Mix & Match, `units.js`. After changing a
+the year plan, the hub or Mix & Match, `units.js`; after changing speech, sounds or
+the sounds page, `sounds.js`. After changing a
 fun module, run its own suite in `tools/modules/`; after changing the Reading Road's
 content, `node modules/readcheck.js` and `node modules/reading.test.js`. The iPad
 runs are Chromium with touch input at iPad screen sizes, not real Safari, so try a

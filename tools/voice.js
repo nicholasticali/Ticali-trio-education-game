@@ -48,8 +48,12 @@ let bad = 0; const fail = m => { bad++; console.log('FAIL ' + m); };
       // An early reader hears a K question.
       pickProfile('k'); document.querySelector('.buddy-chooser, #buddy-overlay') && (typeof buddyLater === 'function') && buddyLater();
       const pk = PACKS.k.find(x => x.tier === 'now'); startPack(pk.id); const go = document.querySelector('.briefing-go'); if (go) go.click();
-      await wait(300); window.__said.length = 0;
-      const btn = document.querySelector('.question-frame .js-speak'); btn.click(); await wait(250);
+      await wait(300);
+      // A phonics question, whatever unit the date puts class in: its sounds are recordings, its words the voice.
+      questions = [prepareQuestion({ type: 'mc', text: 'Put these sounds together: /m/ … /a/ … /t/. What word is it?', options: ['mat', 'map', 'man', 'mad'], correct: 0, why: 'x', hint: 'y' })];
+      qIdx = 0; renderQuestion(); await wait(100); window.__said.length = 0;
+      const btn = document.querySelector('.question-frame .js-speak'); btn.click();
+      for (let i = 0; i < 80 && (i < 3 || sayBusy()); i++) await wait(100);
       out.k = window.__said.slice();
       return out;
     });
@@ -57,9 +61,10 @@ let bad = 0; const fail = m => { bad++; console.log('FAIL ' + m); };
     const natural = !/^Samantha/.test(WANT[dev]);
     const last = r.k[r.k.length - 1] || {};
     if (dev === 'edge') {
-      // Jenny fails (no network) -> straight to a built-in voice, not the other online ones.
+      // Jenny fails (no network) -> straight to a built-in voice, not the other online ones, and the
+      // rest of the text (the words after the recorded sounds) stays with that built-in voice.
       const vs = r.k.map(x => x.voice);
-      if (!(vs[0] === WANT.edge && vs.length === 2 && /^Microsoft (Zira|David) - /.test(vs[1] || ''))) fail(`edge fallback order: ${JSON.stringify(vs)}`);
+      if (!(vs[0] === WANT.edge && vs.length >= 3 && vs.slice(1).every(v => /^Microsoft (Zira|David) - /.test(v || '')))) fail(`edge fallback order: ${JSON.stringify(vs)}`);
       if (!(last.rate === 0.85 && last.pitch === 1.05)) fail(`edge built-in fallback prosody ${last.rate}/${last.pitch}`);
     } else {
       if (last.voice !== WANT[dev]) fail(`${dev}: K question spoken by "${last.voice}"`);

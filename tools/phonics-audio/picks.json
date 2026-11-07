@@ -1,0 +1,52 @@
+{
+ "a": {
+  "carrier": "sˈæt",
+  "margin": 33.1,
+  "nearest_other": "e"
+ },
+ "e": {
+  "carrier": "tˈɛp",
+  "margin": 14.1,
+  "nearest_other": "a"
+ },
+ "i": {
+  "carrier": "bˈɪt",
+  "margin": 43.0,
+  "nearest_other": "e"
+ },
+ "o": {
+  "carrier": "kˈɑːp",
+  "margin": 2.3,
+  "nearest_other": "aw"
+ },
+ "u": {
+  "carrier": "kˈʌp",
+  "margin": 5.2,
+  "nearest_other": "a"
+ },
+ "ee": {
+  "carrier": "tˈiːp",
+  "margin": 140.5,
+  "nearest_other": "i"
+ },
+ "oo": {
+  "carrier": "tˈuːp",
+  "margin": 17.6,
+  "nearest_other": "i"
+ },
+ "oo2": {
+  "carrier": "bˈʊt",
+  "margin": 34.4,
+  "nearest_other": "aw"
+ },
+ "aw": {
+  "carrier": "fˈɔːt",
+  "margin": 40.9,
+  "nearest_other": "o"
+ },
+ "er": {
+  "carrier": "sˈɜːd",
+  "margin": 74.7,
+  "nearest_other": "e"
+ }
+}

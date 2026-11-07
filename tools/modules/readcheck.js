@@ -405,13 +405,15 @@ function checkLand(land, file, seen) {
     }
   });
 
-  // Accurate phonics: the voice must never be asked for an isolated stop
-  // sound ("t", "/t/", "tuh") — those come out as letter names or a schwa.
+  // Accurate phonics: a sound is written in CKLA notation (/t/), which the game
+  // plays from its recording. A respelled sound ("tuh", "kuh") or a bare letter
+  // standing for a stop sound ("t") would go to the speech voice, which says a
+  // letter name or adds a vowel.
   function stoppy(sid, at, text) {
     if (!isStr(text)) return;
     const t = text.trim().replace(/[.!?,]+$/, '');
-    if (/^\/?[bcdgkpqt]\/?$/i.test(t) || /\b(buh|duh|guh|kuh|puh|tuh)\b/i.test(t) || /\/[bcdgkpt]\//i.test(t)) {
-      warn(sid, at, `"${text}" asks the voice for an isolated stop sound; use a keyword ("p, like pig")`);
+    if (/^[bcdgkpqt]$/i.test(t) || /\b(buh|duh|guh|kuh|puh|tuh|juh|kwuh)\b/i.test(t)) {
+      warn(sid, at, `"${text}" asks the voice for a stop sound; write the sound in CKLA notation (/t/), which plays its recording`);
     }
   }
   return out;

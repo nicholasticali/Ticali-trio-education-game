@@ -2,8 +2,9 @@
 // double press does, and where focus goes.
 //   node speech.js [app.html]
 //
-// 1. speech and answers (laptop, then iPad): the voice says blends sound by
-//    sound ("c... a... t..." as "kuh, aaa, tuh") and drops emoji and check
+// 1. speech and answers (laptop, then iPad): a blend ("c... a... t...") is
+//    spoken as its recorded sounds, /k/ /a/ /t/, between the words, and the
+//    voice drops emoji and check
 //    marks, a picture-only line says nothing, prose keeps its "..."; the
 //    built-in voice priority (Samantha, Zira, Google US English); a screen
 //    change drops a pending auto-read; Enter or Space on a 🔊 inside a
@@ -42,7 +43,8 @@ async function speechAndAnswers(b) {
   // 1-2. speechify and voice choice
   let p = await mk(false);
   const sp = await p.evaluate(() => ({
-    blend: speechify('Blend: c... a... t... What word?'),
+    blend: JSON.stringify(sayPlan(speechify('Blend: c... a... t... What word?'))),
+    idem: ['Blend: c... a... t...', 'The /th/ in this', 'sss and mmm', '6 cm by 7 x 5'].every(x => speechify(speechify(x)) === speechify(x)),
     emoji: speechify('Which letter starts APPLE? 🍎'),
     pic: speechify('🔵'), check: speechify('✓ Right. Now PROVE it.'),
     prose: speechify('Wait... what? I see a cat.'),
@@ -50,7 +52,9 @@ async function speechAndAnswers(b) {
     v2: pickVoice([{ name: 'Microsoft David', lang: 'en-US' }, { name: 'Microsoft Zira', lang: 'en-US' }]).name,
     v3: pickVoice([{ name: 'Google UK English Female', lang: 'en-GB' }, { name: 'Google US English', lang: 'en-US' }]).name,
   }));
-  sp.blend === 'Blend: kuh, aaa, tuh, What word?' ? ok('sound-by-sound: ' + sp.blend) : bad('blend: ' + sp.blend);
+  sp.blend === JSON.stringify([{ speak: 'Blend' }, { clip: 'k' }, { clip: 'a' }, { clip: 't' }, { speak: 'What word?' }])
+    ? ok('sound-by-sound: Blend, the recorded /k/ /a/ /t/, What word?') : bad('blend: ' + sp.blend);
+  sp.idem ? ok('speechify is idempotent on sounds and units') : bad('speechify changes its own output');
   sp.emoji === 'Which letter starts APPLE?' ? ok('emoji dropped') : bad('emoji: ' + sp.emoji);
   sp.pic === '' ? ok('picture-only says nothing') : bad('pic: ' + sp.pic);
   sp.check === 'Right. Now PROVE it.' ? ok('check mark dropped') : bad('check: ' + sp.check);

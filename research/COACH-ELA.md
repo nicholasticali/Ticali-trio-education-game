@@ -88,7 +88,7 @@ Use **strategy and sound names, never unit or lesson numbers**, with the childre
 - CKLA's vowel sound names: short **/a/ /e/ /i/ /o/ /u/**; long **/ae/ /ee/ /ie/
   /oe/ /ue/** (as in cake, see, bike, home, cute); two **/oo/** sounds, as in soon
   and as in look (this file tells them apart by key word); **/ou/** (shout),
-  **/oi/** (coin), **/aw/** (paw), **/er/ /ar/ /or/**, and **/ə/** (schwa, grade 2).
+  **/oi/** (oil, CKLA's Spelling Card word), **/aw/** (paw), **/er/ /ar/ /or/**, and **/ə/** (schwa, grade 2).
 - **/x/** is one CKLA sound-spelling ('x' as in box), and **/qu/** is one ('qu' as in
   quilt). Do not turn them into /k/ /s/ or /k/ /w/ for a kindergartener.
 - There are two /th/ sounds: unvoiced as in **thin/moth** and voiced as in **this**.
@@ -280,7 +280,7 @@ one per coach.
 - Tricky Words: **he, she, we, be, me, they, their, my, by, you, your** (re-taught).
 
 **Step 12 · G1 Unit 3 (19 days; Reader *Fables*, 480L)** [C: G1 map; G1 Unit 3 guide]
-- New: /oo/ 'oo' (soon), /oo/ 'oo' (look), /ou/ 'ou' (shout), /oi/ 'oi' (coin), /aw/
+- New: /oo/ 'oo' (soon), /oo/ 'oo' (look), /ou/ 'ou' (shout), /oi/ 'oi' (oil), /aw/
   'aw' (paw); **Tricky Spelling 'oo'** (two sounds). Weekly spelling tests begin.
   The 'ow' (cow) and 'oy' (boy) spellings wait until grade 2.
 - Words (checked): moon, spoon, food, zoo, book, look, good, foot, shout, cloud, out,

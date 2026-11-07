@@ -1,0 +1,342 @@
+{
+ "p": {
+  "carrier": "pˈʌ",
+  "method": "initial_unvoiced2",
+  "cls": "stop"
+ },
+ "t": {
+  "carrier": "tˈʊ",
+  "method": "initial_unvoiced2",
+  "cls": "stop"
+ },
+ "k": {
+  "carrier": "kˈɑ",
+  "method": "initial_unvoiced2",
+  "cls": "stop"
+ },
+ "b": {
+  "carrier": "bˈɑ",
+  "method": "initial_voiced_stop2",
+  "fout": 0.02,
+  "cls": "stop"
+ },
+ "d": {
+  "carrier": "dˈæ",
+  "method": "initial_voiced_stop2",
+  "fout": 0.02,
+  "cls": "stop"
+ },
+ "g": {
+  "carrier": "ɡˈʌ",
+  "method": "initial_voiced_stop2",
+  "fout": 0.02,
+  "cls": "stop"
+ },
+ "ch": {
+  "carrier": "tʃˈɔ",
+  "method": "initial_unvoiced2",
+  "cls": "stop"
+ },
+ "j": {
+  "carrier": "dʒˈʌ",
+  "method": "initial_voiced_affricate",
+  "fout": 0.02,
+  "cls": "stop",
+  "opt": {
+   "prevoice": 8,
+   "keep": 3
+  }
+ },
+ "h": {
+  "carrier": "hˈʌ",
+  "method": "initial_unvoiced2",
+  "cls": "breath"
+ },
+ "m": {
+  "carrier": "ˈɛm",
+  "method": "final_nasal",
+  "hold": 0.75,
+  "cls": "cont",
+  "steady": 10
+ },
+ "n": {
+  "carrier": "ˈɑn",
+  "method": "final_nasal",
+  "hold": 0.75,
+  "cls": "cont",
+  "steady": 10
+ },
+ "ng": {
+  "carrier": "ˈɑŋ",
+  "method": "final_nasal",
+  "hold": 0.75,
+  "cls": "cont",
+  "steady": 10
+ },
+ "f": {
+  "carrier": "ˈʊf",
+  "method": "final_unvoiced",
+  "hold": 0.75,
+  "cls": "fric",
+  "level": -32
+ },
+ "s": {
+  "carrier": "ˈæs",
+  "method": "final_unvoiced",
+  "hold": 0.75,
+  "cls": "fric"
+ },
+ "sh": {
+  "carrier": "ˈɔʃ",
+  "method": "final_unvoiced",
+  "hold": 0.75,
+  "cls": "fric"
+ },
+ "th": {
+  "carrier": "ˈɔθ",
+  "method": "final_unvoiced",
+  "hold": 0.75,
+  "cls": "fric",
+  "level": -32,
+  "edge": 0.06
+ },
+ "v": {
+  "method": "voiced_hiss",
+  "hiss": "f",
+  "hum": "m",
+  "cls": "vfric",
+  "bar_db": -4,
+  "level": -28
+ },
+ "z": {
+  "method": "voiced_hiss",
+  "hiss": "s",
+  "hum": "m",
+  "cls": "vfric",
+  "bar_db": -8
+ },
+ "dh": {
+  "method": "voiced_hiss",
+  "hiss": "th",
+  "hum": "m",
+  "cls": "vfric",
+  "bar_db": -4,
+  "level": -28
+ },
+ "zh": {
+  "method": "voiced_hiss",
+  "hiss": "sh",
+  "hum": "m",
+  "cls": "vfric",
+  "bar_db": -8
+ },
+ "l": {
+  "carrier": "lˈʌ",
+  "method": "initial_sonorant",
+  "hold": 0.75,
+  "cls": "cont",
+  "steady": 10
+ },
+ "r": {
+  "carrier": "ɹˈɑ",
+  "method": "glide",
+  "opt": {
+   "len": 0.15,
+   "skip": 3
+  },
+  "cls": "glide",
+  "fout": 0.05,
+  "fin": 0.02
+ },
+ "w": {
+  "carrier": "wˈɑ",
+  "method": "glide",
+  "opt": {
+   "len": 0.16,
+   "skip": 3
+  },
+  "cls": "glide",
+  "fout": 0.05,
+  "fin": 0.02
+ },
+ "y": {
+  "carrier": "jˈɑ",
+  "method": "glide",
+  "opt": {
+   "len": 0.12,
+   "skip": 3
+  },
+  "cls": "glide",
+  "fout": 0.05,
+  "fin": 0.02
+ },
+ "x": {
+  "carrier": "ˈɑks",
+  "method": "final_cluster",
+  "cls": "fric"
+ },
+ "qu": {
+  "method": "concat",
+  "parts": [
+   "k",
+   "w"
+  ],
+  "gap": 0.0,
+  "cls": "stop"
+ },
+ "a": {
+  "method": "vowel_typical",
+  "carriers": [
+   "sˈæt"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "e": {
+  "method": "vowel_typical",
+  "carriers": [
+   "tˈɛp"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "i": {
+  "method": "vowel_typical",
+  "carriers": [
+   "bˈɪt"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "o": {
+  "method": "vowel_typical",
+  "carriers": [
+   "kˈɑːp"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "u": {
+  "method": "vowel_typical",
+  "carriers": [
+   "kˈʌp"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "ae": {
+  "carrier": "pˈeɪ",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "ee": {
+  "method": "vowel_typical",
+  "carriers": [
+   "tˈiːp"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "ie": {
+  "carrier": "pˈaɪ",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "oe": {
+  "carrier": "pˈoʊ",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "ue": {
+  "carrier": "pˈjuː",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "oo": {
+  "method": "vowel_typical",
+  "carriers": [
+   "tˈuːp"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "oo2": {
+  "method": "vowel_typical",
+  "carriers": [
+   "bˈʊt"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "ou": {
+  "carrier": "pˈaʊ",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "oi": {
+  "carrier": "pˈɔɪ",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "aw": {
+  "method": "vowel_typical",
+  "carriers": [
+   "fˈɔːt"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "er": {
+  "method": "vowel_typical",
+  "carriers": [
+   "sˈɜːd"
+  ],
+  "core": 20,
+  "hold": 0.5,
+  "cls": "vowel"
+ },
+ "ar": {
+  "carrier": "pˈɑːɹ",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "or": {
+  "carrier": "pˈɔːɹ",
+  "method": "vowel_final",
+  "cls": "vowel",
+  "fin": 0.03,
+  "fout": 0.08
+ },
+ "schwa": {
+  "method": "vowel_typical",
+  "carriers": [
+   "kˈʌp"
+  ],
+  "core": 16,
+  "hold": 0.24,
+  "cls": "vowel"
+ }
+}

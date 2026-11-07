@@ -1,0 +1,893 @@
+[
+ {
+  "id": "m",
+  "n": "/m/",
+  "key": "mat",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "m"
+  ],
+  "alt": {
+   "K": [
+    "mm"
+   ]
+  },
+  "taught": "K",
+  "tip": "Lips together. Hum: mmm.",
+  "sister": null,
+  "fb": "the first sound in mat"
+ },
+ {
+  "id": "a",
+  "n": "/a/",
+  "key": "mad",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "a"
+  ],
+  "alt": {},
+  "taught": "K",
+  "tip": "Open your mouth wide: aaa.",
+  "sister": null,
+  "fb": "the middle sound in mad"
+ },
+ {
+  "id": "t",
+  "n": "/t/",
+  "key": "tag",
+  "kind": "clipped",
+  "voiced": false,
+  "spell": [
+   "t"
+  ],
+  "alt": {
+   "K": [
+    "tt"
+   ],
+   "1": [
+    "ed"
+   ]
+  },
+  "taught": "K",
+  "tip": "Tongue taps behind your top teeth. Quick! No uh after it.",
+  "sister": "d",
+  "fb": "the first sound in tag"
+ },
+ {
+  "id": "d",
+  "n": "/d/",
+  "key": "dad",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "d"
+  ],
+  "alt": {
+   "K": [
+    "dd"
+   ],
+   "1": [
+    "ed"
+   ]
+  },
+  "taught": "K",
+  "tip": "Like /t/ with your voice on. Quick! No uh after it.",
+  "sister": "t",
+  "fb": "the first sound in dad"
+ },
+ {
+  "id": "o",
+  "n": "/o/",
+  "key": "mom",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "o"
+  ],
+  "alt": {
+   "2": [
+    "a"
+   ]
+  },
+  "taught": "K",
+  "tip": "Open wide, like at the doctor: ah.",
+  "sister": null,
+  "fb": "the middle sound in mom"
+ },
+ {
+  "id": "k",
+  "n": "/k/",
+  "key": "cat",
+  "kind": "clipped",
+  "voiced": false,
+  "spell": [
+   "c"
+  ],
+  "alt": {
+   "K": [
+    "k",
+    "ck",
+    "cc"
+   ],
+   "1": [
+    "ch"
+   ]
+  },
+  "taught": "K",
+  "tip": "The back of your tongue goes up. A quick puff of air.",
+  "sister": "g",
+  "fb": "the first sound in cat"
+ },
+ {
+  "id": "g",
+  "n": "/g/",
+  "key": "dog",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "g"
+  ],
+  "alt": {
+   "K": [
+    "gg"
+   ]
+  },
+  "taught": "K",
+  "tip": "Like /k/ with your voice on. Quick! No uh after it.",
+  "sister": "k",
+  "fb": "the last sound in dog"
+ },
+ {
+  "id": "i",
+  "n": "/i/",
+  "key": "dig",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "i"
+  ],
+  "alt": {
+   "2": [
+    "y"
+   ]
+  },
+  "taught": "K",
+  "tip": "Open your mouth just a little: i.",
+  "sister": null,
+  "fb": "the middle sound in dig"
+ },
+ {
+  "id": "n",
+  "n": "/n/",
+  "key": "man",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "n"
+  ],
+  "alt": {
+   "K": [
+    "nn"
+   ],
+   "1": [
+    "kn"
+   ]
+  },
+  "taught": "K",
+  "tip": "Tongue up behind your top teeth. Hum through your nose: nnn.",
+  "sister": null,
+  "fb": "the last sound in man"
+ },
+ {
+  "id": "h",
+  "n": "/h/",
+  "key": "hat",
+  "kind": "clipped",
+  "voiced": false,
+  "spell": [
+   "h"
+  ],
+  "alt": {},
+  "taught": "K",
+  "tip": "Just a little breath of air: h.",
+  "sister": null,
+  "fb": "the first sound in hat"
+ },
+ {
+  "id": "s",
+  "n": "/s/",
+  "key": "sit",
+  "kind": "held",
+  "voiced": false,
+  "spell": [
+   "s"
+  ],
+  "alt": {
+   "K": [
+    "ss"
+   ],
+   "1": [
+    "c",
+    "ce",
+    "se"
+   ]
+  },
+  "taught": "K",
+  "tip": "Teeth close together. Hiss like a snake: sss.",
+  "sister": "z",
+  "fb": "the first sound in sit"
+ },
+ {
+  "id": "f",
+  "n": "/f/",
+  "key": "fan",
+  "kind": "held",
+  "voiced": false,
+  "spell": [
+   "f"
+  ],
+  "alt": {
+   "K": [
+    "ff"
+   ],
+   "2": [
+    "ph"
+   ]
+  },
+  "taught": "K",
+  "tip": "Top teeth on your bottom lip. Blow: fff.",
+  "sister": "v",
+  "fb": "the first sound in fan"
+ },
+ {
+  "id": "v",
+  "n": "/v/",
+  "key": "van",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "v"
+  ],
+  "alt": {
+   "1": [
+    "ve"
+   ]
+  },
+  "taught": "K",
+  "tip": "Top teeth on your bottom lip. Buzz: vvv.",
+  "sister": "f",
+  "fb": "the first sound in van"
+ },
+ {
+  "id": "z",
+  "n": "/z/",
+  "key": "zigzag",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "z"
+  ],
+  "alt": {
+   "K": [
+    "s",
+    "zz"
+   ],
+   "1": [
+    "ze",
+    "se"
+   ]
+  },
+  "taught": "K",
+  "tip": "Teeth close together. Buzz like a bee: zzz.",
+  "sister": "s",
+  "fb": "the first sound in zigzag"
+ },
+ {
+  "id": "p",
+  "n": "/p/",
+  "key": "pig",
+  "kind": "clipped",
+  "voiced": false,
+  "spell": [
+   "p"
+  ],
+  "alt": {
+   "K": [
+    "pp"
+   ]
+  },
+  "taught": "K",
+  "tip": "Lips together, then pop! A puff of air.",
+  "sister": "b",
+  "fb": "the first sound in pig"
+ },
+ {
+  "id": "e",
+  "n": "/e/",
+  "key": "pen",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "e"
+  ],
+  "alt": {
+   "2": [
+    "ea"
+   ]
+  },
+  "taught": "K",
+  "tip": "Open your mouth a bit more than for /i/: e.",
+  "sister": null,
+  "fb": "the middle sound in pen"
+ },
+ {
+  "id": "b",
+  "n": "/b/",
+  "key": "bed",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "b"
+  ],
+  "alt": {
+   "K": [
+    "bb"
+   ]
+  },
+  "taught": "K",
+  "tip": "Lips together, then pop, with your voice on. Quick! No uh after it.",
+  "sister": "p",
+  "fb": "the first sound in bed"
+ },
+ {
+  "id": "l",
+  "n": "/l/",
+  "key": "log",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "l"
+  ],
+  "alt": {
+   "K": [
+    "ll"
+   ]
+  },
+  "taught": "K",
+  "tip": "Tongue tip up behind your top teeth: lll.",
+  "sister": null,
+  "fb": "the first sound in log"
+ },
+ {
+  "id": "r",
+  "n": "/r/",
+  "key": "rat",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "r"
+  ],
+  "alt": {
+   "K": [
+    "rr"
+   ],
+   "1": [
+    "wr"
+   ]
+  },
+  "taught": "K",
+  "tip": "Tongue pulled back. Say it quick, or it turns into /er/.",
+  "sister": null,
+  "fb": "the first sound in rat"
+ },
+ {
+  "id": "u",
+  "n": "/u/",
+  "key": "mug",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "u"
+  ],
+  "alt": {
+   "2": [
+    "o",
+    "o_e",
+    "ou"
+   ]
+  },
+  "taught": "K",
+  "tip": "Let your mouth relax: u.",
+  "sister": null,
+  "fb": "the middle sound in mug"
+ },
+ {
+  "id": "w",
+  "n": "/w/",
+  "key": "wig",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "w"
+  ],
+  "alt": {
+   "1": [
+    "wh"
+   ]
+  },
+  "taught": "K",
+  "tip": "Lips in a little circle, then open. Quick: w.",
+  "sister": null,
+  "fb": "the first sound in wig"
+ },
+ {
+  "id": "j",
+  "n": "/j/",
+  "key": "jam",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "j"
+  ],
+  "alt": {
+   "1": [
+    "g",
+    "ge"
+   ],
+   "2": [
+    "dge"
+   ]
+  },
+  "taught": "K",
+  "tip": "Lips push out. A quick buzz: j.",
+  "sister": "ch",
+  "fb": "the first sound in jam"
+ },
+ {
+  "id": "y",
+  "n": "/y/",
+  "key": "yes",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "y"
+  ],
+  "alt": {},
+  "taught": "K",
+  "tip": "Smile, then say it quick: y.",
+  "sister": null,
+  "fb": "the first sound in yes"
+ },
+ {
+  "id": "x",
+  "n": "/x/",
+  "key": "box",
+  "kind": "clipped",
+  "voiced": false,
+  "spell": [
+   "x"
+  ],
+  "alt": {},
+  "taught": "K",
+  "tip": "Two sounds, fast: /k/ and /s/.",
+  "sister": null,
+  "fb": "the last sound in box"
+ },
+ {
+  "id": "ch",
+  "n": "/ch/",
+  "key": "chips",
+  "kind": "clipped",
+  "voiced": false,
+  "spell": [
+   "ch"
+  ],
+  "alt": {
+   "1": [
+    "tch"
+   ]
+  },
+  "taught": "K",
+  "tip": "Lips push out. Quick, like a little sneeze: ch.",
+  "sister": "j",
+  "fb": "the first sound in chips"
+ },
+ {
+  "id": "sh",
+  "n": "/sh/",
+  "key": "ship",
+  "kind": "held",
+  "voiced": false,
+  "spell": [
+   "sh"
+  ],
+  "alt": {
+   "2": [
+    "ti"
+   ]
+  },
+  "taught": "K",
+  "tip": "Lips push out. Hush a baby: shhh.",
+  "sister": "zh",
+  "fb": "the first sound in ship"
+ },
+ {
+  "id": "th",
+  "n": "/th/",
+  "key": "thin",
+  "kind": "held",
+  "voiced": false,
+  "spell": [
+   "th"
+  ],
+  "alt": {},
+  "taught": "K",
+  "tip": "Tongue between your teeth. Blow softly: th.",
+  "sister": "dh",
+  "fb": "the first sound in thin"
+ },
+ {
+  "id": "dh",
+  "n": "/th/",
+  "key": "this",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "th"
+  ],
+  "alt": {},
+  "taught": "K",
+  "tip": "Tongue between your teeth. Buzz: th.",
+  "sister": "th",
+  "fb": "the first sound in this"
+ },
+ {
+  "id": "qu",
+  "n": "/qu/",
+  "key": "quilt",
+  "kind": "clipped",
+  "voiced": false,
+  "spell": [
+   "qu"
+  ],
+  "alt": {},
+  "taught": "K",
+  "tip": "Two sounds, fast: /k/ and /w/.",
+  "sister": null,
+  "fb": "the first sound in quilt"
+ },
+ {
+  "id": "ng",
+  "n": "/ng/",
+  "key": "ring",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "ng"
+  ],
+  "alt": {
+   "1": [
+    "n"
+   ]
+  },
+  "taught": "K",
+  "tip": "Back of your tongue up. Hum through your nose: ng.",
+  "sister": null,
+  "fb": "the last sound in ring"
+ },
+ {
+  "id": "ee",
+  "n": "/ee/",
+  "key": "bee",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "ee"
+  ],
+  "alt": {
+   "2": [
+    "ea",
+    "e_e",
+    "y",
+    "ey",
+    "e"
+   ]
+  },
+  "taught": "K",
+  "tip": "A big smile: ee.",
+  "sister": null,
+  "fb": "the last sound in bee"
+ },
+ {
+  "id": "ae",
+  "n": "/ae/",
+  "key": "cake",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "a_e"
+  ],
+  "alt": {
+   "1": [
+    "ai",
+    "ay"
+   ],
+   "2": [
+    "a",
+    "ey",
+    "ei",
+    "eigh"
+   ]
+  },
+  "taught": "K",
+  "tip": "Your mouth moves as you say it: ae.",
+  "sister": null,
+  "fb": "the middle sound in cake"
+ },
+ {
+  "id": "ie",
+  "n": "/ie/",
+  "key": "bite",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "i_e"
+  ],
+  "alt": {
+   "2": [
+    "ie",
+    "i",
+    "igh",
+    "y"
+   ]
+  },
+  "taught": "K",
+  "tip": "Open, then smile: ie.",
+  "sister": null,
+  "fb": "the middle sound in bite"
+ },
+ {
+  "id": "oe",
+  "n": "/oe/",
+  "key": "home",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "o_e"
+  ],
+  "alt": {
+   "1": [
+    "oa"
+   ],
+   "2": [
+    "oe",
+    "o",
+    "ow"
+   ]
+  },
+  "taught": "K",
+  "tip": "Round your lips: oe.",
+  "sister": null,
+  "fb": "the middle sound in home"
+ },
+ {
+  "id": "ue",
+  "n": "/ue/",
+  "key": "cute",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "u_e"
+  ],
+  "alt": {
+   "2": [
+    "ue",
+    "u",
+    "ew"
+   ]
+  },
+  "taught": "K",
+  "tip": "Two sounds glued together: /y/ and /oo/.",
+  "sister": null,
+  "fb": "the middle sound in cute"
+ },
+ {
+  "id": "oo",
+  "n": "/oo/",
+  "key": "soon",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "oo"
+  ],
+  "alt": {
+   "2": [
+    "u_e",
+    "u",
+    "ue",
+    "ew",
+    "ou"
+   ]
+  },
+  "taught": "1",
+  "tip": "Lips in a small circle: oo, like in soon.",
+  "sister": "oo2",
+  "fb": "the middle sound in soon"
+ },
+ {
+  "id": "oo2",
+  "n": "/oo/",
+  "key": "look",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "oo"
+  ],
+  "alt": {
+   "2": [
+    "u"
+   ]
+  },
+  "taught": "1",
+  "tip": "Lips just a little round: oo, like in look.",
+  "sister": "oo",
+  "fb": "the middle sound in look"
+ },
+ {
+  "id": "ou",
+  "n": "/ou/",
+  "key": "shout",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "ou"
+  ],
+  "alt": {
+   "2": [
+    "ow"
+   ]
+  },
+  "taught": "1",
+  "tip": "Like when you bump your knee: ou!",
+  "sister": null,
+  "fb": "the middle sound in shout"
+ },
+ {
+  "id": "oi",
+  "n": "/oi/",
+  "key": "oil",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "oi"
+  ],
+  "alt": {
+   "2": [
+    "oy"
+   ]
+  },
+  "taught": "1",
+  "tip": "Round, then smile: oi.",
+  "sister": null,
+  "fb": "the first sound in oil"
+ },
+ {
+  "id": "aw",
+  "n": "/aw/",
+  "key": "paw",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "aw"
+  ],
+  "alt": {
+   "2": [
+    "au",
+    "augh",
+    "al"
+   ]
+  },
+  "taught": "1",
+  "tip": "Lips a little round: aw. Not the same as /o/ in mom.",
+  "sister": null,
+  "fb": "the last sound in paw"
+ },
+ {
+  "id": "er",
+  "n": "/er/",
+  "key": "her",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "er"
+  ],
+  "alt": {
+   "2": [
+    "ir",
+    "ur",
+    "ar",
+    "or"
+   ]
+  },
+  "taught": "1",
+  "tip": "One sound: er.",
+  "sister": null,
+  "fb": "the last sound in her"
+ },
+ {
+  "id": "ar",
+  "n": "/ar/",
+  "key": "car",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "ar"
+  ],
+  "alt": {},
+  "taught": "1",
+  "tip": "One sound: ar.",
+  "sister": null,
+  "fb": "the last sound in car"
+ },
+ {
+  "id": "or",
+  "n": "/or/",
+  "key": "for",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "or"
+  ],
+  "alt": {
+   "2": [
+    "ar",
+    "ore",
+    "oor"
+   ]
+  },
+  "taught": "1",
+  "tip": "One sound: or.",
+  "sister": null,
+  "fb": "the last sound in for"
+ },
+ {
+  "id": "schwa",
+  "n": "/ə/",
+  "key": "about",
+  "kind": "clipped",
+  "voiced": true,
+  "spell": [
+   "a"
+  ],
+  "alt": {
+   "2": [
+    "e",
+    "al",
+    "il",
+    "el",
+    "le"
+   ]
+  },
+  "taught": "2",
+  "tip": "A quick, lazy uh, like the a in about.",
+  "sister": null,
+  "fb": "the first sound in about"
+ },
+ {
+  "id": "zh",
+  "n": "/zh/",
+  "key": "treasure",
+  "kind": "held",
+  "voiced": true,
+  "spell": [
+   "s"
+  ],
+  "alt": {},
+  "taught": "later",
+  "tip": "Lips push out. Buzz: zh.",
+  "sister": "sh",
+  "fb": "the middle sound in treasure"
+ }
+]

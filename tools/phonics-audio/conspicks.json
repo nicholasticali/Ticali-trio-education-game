@@ -1,0 +1,88 @@
+{
+ "s": {
+  "carrier": "ˈæs",
+  "method": "final_unvoiced"
+ },
+ "sh": {
+  "carrier": "ˈɔʃ",
+  "method": "final_unvoiced"
+ },
+ "f": {
+  "carrier": "ˈʊf",
+  "method": "final_unvoiced"
+ },
+ "th": {
+  "carrier": "ˈɔθ",
+  "method": "final_unvoiced"
+ },
+ "p": {
+  "carrier": "pˈʌ",
+  "method": "initial_unvoiced2",
+  "margin": 70.7,
+  "nearest_other": "k",
+  "cut_s": 0.084
+ },
+ "t": {
+  "carrier": "tˈʊ",
+  "method": "initial_unvoiced2",
+  "margin": 78.5,
+  "nearest_other": "k",
+  "cut_s": 0.124
+ },
+ "k": {
+  "carrier": "kˈɑ",
+  "method": "initial_unvoiced2",
+  "margin": 37.3,
+  "nearest_other": "p",
+  "cut_s": 0.109
+ },
+ "ch": {
+  "carrier": "tʃˈɔ",
+  "method": "initial_unvoiced2",
+  "margin": 139.3,
+  "nearest_other": "t",
+  "cut_s": 0.099
+ },
+ "b": {
+  "carrier": "bˈɑ",
+  "method": "initial_voiced_stop2",
+  "margin": 77.9,
+  "nearest_other": "g",
+  "cut_s": 0.065
+ },
+ "d": {
+  "carrier": "dˈæ",
+  "method": "initial_voiced_stop2",
+  "margin": 47.8,
+  "nearest_other": "g",
+  "cut_s": 0.08
+ },
+ "g": {
+  "carrier": "ɡˈʌ",
+  "method": "initial_voiced_stop2",
+  "margin": 10.7,
+  "nearest_other": "d",
+  "cut_s": 0.08
+ },
+ "m": {
+  "carrier": "ˈɛm",
+  "method": "final_nasal",
+  "margin": 62.1,
+  "nearest_other": "n",
+  "cut_s": 0.13
+ },
+ "n": {
+  "carrier": "ˈɑn",
+  "method": "final_nasal",
+  "margin": 52.4,
+  "nearest_other": "m",
+  "cut_s": 0.1
+ },
+ "ng": {
+  "carrier": "ˈɑŋ",
+  "method": "final_nasal",
+  "margin": 77.7,
+  "nearest_other": "n",
+  "cut_s": 0.095
+ }
+}
