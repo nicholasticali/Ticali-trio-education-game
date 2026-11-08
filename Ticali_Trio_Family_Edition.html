@@ -5138,6 +5138,120 @@
     .question-frame { animation: none; }
   }
 
+  /* ═══ 🦝 SCOUT, THE RACCOON GUIDE ═══ */
+  .scout-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .scout-svg .sc-all { transform-box: view-box; transform-origin: 60px 118px; animation: scBreathe 3.4s ease-in-out infinite; }
+  .scout-svg .sc-tail { transform-box: view-box; transform-origin: 82px 98px; animation: scTail 3.4s ease-in-out infinite; }
+  .scout-svg .sc-arm-r { transform-box: view-box; transform-origin: 80px 88px; }
+  .scout-svg .sc-lid { transform-box: fill-box; transform-origin: center top; transform: scaleY(0); animation: scBlink 5.2s infinite; }
+  .scout-svg .sc-lid + .sc-lid { animation-delay: 0.04s; }
+  .scout-svg .sc-look { transition: transform 0.12s ease-out; }
+  .scout-svg .sc-mouth-open { opacity: 0; }
+  @keyframes scBreathe { 0%, 100% { transform: translateY(0) scale(1, 1); } 50% { transform: translateY(0.6px) scale(1.012, 0.988); } }
+  @keyframes scTail { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
+  @keyframes scBlink { 0%, 91%, 97%, 100% { transform: scaleY(0); } 94% { transform: scaleY(1); } }
+  /* What Scout does when tapped, and while talking. */
+  .scout-do-wave .scout-svg .sc-arm-r { animation: scWave 1s ease-in-out; }
+  @keyframes scWave { 0% { transform: rotate(0); } 25% { transform: rotate(-150deg); } 45% { transform: rotate(-115deg); } 65% { transform: rotate(-150deg); } 85% { transform: rotate(-120deg); } 100% { transform: rotate(0); } }
+  .scout-do-hop .scout-svg .sc-all { animation: scHop 0.75s cubic-bezier(.3, 1.4, .6, 1); }
+  @keyframes scHop { 0% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(2px) scale(1.08, 0.9); } 45% { transform: translateY(-16px) scale(0.96, 1.05); } 75% { transform: translateY(0) scale(1.06, 0.94); } 100% { transform: translateY(0) scale(1, 1); } }
+  .scout-do-twirl .scout-svg .sc-tail { animation: scTwirl 0.9s ease-in-out; }
+  @keyframes scTwirl { 0% { transform: rotate(0); } 30% { transform: rotate(-32deg); } 60% { transform: rotate(16deg); } 100% { transform: rotate(0); } }
+  .scout-do-wiggle .scout-svg .sc-head { transform-box: view-box; transform-origin: 60px 80px; animation: scWiggle 0.8s ease-in-out; }
+  @keyframes scWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+  .scout-talking .scout-svg .sc-mouth { opacity: 0; }
+  .scout-talking .scout-svg .sc-mouth-open { animation: scTalk 0.26s ease-in-out infinite alternate; }
+  @keyframes scTalk { from { opacity: 1; transform: scaleY(1); } to { opacity: 1; transform: scaleY(0.45); } }
+  .scout-svg .sc-mouth-open { transform-box: fill-box; transform-origin: center top; }
+  @media (prefers-reduced-motion: reduce) {
+    .scout-svg *, .scout-svg { animation: none !important; transition: none !important; }
+    .scout-svg .sc-lid { transform: scaleY(0) !important; }
+    .scout-talking .scout-svg .sc-mouth-open { opacity: 1; }
+  }
+  /* Scout is a button: a tap waves, hops or twirls, and Scout says something. */
+  .scout-pal {
+    flex: none; width: 96px; height: 96px; padding: 0; margin: 0; background: none; border: 0; cursor: pointer;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none;
+  }
+  .scout-pal:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 12px; }
+  .scout-bubble {
+    position: relative; flex: 1; min-width: 0; background: white; border: 3px solid var(--ink); border-radius: 14px;
+    box-shadow: 4px 4px 0 var(--ink); padding: 0.7rem 0.9rem;
+  }
+  .scout-bubble::before {   /* the bubble's tail, pointing at Scout */
+    content: ''; position: absolute; left: -13px; top: 30px; width: 18px; height: 18px; background: white;
+    border-left: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: rotate(45deg);
+  }
+  .scout-kicker {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 0.2rem;
+  }
+  .scout-line { font-family: 'Fraunces', 'Iowan Old Style', Georgia, 'Times New Roman', serif; font-size: 1.08rem; line-height: 1.45; margin: 0; }
+  /* The title screen: Scout says hello. */
+  .scout-hello { display: flex; align-items: center; gap: 1rem; max-width: 560px; margin: 0 auto 1.5rem; text-align: left; }
+  /* On a wide screen Scout stands beside the logo, so the three cards stay on the first screen. */
+  @media (min-width: 1100px) {
+    .title-screen { position: relative; }
+    .scout-hello { position: absolute; top: 30px; left: calc(50% + 178px); width: min(400px, calc(50% - 205px)); margin: 0; align-items: flex-start; }
+    .scout-hello .scout-pal { width: 88px; height: 88px; }
+    .scout-hello .scout-bubble::before { top: 26px; }
+    .scout-hello .scout-line { font-size: 1rem; }
+  }
+  /* A child's hub: Scout's tip and what to do about it. */
+  .scout-guide { display: flex; align-items: flex-start; gap: 1rem; margin: 0 0 1.5rem; }
+  .scout-guide .scout-pal { width: 104px; height: 104px; }
+  .scout-acts { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+  .scout-acts button {
+    min-height: 48px; padding: 0.45rem 0.85rem; cursor: pointer; touch-action: manipulation;
+    border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); background: white; color: var(--ink);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.78rem; letter-spacing: 0.5px;
+  }
+  .scout-acts .scout-go { background: var(--ink); color: white; box-shadow: 3px 3px 0 var(--user-color); }
+  .scout-acts button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .scout-acts .scout-go[hidden] { display: none; }
+  .profile-k .scout-acts button, body.scout-k .scout-acts button { min-height: 56px; }
+  /* A part of the hub Scout is pointing at. */
+  .scout-spot { position: relative; z-index: 2; outline: 4px solid var(--gold); outline-offset: 5px; animation: scSpot 1.6s ease-in-out infinite; }
+  .scout-spot-flash { outline: 4px solid var(--gold); outline-offset: 5px; animation: scSpot 0.8s ease-in-out 3; }
+  @keyframes scSpot { 0%, 100% { outline-color: var(--gold); } 50% { outline-color: var(--user-color); } }
+  /* SHOW ME AROUND: Scout's speech bubble stays at the bottom while the hub scrolls behind it. */
+  .scout-tour {
+    position: fixed; left: 50%; bottom: calc(0.75rem + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 9000;
+    width: min(560px, calc(100vw - 1.5rem)); display: flex; align-items: flex-end; gap: 0.6rem;
+    background: white; border: 3px solid var(--ink); border-radius: 16px; box-shadow: 6px 6px 0 var(--ink); padding: 0.7rem 0.8rem;
+  }
+  .scout-tour-pal { flex: none; width: 76px; height: 76px; }
+  .scout-tour-main { flex: 1; min-width: 0; }
+  .scout-tour-text { font-family: 'Fraunces', 'Iowan Old Style', Georgia, 'Times New Roman', serif; font-size: 1.05rem; line-height: 1.4; margin: 0 1.8rem 0.5rem 0; }
+  .scout-tour-acts { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .scout-tour-acts > button:not(.voice-btn) {
+    min-height: 48px; padding: 0.4rem 0.9rem; cursor: pointer; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    background: white; color: var(--ink); font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.8rem;
+  }
+  .scout-tour-acts .scout-tour-next { background: var(--ink); color: white; box-shadow: 3px 3px 0 var(--user-color); margin-left: auto; }
+  .scout-tour-acts > button:disabled { opacity: 0.4; cursor: default; }
+  .scout-tour-x {
+    position: absolute; top: 0.35rem; right: 0.35rem; width: 44px; height: 44px; border: 0; background: none;
+    font-size: 1.1rem; cursor: pointer; color: var(--ink);
+  }
+  body.scout-touring .app { padding-bottom: 200px; }
+  .scout-tour .voice-btn { min-width: 48px; min-height: 48px; }
+  body.scout-k .scout-tour .voice-btn { min-width: 56px; min-height: 56px; }
+  body.scout-k .scout-tour-acts > button:not(.voice-btn), body.scout-k .scout-tour-x { min-height: 56px; min-width: 56px; }
+  /* SHOW ME HOW is Scout's: a small Scout in its header. */
+  .coach-kicker { display: flex; align-items: center; gap: 0.5rem; }
+  .coach-scout { display: inline-block; flex: none; width: 46px; height: 46px; margin: -0.3rem 0 -0.3rem -0.2rem; }
+  @media (max-width: 480px) {
+    .scout-hello { gap: 0.6rem; }
+    .scout-hello .scout-pal, .scout-guide .scout-pal { width: 72px; height: 72px; }
+    .scout-guide { gap: 0.6rem; }
+    .scout-line { font-size: 1rem; }
+    .scout-bubble::before { top: 22px; left: -11px; width: 14px; height: 14px; }
+    .scout-tour-pal { width: 56px; height: 56px; }
+    .scout-tour-text { font-size: 1rem; }
+    .scout-acts button { flex: 1 1 auto; font-size: 0.72rem; padding: 0.4rem 0.55rem; }
+  }
+
   /* ─── Printing a round / work paper ─── */
   @media print {
     .quiz-top, .parent-link, .next-btn, .scratch-btn, .autoread-btn,
@@ -135844,6 +135958,7 @@ function renderProfileSelect() {
       <div class="brand-v">🏆 COOLEST KIDS EVER · FAMILY EDITION 🏆</div>
       <div class="brand-tag">Math · Reading · Science · Puzzles</div>
       <button class="about-link" onclick="renderAbout()">ℹ️ For grown-ups: about this game</button>
+      ${scoutTitleHtml()}
       <div class="profiles">${cards}</div>
       ${titleGradesHtml()}
       ${FUN.html('titleExtra', {})}
@@ -136237,6 +136352,7 @@ function renderHub() {
       </div>
 
       ${reviewAlert}
+      ${scoutHubHtml(p)}
       ${ownPlan ? yearNowStripHtml(p.id) : ''}
       ${(() => { const zone = FUN.html('hubTop', { profile: p }); return zone ? `<div class="fun-zone">${zone}</div>` : ''; })()}
 
@@ -138059,6 +138175,10 @@ function renderAbout() {
             plays all ${PHONICS_SOUNDS.length} in CKLA's order, and a 🔊 row under any question or step plays the sounds it names.
             The 🔊 Sound Lab, open all year in kindergarten and 1st grade, practices hearing the first, middle and last sound of
             a word, blending, counting, ordering and changing sounds, and reading silly words.</li>
+          <li><strong>A guide.</strong> 🦝 Scout the raccoon says hello on the title screen, suggests what to play next on each
+            child's hub (the unit class is on, today's missions, the Reading Road), shows the hub around with 🧭 SHOW ME
+            AROUND and walks the child through 💡 SHOW ME HOW. A tap on Scout reads the tip aloud. Scout never pops up
+            uninvited.</li>
           <li><strong>Keep it fun and kind.</strong> ${funList()}. A wrong answer never takes away progress.</li>
         </ul>
       </div>
@@ -139649,7 +139769,7 @@ function renderCoach() {
       <div class="tut-modal coach-modal${earlyReader() ? ' early' : ''}">
         <div class="tut-header coach-header">
           <button class="tut-close" onclick="closeCoach()" aria-label="Close">✕</button>
-          <div class="coach-kicker">🦉 SHOW ME HOW</div>
+          <div class="coach-kicker"><span class="coach-scout" aria-hidden="true">${scoutSvg()}</span>SHOW ME HOW</div>
           <h3>${c.name}</h3>
         </div>
         <div class="tut-body">
@@ -139674,7 +139794,7 @@ function renderCoach() {
   // The question behind stays put and out of the Tab order until the coach closes.
   app.inert = true;
   focusFirst(['#coach-next']);
-  if (coachState.voice) setTimeout(() => { if (coachState && coachState.i === i) speakText(plainText(c.steps[i])); }, 150);
+  if (coachState.voice) setTimeout(() => { if (coachState && coachState.i === i) { speakText(plainText(c.steps[i])); scoutTalk(document.querySelector('#coach-overlay .coach-kicker')); } }, 150);
 }
 
 function coachNext() {
@@ -140035,6 +140155,411 @@ document.addEventListener('keydown', e => {
     }
   });
 })();
+
+// ═══════════════════════════════════════════════════════════════
+// 🦝 SCOUT, THE RACCOON GUIDE
+// A friendly raccoon who says hello on the title screen, suggests what to play next on
+// each child's hub (the unit class is on, today's missions, the Reading Road...), shows
+// the hub around (🧭 SHOW ME AROUND) and presents 💡 SHOW ME HOW. A tap on Scout: a wave,
+// a hop or a tail twirl, and Scout says the tip aloud; Scout's eyes follow a finger or
+// the mouse. Nothing pops up by itself: the tour starts only from its button.
+// ═══════════════════════════════════════════════════════════════
+// Scout's picture: an original raccoon drawn in SVG, in the game's style (flat colors, ink outlines).
+// Parts that move have their own class: .sc-all (hop, breathe), .sc-tail (sway, twirl), .sc-arm-r
+// (wave), .sc-lid (blink), .sc-look (eyes that follow a finger or the mouse), .sc-mouth and
+// .sc-mouth-open (talking). The neckerchief takes the child's color (--user-color).
+let scoutSvgN = 0;
+function scoutSvg(extraClass) {
+  const id = 'sct' + (++scoutSvgN);
+  const ink = 'var(--ink, #1a1a2e)';
+  const fur = '#9b9daa', dark = '#3a3b47', cream = '#f3eee6', lid = '#9b9daa';
+  return `<svg class="scout-svg${extraClass ? ' ' + extraClass : ''}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+  <defs><clipPath id="${id}t"><path d="M80 101 C99 106 114 92 113 72 C112 59 103 53 97 57 C102 68 99 81 86 88 Z"/></clipPath></defs>
+  <g class="sc-all">
+    <g class="sc-tail">
+      <path d="M80 101 C99 106 114 92 113 72 C112 59 103 53 97 57 C102 68 99 81 86 88 Z" fill="${fur}"/>
+      <g clip-path="url(#${id}t)" stroke="${dark}" stroke-width="6.5" stroke-linecap="butt">
+        <line x1="89" y1="82" x2="97" y2="106"/>
+        <line x1="96" y1="74" x2="116" y2="86"/>
+        <line x1="95" y1="64" x2="117" y2="65"/>
+        <line x1="94" y1="53" x2="116" y2="53" stroke-width="9"/>
+      </g>
+      <path d="M80 101 C99 106 114 92 113 72 C112 59 103 53 97 57 C102 68 99 81 86 88 Z" fill="none" stroke="${ink}" stroke-width="2.6" stroke-linejoin="round"/>
+    </g>
+    <ellipse cx="47" cy="114" rx="9" ry="4.6" fill="${dark}" stroke="${ink}" stroke-width="2.4"/>
+    <ellipse cx="73" cy="114" rx="9" ry="4.6" fill="${dark}" stroke="${ink}" stroke-width="2.4"/>
+    <ellipse cx="60" cy="96" rx="27" ry="21" fill="${fur}" stroke="${ink}" stroke-width="2.6"/>
+    <ellipse cx="60" cy="100" rx="16" ry="14" fill="${cream}"/>
+    <ellipse class="sc-arm-l" cx="36" cy="98" rx="6.5" ry="11" transform="rotate(18 36 98)" fill="${dark}" stroke="${ink}" stroke-width="2.4"/>
+    <g class="sc-arm-r"><ellipse cx="84" cy="98" rx="6.5" ry="11" transform="rotate(-18 84 98)" fill="${dark}" stroke="${ink}" stroke-width="2.4"/></g>
+    <path class="sc-scarf" d="M41 77 L79 77 L60 92 Z" fill="var(--user-color, #f4a261)" stroke="${ink}" stroke-width="2.4" stroke-linejoin="round"/>
+    <g class="sc-head">
+      <path d="M25 42 L27 15 Q29 9 35 12 L50 29 Z" fill="${fur}" stroke="${ink}" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M31 33 L31.5 19 L42 29 Z" fill="#f2b5c4"/>
+      <path d="M95 42 L93 15 Q91 9 85 12 L70 29 Z" fill="${fur}" stroke="${ink}" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M89 33 L88.5 19 L78 29 Z" fill="#f2b5c4"/>
+      <ellipse cx="60" cy="51" rx="37" ry="30" fill="${fur}" stroke="${ink}" stroke-width="2.6"/>
+      <ellipse cx="43" cy="35" rx="9" ry="4.2" fill="${cream}"/>
+      <ellipse cx="77" cy="35" rx="9" ry="4.2" fill="${cream}"/>
+      <path d="M25 52 Q28 39 45 42 Q60 47 75 42 Q92 39 95 52 Q93 63 78 63 Q66 61 60 57 Q54 61 42 63 Q27 63 25 52 Z" fill="${dark}"/>
+      <ellipse cx="60" cy="68" rx="17" ry="12" fill="${cream}"/>
+      <ellipse cx="34" cy="66" rx="5.5" ry="3.2" fill="#f2a0b4" opacity="0.6"/>
+      <ellipse cx="86" cy="66" rx="5.5" ry="3.2" fill="#f2a0b4" opacity="0.6"/>
+      <circle cx="45" cy="51" r="7.8" fill="#fff"/>
+      <circle cx="75" cy="51" r="7.8" fill="#fff"/>
+      <g class="sc-look">
+        <circle cx="45" cy="51.5" r="4.6" fill="${ink}"/><circle cx="46.8" cy="49.6" r="1.7" fill="#fff"/>
+        <circle cx="75" cy="51.5" r="4.6" fill="${ink}"/><circle cx="76.8" cy="49.6" r="1.7" fill="#fff"/>
+      </g>
+      <ellipse class="sc-lid" cx="45" cy="51" rx="8.6" ry="8.6" fill="${dark}"/>
+      <ellipse class="sc-lid" cx="75" cy="51" rx="8.6" ry="8.6" fill="${dark}"/>
+      <path d="M54 61 Q60 58 66 61 Q63.5 66.5 60 66.5 Q56.5 66.5 54 61 Z" fill="${ink}"/>
+      <path class="sc-mouth" d="M53 71 Q56.5 75 60 71 Q63.5 75 67 71" fill="none" stroke="${ink}" stroke-width="2.2" stroke-linecap="round"/>
+      <g class="sc-mouth-open"><ellipse cx="60" cy="72.5" rx="4.6" ry="4" fill="${ink}"/><ellipse cx="60" cy="74.6" rx="2.8" ry="1.6" fill="#f08aa2"/></g>
+    </g>
+  </g>
+</svg>`;
+}
+
+// A child playing their own hub, or the title screen: Scout's words for them.
+function scoutEarly(pid) { return pid === 'k'; }
+function scoutHello() {
+  const h = new Date().getHours();
+  return h < 12 ? 'Good morning!' : h < 17 ? 'Good afternoon!' : 'Good evening!';
+}
+
+// ─── Saying a line ───
+// Scout's mouth moves while the line is spoken, and stops when the voice does.
+let scoutTalkTimer = null;
+function scoutTalk(el) {
+  if (!el) return;
+  clearInterval(scoutTalkTimer);
+  el.classList.add('scout-talking');
+  // Quiet for a moment (not just the gap between two parts of a line) means the line is over.
+  let started = false, quiet = 0, n = 0;
+  scoutTalkTimer = setInterval(() => {
+    const busy = typeof sayBusy === 'function' ? sayBusy() : !!(window.speechSynthesis && window.speechSynthesis.speaking);
+    if (busy) { started = true; quiet = 0; } else quiet++;
+    if ((started && quiet >= 3) || (!started && quiet > 25) || ++n > 250 || !el.isConnected) {
+      clearInterval(scoutTalkTimer);
+      el.classList.remove('scout-talking');
+    }
+  }, 120);
+}
+function scoutSay(text, el) {
+  if (!text) return;
+  speakText(text);
+  scoutTalk(el);
+}
+
+// ─── A tap: a wave, a hop, a tail twirl or a head wiggle, in turn ───
+const SCOUT_MOVES = ['wave', 'hop', 'twirl', 'wiggle'];
+let scoutMoveN = 0;
+function scoutMove(el, move) {
+  if (!el) return;
+  const m = move || SCOUT_MOVES[scoutMoveN++ % SCOUT_MOVES.length];
+  SCOUT_MOVES.forEach(x => el.classList.remove('scout-do-' + x));
+  void el.offsetWidth;
+  el.classList.add('scout-do-' + m);
+  clearTimeout(el._scoutMoveT);
+  el._scoutMoveT = setTimeout(() => el.classList.remove('scout-do-' + m), 1050);
+}
+
+// ─── The title screen: Scout says hello ───
+const SCOUT_TITLE_LINES = [
+  "Hi! I'm Scout the raccoon, your guide. Tap your card to start!",
+  'Want to try another grade? Pick one under Every grade.',
+  'Grown-ups: tap For grown-ups, about this game, to see how it all works.',
+];
+let scoutTitleN = 0;
+function scoutTitleHtml() {
+  scoutTitleN = 0;
+  return `
+    <div class="scout-hello">
+      <button type="button" class="scout-pal" onclick="scoutTitleTap(this)" aria-label="Scout the raccoon, your guide. Tap to hear Scout.">${scoutSvg()}</button>
+      <div class="scout-bubble"><p class="scout-line" aria-live="polite">${SCOUT_TITLE_LINES[0]}</p></div>
+    </div>`;
+}
+function scoutTitleTap(btn) {
+  const line = btn.parentNode.querySelector('.scout-line');
+  const text = SCOUT_TITLE_LINES[scoutTitleN % SCOUT_TITLE_LINES.length];
+  if (line) line.textContent = text;
+  scoutTitleN++;
+  funSound('tap');
+  scoutMove(btn);
+  scoutSay(text, btn);
+}
+
+// ─── The hub: Scout's tips, the most useful first ───
+// Each tip says what to try next, and most come with a button that does it.
+let scoutHub = null;   // { pid, tips, i }
+function scoutTips(pid) {
+  const d = state.profiles[pid];
+  const early = scoutEarly(pid);
+  const tips = [];
+  const grade = typeof OWN_GRADE !== 'undefined' ? OWN_GRADE[pid] : null;
+  // 1. What class is on now, the first topic not played yet.
+  try {
+    const ids = grade && typeof mixNowIds === 'function' ? mixNowIds(grade, pid) : [];
+    const id = ids.find(x => !(d.rounds && d.rounds[x])) || ids[0];
+    const pk = id && yearPack(id);
+    if (pk) tips.push({
+      text: early ? `Your class is learning ${pk.title}. Let's practice it!` : `Your class is probably on ${pk.title} right now. Want to practice it?`,
+      go: 'PRACTICE', act: () => startPack(pk.id) });
+  } catch (e) {}
+  // 2. Today's missions.
+  if (document.querySelector('.missions-card')) {
+    const s = typeof missionsPeek === 'function' ? missionsPeek(d) : null;
+    const done = s && s.day === FUN.today() && Array.isArray(s.done) ? s.done.length : 0;
+    tips.push({
+      text: done >= 3 ? 'You did all three missions today. Amazing!' : done ? `You finished ${done} of your 3 missions today. Keep going!` : 'Three new missions are waiting for you today!',
+      go: 'MISSIONS', act: () => scoutShow('.missions-card') });
+  }
+  // 3. The kindergartener's sounds.
+  if (pid === 'k') {
+    if (allPacks().some(pk => pk.id === 'k_sound_lab')) tips.push({ text: "Let's play in the Sound Lab: hear, blend and change the sounds in words!", go: 'SOUND LAB', act: () => startPack('k_sound_lab') });
+    if (typeof sndOpenPage === 'function') tips.push({ text: 'Tap MY SOUNDS to hear every letter sound, just like your teacher says it.', go: 'MY SOUNDS', act: () => sndOpenPage('K') });
+  }
+  // 4. The Reading Road.
+  if (document.querySelector('.reading-hubcard .reading-hub-go')) tips.push({
+    text: early ? 'The Reading Road has stories and games for you. Let\'s go!' : 'The Reading Road has your next stop waiting, with a story and games.',
+    go: 'READING ROAD', act: () => { const b = document.querySelector('.reading-hubcard .reading-hub-go'); if (b) b.click(); } });
+  // 5. Habits that help.
+  tips.push({ text: early ? 'Stuck? Tap SHOW ME HOW. I will help you, step by step!' : 'Stuck on a question? Tap SHOW ME HOW and I will walk you through it, step by step.' });
+  tips.push({ text: early ? 'After you answer, listen to why. That is how your brain grows!' : 'After every answer, read the why. Knowing why is how you remember.' });
+  if (grade && typeof openMixPicker === 'function' && document.querySelector('.now-strip .mix-btn')) tips.push({
+    text: 'Try MIX AND MATCH: pick some packs, and I will mix them into one round.', go: 'MIX & MATCH', act: () => openMixPicker(grade) });
+  if (document.querySelector('.buddy-card')) tips.push({ text: early ? 'Your Brain Buddy grows when you learn. Go say hi!' : 'Your Brain Buddy grows with every round. Tap the card to visit.', go: 'BRAIN BUDDY', act: () => scoutShow('.buddy-card', true) });
+  tips.push({ text: 'Want a tour? Tap SHOW ME AROUND and I will show you everything here.' });
+  return tips;
+}
+function scoutHubHtml(p) {
+  return `
+    <section class="scout-guide" aria-label="Scout the raccoon, your guide" data-pid="${p.id}">
+      <button type="button" class="scout-pal" onclick="scoutHubTap(this)" aria-label="Scout the raccoon. Tap for another tip.">${scoutSvg()}</button>
+      <div class="scout-bubble">
+        <div class="scout-kicker">🦝 SCOUT SAYS</div>
+        <p class="scout-line" aria-live="polite"></p>
+        <div class="scout-acts">
+          <button type="button" class="scout-go" onclick="scoutGo()" hidden></button>
+          <button type="button" class="scout-more" onclick="scoutNextTip(true)">💡 NEXT TIP</button>
+          <button type="button" class="scout-tour-btn" onclick="scoutTourStart()">🧭 SHOW ME AROUND</button>
+        </div>
+      </div>
+    </section>`;
+}
+// The tips depend on what the hub shows, so they are worked out once it is on screen.
+function scoutHubFill() {
+  const box = document.querySelector('.scout-guide');
+  if (!box || !currentProfile) { scoutHub = null; return; }
+  const pid = currentProfile.id;
+  scoutHub = { pid, tips: scoutTips(pid), i: 0 };
+  scoutShowTip(true);
+}
+function scoutShowTip(first) {
+  const box = document.querySelector('.scout-guide');
+  if (!box || !scoutHub || !scoutHub.tips.length) return;
+  const tip = scoutHub.tips[scoutHub.i % scoutHub.tips.length];
+  box.querySelector('.scout-line').textContent = (first ? scoutHello() + ' ' : '') + tip.text;
+  const go = box.querySelector('.scout-go');
+  go.hidden = !tip.act;
+  go.textContent = tip.act ? (tip.go || "LET'S GO") + ' →' : '';
+}
+function scoutNextTip(fromButton) {
+  if (!scoutHub) return;
+  scoutHub.i++;
+  scoutShowTip(false);
+  const box = document.querySelector('.scout-guide');
+  const pal = box && box.querySelector('.scout-pal');
+  scoutMove(pal);
+  funSound('tap');
+  const d = state.profiles[scoutHub.pid];
+  if (!fromButton || (d && d.autoRead)) scoutSay(box.querySelector('.scout-line').textContent, pal);
+}
+function scoutHubTap(btn) {
+  // A tap on Scout says the tip on show; the next tap moves on to a new one.
+  if (!scoutHub) return;
+  if (btn.dataset.said === String(scoutHub.i)) { scoutNextTip(false); btn.dataset.said = String(scoutHub.i); return; }
+  btn.dataset.said = String(scoutHub.i);
+  funSound('tap');
+  scoutMove(btn);
+  scoutSay(btn.parentNode.querySelector('.scout-line').textContent, btn);
+}
+function scoutGo() {
+  const tip = scoutHub && scoutHub.tips[scoutHub.i % scoutHub.tips.length];
+  if (tip && tip.act) { funSound('tap'); tip.act(); }
+}
+// Bring a part of the hub into view and make it glow for a moment (or open it).
+function scoutShow(sel, open) {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  if (open) { el.click(); return; }
+  scoutScrollTo(el);
+  el.classList.remove('scout-spot-flash'); void el.offsetWidth; el.classList.add('scout-spot-flash');
+  setTimeout(() => el.classList.remove('scout-spot-flash'), 2400);
+}
+function scoutScrollTo(el) {
+  const box = document.getElementById('app');
+  if (!box || !el) return;
+  const top = el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 14;
+  box.scrollTo({ top: Math.max(0, top), behavior: FUN.reducedMotion() ? 'auto' : 'smooth' });
+}
+
+// ─── SHOW ME AROUND: Scout points out each part of the hub ───
+// It starts only from its button, never by itself, and any new screen ends it.
+const SCOUT_TOUR = [
+  { sel: '.now-strip', k: 'This is NOW IN CLASS. It shows what your class is learning now. Tap a card to practice!',
+    t: 'NOW IN CLASS shows the unit your class is probably on, worked out from the school calendar. Tap a topic to practice it.' },
+  { sel: '.now-strip .mix-btn', k: 'MIX AND MATCH! Pick some packs, and play them mixed in one round.',
+    t: 'MIX AND MATCH: pick any packs you like, and play them mixed together in one round.' },
+  { sel: '.reading-hubcard', k: 'The Reading Road! Stories and games, one stop at a time.',
+    t: 'The Reading Road goes stop by stop from letter sounds to big reading skills, with a story at every stop.' },
+  { sel: '.snd-hubcard', k: 'MY SOUNDS. Tap to hear every letter sound, just like your teacher says it.',
+    t: 'MY SOUNDS plays every letter sound, the way class says it.' },
+  { sel: '.buddy-card', k: 'This is your Brain Buddy. It grows when you learn!',
+    t: 'Your Brain Buddy grows as you earn XP. Tap the card to visit.' },
+  { sel: '.missions-card', k: 'Three missions every day. Finish them all for a bonus!',
+    t: 'Three new missions every day. Finish all three for bonus XP and a day streak.' },
+  { sel: '.stk-hubcard', k: 'Your sticker book. Every sticker has a fun fact.',
+    t: 'Your sticker book: you earn stickers by playing, and each one teaches a fact.' },
+  { sel: '.boss-hubcard', k: 'Boss Battle! Every right answer zaps the boss.',
+    t: 'Boss Battle: every right answer zaps the boss. Beat it to meet the next one.' },
+  { sel: '.sprint-hubcard', k: 'Speed Sprint! Try to beat your own best.',
+    t: 'Speed Sprint: quick math facts, against your own best.' },
+  { sel: '.family-card', k: 'The family goal. Everyone at home helps fill it up!',
+    t: 'The family goal: rounds from everyone at home add up toward it.' },
+  { sel: '.hub .bridge-section', k: 'Here are all your packs, unit by unit, just like class.',
+    t: 'Here are all your packs, unit by unit in each subject, in the order class teaches them.' },
+  { sel: '.hub .trophy-grid', k: 'Trophies! Can you win them all?', t: 'Trophies to win. How many can you collect?' },
+  { sel: '.hub-stats button[onclick^="renderProgress"]', k: 'PROGRESS shows how well you are doing.', t: 'PROGRESS shows how you are doing in each subject.' },
+  { sel: null, k: "That's the tour! Tap me any time for a tip. Have fun!", t: "That's the tour! Tap me any time for another tip. Have fun!" },
+];
+let scoutTour = null;  // { pid, steps, i, back }
+function scoutTourStart() {
+  if (!currentProfile) return;
+  const steps = SCOUT_TOUR.filter(s => !s.sel || document.querySelector(s.sel));
+  scoutTour = { pid: currentProfile.id, steps, i: 0, back: document.activeElement };
+  funSound('tap');
+  scoutTourStep();
+}
+function scoutTourStep() {
+  if (!scoutTour) return;
+  const { steps, i, pid } = scoutTour;
+  const s = steps[i];
+  const early = scoutEarly(pid);
+  const text = early ? s.k : s.t;
+  document.querySelectorAll('.scout-spot').forEach(e => e.classList.remove('scout-spot'));
+  const target = s.sel && document.querySelector(s.sel);
+  if (target) { target.classList.add('scout-spot'); scoutScrollTo(target); }
+  else { const g = document.querySelector('.scout-guide'); if (g) scoutScrollTo(g); }
+  const last = i === steps.length - 1;
+  const html = `
+    <div class="scout-tour" id="scout-tour" role="dialog" aria-label="Scout shows you around" aria-modal="false">
+      <button type="button" class="scout-tour-x" onclick="scoutTourEnd(true)" aria-label="End the tour">✕</button>
+      <div class="scout-tour-pal">${scoutSvg()}</div>
+      <div class="scout-tour-main">
+        <div class="scout-kicker">🧭 SHOW ME AROUND · ${i + 1} OF ${steps.length}</div>
+        <p class="scout-tour-text" aria-live="polite">${text}</p>
+        <div class="scout-tour-acts">
+          <button type="button" class="scout-tour-back" onclick="scoutTourMove(-1)" ${i === 0 ? 'disabled' : ''}>← BACK</button>
+          ${speakBtn(text, false)}
+          <button type="button" class="scout-tour-next" onclick="scoutTourMove(1)">${last ? 'DONE ✓' : 'NEXT →'}</button>
+        </div>
+      </div>
+    </div>`;
+  const old = document.getElementById('scout-tour');
+  if (old) old.outerHTML = html; else document.body.insertAdjacentHTML('beforeend', html);
+  const box = document.getElementById('scout-tour');
+  document.body.classList.add('scout-touring');
+  const next = box.querySelector('.scout-tour-next');
+  try { next.focus({ preventScroll: true }); } catch (e) {}
+  const pal = box.querySelector('.scout-tour-pal');
+  scoutMove(pal, i === 0 ? 'wave' : last ? 'hop' : null);
+  const d = state.profiles[pid];
+  if (d && d.autoRead) { speakText(text); scoutTalk(pal); }
+}
+function scoutTourMove(dir) {
+  if (!scoutTour) return;
+  const n = scoutTour.i + dir;
+  if (n >= scoutTour.steps.length) { scoutTourEnd(true); return; }
+  if (n < 0) return;
+  stopSpeech();
+  scoutTour.i = n;
+  funSound('tap');
+  scoutTourStep();
+}
+function scoutTourEnd(byHand) {
+  const box = document.getElementById('scout-tour');
+  if (box) box.remove();
+  document.body.classList.remove('scout-touring');
+  document.querySelectorAll('.scout-spot').forEach(e => e.classList.remove('scout-spot'));
+  if (!scoutTour) return;
+  const back = scoutTour.back;
+  scoutTour = null;
+  if (byHand) {
+    stopSpeech();
+    const g = document.querySelector('.scout-guide');
+    if (g) scoutScrollTo(g);
+    const b = document.querySelector('.scout-guide .scout-tour-btn') || (back && back.isConnected ? back : null);
+    if (b) try { b.focus({ preventScroll: true }); } catch (e) {}
+  }
+}
+document.addEventListener('keydown', e => {
+  if (!scoutTour) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); scoutTourEnd(true); }
+  else if (e.key === 'ArrowRight' && !/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName || '')) { e.preventDefault(); e.stopImmediatePropagation(); scoutTourMove(1); }
+  else if (e.key === 'ArrowLeft' && !/^(INPUT|TEXTAREA)$/.test((e.target || {}).tagName || '')) { e.preventDefault(); e.stopImmediatePropagation(); scoutTourMove(-1); }
+}, true);
+
+// ─── Eyes that follow a finger or the mouse ───
+let scoutPoint = null, scoutEyeFrame = 0, scoutLastMove = 0;
+function scoutEyes() {
+  scoutEyeFrame = 0;
+  if (FUN.reducedMotion()) return;
+  document.querySelectorAll('.scout-svg .sc-look').forEach(g => {
+    const svg = g.ownerSVGElement;
+    const r = svg && svg.getBoundingClientRect();
+    if (!r || !r.width) return;
+    let dx = 0, dy = 0;
+    if (scoutPoint) {
+      dx = scoutPoint.x - (r.left + r.width * 0.5);
+      dy = scoutPoint.y - (r.top + r.height * 0.43);
+      const len = Math.hypot(dx, dy) || 1, k = Math.min(1, len / 160) * 2.6 / len;
+      dx *= k; dy *= k;
+    }
+    g.style.transform = `translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px)`;
+  });
+}
+function scoutEyesSoon() { if (!scoutEyeFrame) scoutEyeFrame = requestAnimationFrame(scoutEyes); }
+for (const ev of ['pointermove', 'pointerdown']) document.addEventListener(ev, e => {
+  scoutPoint = { x: e.clientX, y: e.clientY }; scoutLastMove = Date.now(); scoutEyesSoon();
+}, { passive: true });
+// With nobody pointing, Scout looks around now and then.
+setInterval(() => {
+  if (document.hidden || Date.now() - scoutLastMove < 4000 || !document.querySelector('.scout-svg')) return;
+  const w = window.innerWidth, h = window.innerHeight;
+  scoutPoint = Math.random() < 0.35 ? null : { x: Math.random() * w, y: Math.random() * h };
+  scoutEyesSoon();
+}, 3200);
+
+// ─── Where Scout appears ───
+// The title screen (renderProfileSelect), every child's hub (renderHub) and SHOW ME HOW (renderCoach).
+// A new screen ends the tour; a hub, once drawn, gets its tips.
+const scoutRender0 = render;
+render = function (html) {
+  if (scoutTour || document.getElementById('scout-tour')) scoutTourEnd(false);
+  const out = scoutRender0(html);
+  document.body.classList.toggle('scout-k', !!(currentProfile && currentProfile.id === 'k'));
+  if (document.querySelector('.scout-guide')) scoutHubFill(); else scoutHub = null;
+  scoutEyesSoon();
+  return out;
+};
+// A 🔊 next to Scout's words: Scout says them.
+document.addEventListener('click', e => {
+  const b = e.target && e.target.closest && e.target.closest('.js-speak');
+  const host = b && b.closest('#coach-overlay, #scout-tour, .scout-guide, .scout-hello');
+  if (host) setTimeout(() => scoutTalk(host.querySelector('.coach-kicker, .scout-tour-pal, .scout-pal')), 60);
+});
 
 // Launch. Every module has added its packs by now, so each pack's home
 // profile and grade can be settled once.

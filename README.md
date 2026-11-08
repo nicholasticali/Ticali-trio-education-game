@@ -21,8 +21,8 @@ HOW steps; 1,100+ thinking puzzles; 14 math packs that make fresh questions ever
 round; a Reading Road of 40 stops in 11 lands; and every letter sound as a recording
 of that sound alone, said the way CKLA teaches it (see 🔈 Letter sounds below).
 
-On the title screen, just above the three profile cards, is **ℹ️ For grown-ups:
-about this game**. It is a page written for teachers and principals: what
+On the title screen, just above Scout the raccoon (the game's guide, see 🦝 Scout
+below) and the three profile cards, is **ℹ️ For grown-ups: about this game**. It is a page written for teachers and principals: what
 the game is and what it is for, what it follows, how it was made and its limits,
 privacy, how to try it, and every grade's packs.
 
@@ -208,6 +208,27 @@ Stars unlock the next stop. The kindergartener starts at the first stop, the 3rd
 grader at Big Word Bay and the 5th grader at Detective Island; every earlier stop
 stays open.
 
+## 🦝 Scout, the guide
+
+Scout is a friendly raccoon (drawn for this game) who guides the children:
+
+- **On the title screen** Scout says hello and tells them to tap their card. A tap on
+  Scout gets a wave, a hop or a tail twirl, and the next line, said aloud.
+- **On each child's hub** Scout suggests what to try next, the most useful first: the
+  topic class is on now (with a PRACTICE button that starts it), today's missions, the
+  Sound Lab and MY SOUNDS for the kindergartener, the Reading Road, Mix & Match, the
+  Brain Buddy, and habits that help ("Stuck? Tap SHOW ME HOW"). 💡 NEXT TIP goes on to
+  the next one; a tap on Scout says the tip aloud.
+- **🧭 SHOW ME AROUND** walks through the hub one part at a time: each part is scrolled
+  into view and outlined while Scout explains it (read aloud for the kindergartener).
+  NEXT, BACK, the arrow keys, Esc or ✕ work it, and any new screen ends it.
+- **💡 SHOW ME HOW** is Scout's: Scout is in its header and talks while a step is read.
+
+Scout blinks, sways a ringed tail, and looks toward a finger or the mouse; the mouth
+moves while Scout talks. Nothing pops up by itself, Scout saves nothing, and with
+Reduced Motion on, Scout keeps still. The Brain Buddy is still the child's own pet
+and cheerleader; Scout is the guide.
+
 ## Fun, and kind
 
 XP, levels, trophies and streaks; a 🐾 buddy that hatches and grows with the child;
@@ -377,7 +398,7 @@ input change, also `screens.js`, `platforms.js`, `saves.js` and `speech.js`; aft
 changing questions or coaching steps, `coach.js`, and for K and 1st grade
 `readaloud.js`; after changing a math generator, `generators.js`; after changing
 the year plan, the hub or Mix & Match, `units.js`; after changing speech, sounds or
-the sounds page, `sounds.js`. After changing a
+the sounds page, `sounds.js`; after changing Scout, `scout.js`. After changing a
 fun module, run its own suite in `tools/modules/`; after changing the Reading Road's
 content, `node modules/readcheck.js` and `node modules/reading.test.js`. The iPad
 runs are Chromium with touch input at iPad screen sizes, not real Safari, so try a
