@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Ticali Trio">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#fdf6e3">
@@ -14,9 +14,9 @@
 <meta name="format-detection" content="telephone=no">
 <!-- Home-screen icon, so "Add to Home Screen" on the iPad gives the kids a
      real app tile instead of a screenshot of the page. -->
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADd0lEQVR42u3d23ETQRBAUcXhIAiJdEwEpORAyMF/WxAAknZWmkdP96m639Ro6iBcZrf79vHxQ7rbzRUIDsEhOASH4BAcSoLj+P6jIsEhOASH4BAcgkNwCA7BITjggAMOwSE4BIfgEByCQ3AIDsEBBxxwCA7BITgEh+AQHOM+0i5XD8eC00c7+S7nzIDjzZfEnTMhju6jBIqfMwmOodMmCp4zD46rl/j35+eSe788AuX3V3AfoXG0OGhv3NW3OGgv/s9Mt8g/zV0ycUlJ33NeMnFJSWkcg1i0EOlzfe+xaCFSFMcEGV18TJCx1kc4HHNYnBJ57ZzdWZwSKYRjvozXfMyXscRHIByrZFz1sUrGfB9RcKyV0e5jrYzJPuLimCzjkY/Tc06W8chHWhxBZJz6CCJjmo/1OELJeOIjlIw5PuCAIyqOgDIa/yNmuYwJPmLhCCLj1EcQGXd9wAFHdhyRZTzxEUrGUB9wwAEHHBvhiC/jro+AMsb5gAMOOOCAAw444IADDjjggIOMzXz45vDNAQcccMABBxxwwAEHHHDAAYfnOTzPAQcccMDh6XNPn8MBhzfevPHmXVnvynqRGo6iOMznMJ/DZB+TfcwEMxPMNEHTBM0hNYfUBOOGf01MMDb7vENmn6fdmhDNh60JUfathCJi30qgTU1BlNjUFGvH2/mf+es2Qowdb9G3Lv7voL2ZB7MdchmRSyYmK7FXdpmSN1mMI2Ij9WIlHWX08mGX/diP1PRb194sTomcnjPgTWbDsVxGuw84KsrI4SMzjrUyEviohWOyjEc+4CBjex85cYSSsa8POOAo9nuOaDI29ZEfRxAZd33AAQccZKTzAQcccMBRHEd8GXv5gAMOOOCAAw444IADDjjggIOMzXz45iADDjjggAMOOOCAAw444IADDj48zwEHHHDA4elzMuCAAw5vvMHhXVk44IDDfA44TPYx2cdMMDPB+DBN0BxSc0jz4TiiTjCGI/rnnDb7PNOlZcMxx0eRv1EJcRzP98YNW5aQ77py4jha9sZ1XaCR8q7S4mgk8v6Ot8S3lBzHMXgpWO4ryo9jEJEKl1MFRy8lpe6kHI7XlNS8iro4Hl1TzU8Nh+AQHIJDcAgOwSE4BIfggAMOOASH4BAcgkNwCA7BITgEBxxwwCE41BuHBIfgEByCQ3AIDsGhzfoH8dyxRMVioZMAAAAASUVORK5CYII=">
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADd0lEQVR42u3d23ETQRBAUcXhIAiJdEwEpORAyMF/WxAAknZWmkdP96m639Ro6iBcZrf79vHxQ7rbzRUIDsEhOASH4BAcSoLj+P6jIsEhOASH4BAcgkNwCA7BITjggAMOwSE4BIfgEByCQ3AIDsEBBxxwCA7BITgEh+AQHOM+0i5XD8eC00c7+S7nzIDjzZfEnTMhju6jBIqfMwmOodMmCp4zD46rl/j35+eSe788AuX3V3AfoXG0OGhv3NW3OGgv/s9Mt8g/zV0ycUlJ33NeMnFJSWkcg1i0EOlzfe+xaCFSFMcEGV18TJCx1kc4HHNYnBJ57ZzdWZwSKYRjvozXfMyXscRHIByrZFz1sUrGfB9RcKyV0e5jrYzJPuLimCzjkY/Tc06W8chHWhxBZJz6CCJjmo/1OELJeOIjlIw5PuCAIyqOgDIa/yNmuYwJPmLhCCLj1EcQGXd9wAFHdhyRZTzxEUrGUB9wwAEHHBvhiC/jro+AMsb5gAMOOOCAAw444IADDjjggIOMzXz45vDNAQcccMABBxxwwAEHHHDAAYfnOTzPAQcccMDh6XNPn8MBhzfevPHmXVnvynqRGo6iOMznMJ/DZB+TfcwEMxPMNEHTBM0hNYfUBOOGf01MMDb7vENmn6fdmhDNh60JUfathCJi30qgTU1BlNjUFGvH2/mf+es2Qowdb9G3Lv7voL2ZB7MdchmRSyYmK7FXdpmSN1mMI2Ij9WIlHWX08mGX/diP1PRb194sTomcnjPgTWbDsVxGuw84KsrI4SMzjrUyEviohWOyjEc+4CBjex85cYSSsa8POOAo9nuOaDI29ZEfRxAZd33AAQccZKTzAQcccMBRHEd8GXv5gAMOOOCAAw444IADDjjggIOMzXz45iADDjjggAMOOOCAAw444IADDj48zwEHHHDA4elzMuCAAw5vvMHhXVk44IDDfA44TPYx2cdMMDPB+DBN0BxSc0jz4TiiTjCGI/rnnDb7PNOlZcMxx0eRv1EJcRzP98YNW5aQ77py4jha9sZ1XaCR8q7S4mgk8v6Ot8S3lBzHMXgpWO4ryo9jEJEKl1MFRy8lpe6kHI7XlNS8iro4Hl1TzU8Nh+AQHIJDcAgOwSE4BIfggAMOOASH4BAcgkNwCA7BITgEBxxwwCE41BuHBIfgEByCQ3AIDsGhzfoH8dyxRMVioZMAAAAASUVORK5CYII=">
-<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiVGljYWxpIFRyaW8iLCJzaG9ydF9uYW1lIjoiVGljYWxpIFRyaW8iLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6ImFueSIsImJhY2tncm91bmRfY29sb3IiOiIjZmRmNmUzIiwidGhlbWVfY29sb3IiOiIjZmRmNmUzIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTFFBQUFDMENBSUFBQUN5cjVGbEFBQURkMGxFUVZSNDJ1M2QyM0VUUVJCQVVjWGhJQWlKZEV3RXBPUkF5TUYvV3hBQWtuWldta2RQOTZtNjM5Um82aUJjWnJmNzl2SHhRN3JielJVSURzRWhPQVNINEJBY1NvTGorUDZqSXNFaE9BU0g0QkFjZ2tOd0NBN0JJVGpnZ0FNT3dTRTRCSWZnRUJ5Q1EzQUlEc0VCQnh4d0NBN0JJVGdFaCtBUUhPTSswaTVYRDhlQzAwYzcrUzdueklEanpaZkVuVE1oanU2akJJcWZNd21Pb2RNbUNwNHpENDZybC9qMzUrZVNlNzg4QXVYM1YzQWZvWEcwT0dodjNOVzNPR2d2L3M5TXQ4Zy96VjB5Y1VsSjMzTmVNbkZKU1drY2cxaTBFT2x6ZmUreGFDRlNGTWNFR1YxOFRKQ3gxa2M0SEhOWW5CSjU3WnpkV1p3U0tZUmp2b3pYZk15WHNjUkhJQnlyWkZ6MXNVckdmQjlSY0t5VjBlNWpyWXpKUHVMaW1DemprWS9UYzA2VzhjaEhXaHhCWkp6NkNDSmptby8xT0VMSmVPSWpsSXc1UHVDQUl5cU9nRElhL3lObXVZd0pQbUxoQ0NMajFFY1FHWGQ5d0FGSGRoeVJaVHp4RVVyR1VCOXd3QUVISEJ2aGlDL2pybytBTXNiNWdBTU9PT0NBQXc0NDRJQUREampnZ0lPTXpYejQ1dkROQVFjY2NNQUJCeHh3d0FFSEhIREFBWWZuT1R6UEFRY2NjTURoNlhOUG44TUJoemZldlBIbVhWbnZ5bnFSR282aU9Nem5NSi9EWkIrVGZjd0VNeFBNTkVIVEJNMGhOWWZVQk9PR2YwMU1NRGI3dkVObW42ZmRtaEROaDYwSlVmYXRoQ0ppMzBxZ1RVMUJsTmpVRkd2SDIvbWYrZXMyUW93ZGI5RzNMdjd2b0wyWkI3TWRjaG1SU3lZbUs3RlhkcG1TTjFtTUkySWo5V0lsSFdYMDhtR1gvZGlQMVBSYjE5NHNUb21jbmpQZ1RXYkRzVnhHdXc4NEtzckk0U016anJVeUV2aW9oV095akVjKzRDQmpleDg1Y1lTU3NhOFBPT0FvOW51T2FESTI5WkVmUnhBWmQzM0FBUWNjWktUekFRY2NjTUJSSEVkOEdYdjVnQU1PT09DQUF3NDQ0SUFERGpqZ2dJT016WHo0NWlBRERqamdnQU1PT09DQUF3NDQ0SUFERGo0OHp3RUhISERBNGVsek11Q0FBdzV2dk1IaFhWazQ0SUREZkE0NFRQWXgyY2RNTURQQitEQk4wQnhTYzBqejRUaWlUakNHSS9ybm5EYjdQTk9sWmNNeHgwZVJ2MUVKY1J6UDk4WU5XNWFRNzdweTRqaGE5c1oxWGFDUjhxN1M0bWdrOHY2T3Q4UzNsQnpITVhncFdPNHJ5bzlqRUpFS2wxTUZSeThscGU2a0hJN1hsTlM4aXJvNEhsMVR6VThOaCtBUUhJSkRjQWdPd1NFNEJJZmdnQU1PT0FTSDRCQWNna053Q0E3QklUZ0VCeHh3d0NFNDFCdUhCSWZnRUJ5Q1EzQUlEc0doemZvSDhkeXhSTVZpb1pNQUFBQUFTVVZPUks1Q1lJST0iLCJzaXplcyI6IjE4MHgxODAiLCJ0eXBlIjoiaW1hZ2UvcG5nIiwicHVycG9zZSI6ImFueSJ9XX0=">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiVGljYWxpIFRyaW8iLCJzaG9ydF9uYW1lIjoiVGljYWxpIFRyaW8iLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6ImFueSIsImJhY2tncm91bmRfY29sb3IiOiIjZmRmNmUzIiwidGhlbWVfY29sb3IiOiIjZmRmNmUzIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTFFBQUFDMENBSUFBQUN5cjVGbEFBQVFBRWxFUVZSNG5PeWRDWFJVMWYzSDcrd3pTV2FHSkROWlNBaFpBUk1DQ2dnQkZDS3lDb2pMT1hXcEZLem8zK05Xa1ZURVVxWDZwNG9IdFkxb3RWWmNzRnJhV2dFallSRUNWQ0tiUU5oRFFqYVNrR1F5bWN5U3pEN1RCeFBldXpQa2haak1mZSsrZUQvSGsvUHVqVFB6SS9ubUxyKzdmS1hlem91QVFPZ09LU0FRV0NEaUlMQkN4RUZnaFlpRHdBb1JCNEVWSWc0Q0swUWNCRmFJT0Fpc0VIRVFXQ0hpSUxCQ3hFRmdoWWlEd0FvUkI0RVZJZzRDSzBRY0JGYUlPQWlzRUhFUVdDSGlJTEJDeEVGZ2hZaUR3QW9SQjRFVklnNENLMFFjQkZhSU9BaXNFSEVRV0NIaUlMQkN4RUZnaFlpRHdBb1JCNEVWSWc0Q0swUWNCRmFJT0Fpc0VIRVFXQkdBT0F3R1UvR08wcXJxaGphVHBhM05iR3k3L0xYTlpLYStGUk90alluUnhzWm9ybnpWcHFVT25qdDdjbXpzSU1BSFFvbXo5NGl3dmZicDlKbXFuYnNPN3R4MTRNU3B5cC8wd2h0SERadHgrNFNaMC9OR0RFOEY2QkZLbkgwQVIzR3MvM1R6aCtzMzF6YzBnLzR4SkRsaHljTjMvbnJSQW9BR29jVFpaekFTaDkvdjMxSzA3NDIzUHF1NzJBVENCOVdHTHk5WVREWGpJRXdJSmM3K2c0czR2aTh0ZS9XMUQ4K2NyZTcydTVrUm11bTZ3Y25LU0wxQ0dTZFg2dVdxUktXS3FyL2tzQnRjOWhhWHcrQnkxTmx0dTFvYkwzUmF1MzJIM0p6TWwxYytPdUhta1FCbG5PN1lCR2RXcmtjYjY0dlUrS0kwM2tpdFYzTjVZQ0d4dEVzNnpHS2JSZEpoa2JTM0tpcFB5b3pOU09NTUMveUx3K1B4dlBUS0J4dSsyQnBTTHhXSjh3YnBadWlUWit1VGtsVlJ2WHkzZXJ1dHVLVitaMnZqQVZPTEYvaER2dnQvUys1NThmbUh4V0l4K09td3hla1hTMXdwbVk2czBZN2hvNzJEZEwxOE4wb2l5dkxqeW9xVDh0cnpJcjhQaEMvT01NS3pPRXdteTZKSFZ4MDdYZzVYU29Eb3ZzRnB5OUp6RTVRUm9LODBPVHJYVnAzYTJGamxDNWJJcEx4UmYzM3ZkMXBOYjlYV1E1eCtrYmh6OUNUcmxIaytUVFRvSzJLTFNiMnZLS0tzTkVRaWZZc3p2UEFwampObnE2aWZlRk9URWE2Y0c1ZThQR04wUnFRR2hJTUxIWmJYS3N1S0RmVndaZEpnL2FjZi9XRjQxdEJldmttM2NkcEhqTEhrMytYVnhZTndJR2x0MXBSOHJTby9Cdm9SWjlqaFRSekYyMHVmV3JyRzVmTFFOU3F4NVAzY3lkUDFTU0RjZkdkb2VQemtmcnZQUzljb0ZQSjMzdnJ0bkZtVHJ2dmFhK1AweWVTbWV4NTFabzBDNFVaUmNTTDZQeCtLM1M3dzArTkVBVC9pMkZLMDk4bG4zNEJyVXBTUkcyNmFtaG1wQldnNGIydGZkSHhmbmFNRHJueXY4SVg1ZDl6YXc2dXVqZE16U05kMi8xTWVYU0pBZzlUUUdMUHhYV2w3SzF4NTNUZ1J3WU00eWs1VzNITmZBZnkzT0RVbTRZTlJ0NmlsTW9BU3E4ZjlTTm0rL2FZV3VrWXVsMjc1OTlzNTJlbWdkM0U2MHJOTjl6N21WNmdBU2tST2U4dy8vNktvTGU5bG5BZ2o0VmdjTFFiVDlEdWVvTVozWFdVL2VDWXQrL21NVVNLUkNLREg1L2V0cVR5NXJ2WU1YUk9uajk2NnVUQStMZ2IwR0NjMXByVk5ubVBOWHdBNGlSUDRmT285bTlXbDI4RDE0a1FLcDVNbGg4UDV5OFVyR1dVQVVKQ1J1enh6TkRmS29CQ0x4Q3V5Umk5TFk3SUlsQWgrOWNoTFRxY2I5QmluZGNwODYyMTNBYTdpQkdLeGRkcmRsaW56UVk5eElvOENjQVdWV0h6ODZkZk9sZGZRTlhmRUpTOU41eUhiODF4RzdyeTRJWFNSeW1qOXBtQXRYYncyVHZ1SW0yeFQ1Z0hPb1Q3VWZzTVl1aGdTSndkd0o0Ny9iTnE5cStRd1hSeWxqbGsza3A5Qk9FWGh5SW5aVWN5aTZMZkYzMjhwMmhONERvblRsVGpVZE5jamdDZE1DMzd0amsrbWkzQ2NITUNST0x4ZTcrdHZma29YOVhMbDMyL0tWNGdsZ0Nlb2ovNzhwbndxRTAvWHJIbHpnL2NLY0p6ZVNFM2JBODhBeENQbG5wREtqUGMvNDQxaXNqNkJPQUVuY0NTT0RWOFV3MG1rdFRlTWo1RXJBSy9FSzFTdmo3aVpMbEtyYUJ2L3RUTWt6dlo1QzMwUmZPWW9LWHhxclhuT0wrbGlJRTdBQ1Z6TVZoeE8xOFFwRDdjYTJ3UEZ2RUg2cjhaTkIzaHc1K0dkUDVxN2tncTZXQzAxS3pFYXpZR2lNeVhMK0tzQ2dBZTZUOWJJNjZzQ3ozcmRvQVA3UHBITGtiZG5YTFFjSDMyOGlWWUd4V3ZRM3l2dnJCNCtsbjQydExiVHlxQXd6M2tRWUlONTFnUDBNeFhueDU5OUE5RERoVGpXZjdxRmZyNDdmdWl3S0ZScDBENlFxNGxaRU4rMWVBSFBxRHR6eG52MGd3RTJ1Qk5UT3JPWlA2cFBQeThDNkVFdURtb0NSczNSQTg5U2tXamxzQnNCWnF6SUhFVUZSczFnNlJxL1dHeVpmaS9BRE91MHUveFhGL0V2MWpkWFhrQStIa0F1amwwbGgram5HYnFrQkVYZlYrRVJNVVFWTlYxSHJmWXh6WVlqYTdSUGpkM3VYKzhnblFOYTdmdHU5MkdBR0U3RmNWc3NxdldxZnBJZm13Q2diUi9PakJ5QUpjNzBiUHA1VjhsQmdCaTA0cUF5MEQ4ZU8wY1hiOGVwRjRjWnE5WEJBdzVIVmk3QUVtY21FOWloSTJjczFnNkFFclRpZ0ZPTnd5SzFHUFlwQVU1Ym1jbVVXemNZd3o0bGdGY2I0NG50Mmw3azgvbjI3RVhiczZBVngrbXpWZlF6dG4wS3VDd09FLzJNYlo4U3dBR3RScDA2VXdWUWd2YkVtN0dOU1J0azR6U0REY0hvZHRMUDd2andiMFVMSTU1NHBtdUdmN3dvUUNzT2VOVmJCeTFrNEVhYml4R0hMMUlOTU1ZYndZUUhwK3hRZ0xqbGdLS1B4VmdjUnJlRGZ2WkZoR2R2TXlMZzhBUXVEcWpkaTVWaExBNm81WUQvTkRFRWJ0aU1iUmFBRXJUaWFERzAwYzk2QmI3aWFISFo2V2RmRk9ZdEI3TktESzlZb1FEdGJFVW1ZMVlPM1Q0ZndCV1ppTmxaSXZKNkFNNXd0bFVSdFRpb3hXWDYyZUJ5QUZ6UlE1dEx4QjFvMitwK0lyWXhQWFdjSG0wK0JxMDQ0dlRNT1VFRDFIVGpSaHgwMmtCc3cxb2NFa2k3Y1hxMG05SFJpa01IWFY3VGluSExBVSt6SloyWXR4eE1lSHBkMzgvbzlnYTBBMUtkRG00NWNPNVdHSEZnM25MQTNZb2VjYmVDVmh4d3R3S3ZYK0FHM0szSW11c0J4c0RoNlhWQzdsWnljcGdUZk4rMU5nQmNHUW10dENrclRnQ01VVmFlcEo5SDVtUUFsS0FWeHkwVGI1VEx1eHFuUzA1N1pRZmFqRjZmMFVNSk9vbTFYZHA2Q1dDSnRLVkJjclZia2Nta3QwNUd1NjBPclRnaUlwUjU0NWt0Q0NXNC90QVB0QnZnYllLS0M2Y0Jsc0NCVWNwQXZRRWQrVTZ3MjI5anRzWHVObUlxamozR1JyaW9xTVJVSE1vTHAram5hZm5qQVdLUWl3UCtOM3pmMWx6YmFRT1lVV2UzN1RlMXdEdkJGRFZuSlNZRHdBeEplNnU4NWp4ZG5EVWpEeUFHdVRoU2h5YW1wM1h0a1BBQi81b0wyQTMzVmxjY0QvUW9kTWNpOHZ2Vkpac0JabWgyZlNXNnV0RTFLek1sSVQ0V0lJYUxjeXVMSHBwTFAyOXVycTNFS1Q5OTF0WmUxRUx2OFdlR0hSRm5Ea3RidzNuTmFEK2hocUtxczBmcDRxS0h1RGoxejRVNEZqNDRkMGd5YzdIYS8xY2NCOWl3R2dvbU9TbU8rbzh1VW4rcEFCdmdZS2dnSDNwZ05rQVBGK0tnSmwwdkZDeWlpenRiRzQ2WmpRQUR5aXpHRW1pTS9Qc1hIMTN4MjhWMGtVcDR5QnFxQVFiSUdtdVUwRHhsNVlvbEVna1hGeFJ3ZE1yK3pubFRSNDNNcEl0UG55cTFlamk5cE9aYTJ0MnVKMCtXMHNXUjJSbHpaMDhPaVRONjAzcVJrK2YxUXBHOUkvcnJqK2hpSUU3QUNkeGQzdkx5eXNmbzUycTdiZkh4dlR6dThLQStldUh4UFZRWWRNMnJxeDRQUE1CeFNrMHRNUnZmQlZ6ZGg5RU5YbS9zUDlaSm9VdnU2RGc1Z0R0eGpCK1hzM2doTTR5aThrN1BuajRBZUlMNjZLTlExL2JJNGdYanhuUWRKZ3VKVTFGWE1Xakx4NEFucUkrV056RG5EK0E0T1VEeTh1K2VBMXd4OWRZeHBRZFBORFIycFJET2RaaGxJdkdFNkRqQUxXOWRPUGx4ZlFWZG5EeHhkT0ZiQlhDZUl5Uk9tYUhSTDVhNlVySUF0MFR0SzRvNlVnTFk0MFFOMTFkTnRyZGJaODEvdXZFU2sySmFtcFpUa0JIKzI0RFpXRk5aVmxqRFhEV1pNaVNoZUV1aFJoMFo4cjlkRzZmMTFybldxWGNDcmxDWGJGTHZMNmFMYkhFaWhZZExhcytWMTh5Lzl6bUhnOW53UFZPWDlGN3VKSlVFN2Y0QnU5Znp4TW5TSGREaU1MWDBzM1hUbnpQU2swSHY0clFQRzkxKzl4Sy9UQTVRSW5LN0JuMzlOOVg1TXRDN09CRkd3c3YxMXNYYlN4OTdjalZjTXp4Uys4V1lmSFNIYVJzZEhROGQyMXQrZFZuNHlqS2JpTXBBUjBhcWV2QmpzMW82ZHU0K2ROa2Y0V3BqN3RZUE5qNzRHM1NIYWNYbXR0aC92RU4xWkhEbFp4Lzk0YmFwNHdEbjhIWXhmdEhXL3o2emJLM2J6V3oxMWtwbHk5SkhMa3JPa29iMWxrRnFZckwrWXZuYlZhZXRYamU4OU5yN3podDYxZVVYK1pRcTY1VDVIV09uZ3ZBMmRWNXY1T0hkNnY5K0s0WW16d3E1N0U5cmw4M2o0K0p6d0srbFJ0bUo4NHVXckFvNThKa1JvVjQxYk13MFhYZ3VhOWpSMHZCS3hiRnF1elh3Qys3L2FPN0syMXh1U0R5eDhlWVp2M0JtaHVlU1hVWDVDZTJ1ZjBuYld1REsyQmp0NXgrL2lucEhUdy93Yk1iVDFHeDhhUEh2eXl0cVErb25SOGYvY2NTNHpINjRybEFyT012UEh2cmhjb1pBQlBjTFlZR1dtak4xaEhuMkF4NWRBdWdyMUFxT2R1dm4xSVE1cEQ0bk8vMlREMWR4c0xyV0EvemJlTm50anFlZWZXUEhydEI3YWtSWDdsU1pwVStlRnpja3BkZVhnVloybUxjYkdyYTExRk5wakN1ZEFhc3NNcU1kMDlPc3lXcVhQc0lURituV3F6eUpVWmVUdHBkc01vTmQydEloTTNSSzZ5enlYZFhxQyszZG45WHI2bTVFWW5keW1uM1lUWTRieG5pamUydmpKVzI5cER4ZnBpdy9UbVhvcjQxdjV1MFQzaTE4UWFsQU8vSzlMcmdZQUc3K1p1L2FQMjJvcWUxK054RFYxOHpRSlFVTUFPTVZTcDFNbFJhcHRubmNCcWVqMVcxdmRsNDJBS3kzZDFEcnEvVlhIRlVDNDgxclZTRVYrL09TYkRQU3JMUFR6Y21hM3VidjZ5Mnk0Z3ZhbmRXYUF3MlJYbi9vbThJZEZ0WFhPTEpHZFJrQXFyWGVDSTAzTm81S3dJdHRWa21uUld3MVh6WUFOQnVWWjQ5S1dWYVgwdE9TQ3BZdW5NL1RJQ01Fakt4RFBSN1BsLy9jL3ZZN1h4b01KaEJ1SkNML2ZkbHR5eVkwSjBUMS9iUmprMDI2OWtEQ3hyUFJQbi80TTFIeGNURkxuMzd3L2wvTTVHWlJyVGRnWnpwTTVSWCsrdEhYZi9ud0s1dXRFNFNKdVpudHkvT2FNMktjSUJ4Y2FGTzg5a01DMVphQU1LRldSejd4MkwxTEhyNUxxZVQ1eXU4UU1MVXJwd1lpUHh3OHRXZmZqM3YySGFtdWFRUjlSU1gxdlQrbmxocGJnSER6WGJYNjhlS2hkay9mRjZjeTBwT20zREkyZjhyWVNYbTV1TWtpQUw1ZTlqUjFGNXQyN3psU1U5dElUWHBOSnN1VmhGVjcyNVU3ZytDRUZaWHdMdGw3Qkg1aGlzYTU0YzZhekRBMUdOZHkzcWhZOUUxcW5TWG85MHBscTdUYXFCN2lwQ2FvUTFNU1owN1BHNXpZMjlFclh3aEFITDJoRzkrNEZPc0hjMnJWQ3JTN0FxeE84U1BmcHU2dlp5WlRmUG14b1dBZ2lDUFVOdzc0bnhuWDh2ekVacTdzMk1DYUh4TFcvY2lzTGZQaXg0WUNuZzJ4KzA4M3ZuRVRtcGRQYXViUWpnMnNtTnkwYkFLekc1a1hQellVQ0ZzYzNmakdaWmlYVG1nQm5QUGNoSlo1bWN4SmNlNzkyRkFnYkhHRStzYkZkYTZiVlFkNG9uRG14V3dkczJiR3NSOGJDZ1FzamxEZnVBajMzeGRVSzZSK3dCUFVSMysrb0RvdWd1bE51UFJqUTRHQXhSSHFHM2Q3Zll5SzU5OUVmS1RuOVduTVppSXUvZGhRSUZSeE9KeXVQNi83a2k1U0t5WW9NbDE5WUZhNlpXd0NZMlpBTFJpNVhFSWRtUXBWSEtHK2Nma1kzUXl6R2dxR016ODJGQWhWSEVHK2NjTk13MkpScFVIN1FHNmNZMEVXSTF4dS9OaFFJRWh4QlBuR2lmMHJiOEh1Mm84Vmt5OVJnUVdldWZGalE0RWd4UkhrRzVkbTZjOHFQQ0tHYU56VFU1bThIQWQrYkNnUXZEaHVHNHJGT1BSYThxSEFPUEJqUTRId3hCSHFHNWVLNmJXaDAxSVpjWERneDRZQ0ZqQ3VlUUFBQkFGSlJFRlU0WWtqeURjdXhvRmhueElnU2UzT2lPNjZsNWNEUHpZVUNFOGNRYjV4dVBZcEFmSlRtRlA4cVAzWVVJRDJCQ0lLZ256amRQaGV0ZytDdzBQdHg0WUM0WWtqeURjdUFtdHZsRmdWRXg1cXl5MFVDTERsZ0gzaitGNU02Ums0UENJT0xnanlqVk5oM1hMQURSdHFQellVQ0U4Y1FiNXhFVml2YWNIYVJlM0hoZ0xoelZhQ2ZlT3dqcC9EUzNpUUlEeHhCUG5HZFdEZDhyVkE0YUgyWTBPQjhNUVI1QnZYaWJVNDRQQlErN0doUUhoamppRGZPRHZtTFFmVEE2TDJZME9CQU1XaEUwekwwUUtGcHhkZ3R5SThjUVQ1eGhsVUFHUGc4RkQ3c2FGQWVPSUk4bzJyd2RwM2ZuY3RFeDZQdHpmMUdlRU5TSU44NDJ6eXlqWWN6NmRUbkd0Vk5sOGRjM0RneDRZQzRZa2oxRGV1RnRQR0F3Nk1BejgyRkFoeUoxaVFieHl1UGN1ZU91Ym9QUWQrYkNnUXBEaUNmT1BxbzJyTlBGK3NkaTExWnRuK2k0dzRPUEJqUTRFZ3hSSGtHK2NYclNudCswMlBpRmk5UDlFUHVwTG4zUGl4b1VDbzUxYUNmT01xQm1FMUxEM2JxaXlxWkxJYTNQaXhvVUNvNGdqMWpkdWZDTEJoOVg2bUplUE1qdzBGUWhWSHFHOWN0ZVpZRXhZSnNiSm1WVWt0Yy9FeVozNXNLQkR3S2Z0UTM3anRLVlluei8rY2RvZmt5VzBwZEpGTFB6WVVDUHZ5bGlEZk9MTmljVkdxbTc5OWc5UkhMOXlTU29WQjEzRHB4NFlDWVlzajFEZXVJZXJablVNQVQxQWZmYlNKY1ZMaTJJOE5CWUsvTUc3VnlzZkczNXhERnplZGp5NDh6TFZwSE1WYkIrT29qNmFMa3llT2Z1bkZKVURnRElTckpydnhqUnZmWEpEWERMaGlUV2w4NFJGbTZzU0xIeHNLQnNnbHRkMzR4cVdaMzV0ZHA1S2h2U0xNN2hZOXNTMWxSelZ6RHpwZmZtd29FSHkzRW1ERThOVENOd3ZnR3VvWE5uZGpWcE1ONFo2RVJxdU0rZ2hZR1JUdnY3TmlZQ2dEREppV0kwQTN2bkVLejdJSnpZdHlqZEt3NWhyY1h0SDZzdGkzRDhWYlhjejc4dXZIaG9JQkpRN0E1aHNYN1ZoMTZ5WDRUb1Qrc0tOSzg4cjNpZFh0UVFsNzN2M1lVRERReEFGNjhJMUx0djR4djdFL0pnclVDczd5a2lScXdoeFNqNE1mR3dvR29EaEFUNzV4L3JHSm5iUFNMUE95ekNsYVZ5L2ZqZExFOWlyTnRpck4wYVlJQUVJUEttSGl4NGFDZ1NtT0FOZnhqWXQyekxocUFCZ2Y2ZGFwUEduUkxwdExiT2lRdHRxbHpWY01BT3V0OHFJS0xmVzEyM2ZBeW84TkJRTlpIQUNaYnh5R2Ztd29HT0RpQ0JCRzN6aHMvZGhROExNUVI0RCsrTWJoNzhlR2dwK1JPR0I2NlJzbklEODJGUHhNeFVIb0RjSTc4VWJnRENJT0FpdEVIQVJXaURnSXJCQnhFRmdoNGlDd1FzUkJZSVdJZzhBS0VRZUJGU0lPQWl0RUhBUldpRGdJckJCeEVGZ2g0aUN3UXNSQllJV0lnOEFLRVFlQkZTSU9BaXRFSEFSV2lEZ0lyQkJ4RUZnaDRpQ3dRc1JCWUlXSWc4QUtFUWVCRlNJT0FpdEVIQVJXaURnSXJCQnhFRmdoNGlDd1FzUkJZT1YvQUFBQS8vOFJJV0FXQUFBQUJrbEVRVlFEQUoxUHhkSEYxMW1qQUFBQUFFbEZUa1N1UW1DQyIsInNpemVzIjoiMTgweDE4MCIsInR5cGUiOiJpbWFnZS9wbmciLCJwdXJwb3NlIjoiYW55In1dfQ==">
 <title>Ticali Trio — Family Edition</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -857,6 +857,42 @@
   @media (hover: hover) and (pointer: fine) {
   .reset-btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
   }
+
+  /* The title screen's offline mark (the game opened from its Home Screen icon), and a new version. */
+  .offline-box:empty, .offline-new:empty { display: none; }
+  .offline-status {
+    max-width: 520px; margin: 1.5rem auto 0; text-align: center; color: var(--muted);
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 0.78rem; letter-spacing: 0.5px; line-height: 1.5;
+  }
+  .offline-status.offline-ok { color: #1d7d72; font-weight: 700; }
+  .offline-new { margin: 0 0 1.25rem; max-width: 100%; }
+  .offline-update {
+    display: block; max-width: 100%; min-height: 48px; padding: 0.55rem 1rem; cursor: pointer; touch-action: manipulation;
+    background: var(--ink); color: white; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--gold);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.8rem; letter-spacing: 0.5px;
+  }
+
+  /* The parent dashboard's backup panel. */
+  .backup-acts { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.9rem; }
+  .backup-btn {
+    display: inline-flex; align-items: center; justify-content: center; position: relative; min-height: 48px;
+    padding: 0.5rem 1rem; margin-top: 0.6rem; cursor: pointer; touch-action: manipulation;
+    background: white; color: var(--ink); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    font-family: 'Bungee', 'Arial Black', 'Helvetica Neue', Impact, sans-serif; font-size: 0.8rem; letter-spacing: 0.5px;
+  }
+  .backup-acts .backup-btn { margin-top: 0; }
+  .backup-btn.backup-go { background: var(--ink); color: white; box-shadow: 3px 3px 0 var(--gold); }
+  .backup-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .backup-file input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .backup-file:focus-within { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .backup-paste-label { display: block; margin-top: 1rem; }
+  .backup-text {
+    display: block; width: 100%; box-sizing: border-box; margin-top: 0.4rem; padding: 0.5rem; min-height: 4.5rem;
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-size: 0.8rem; color: var(--ink);
+    background: white; border: 3px solid var(--ink); border-radius: 0; resize: vertical;
+  }
+  .backup-note { min-height: 1.3em; margin-top: 0.6rem; font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-size: 0.8rem; line-height: 1.45; color: #1d7d72; }
+  .backup-note.backup-bad { color: var(--danger); }
 
   ::-webkit-scrollbar { width: 12px; }
   ::-webkit-scrollbar-track { background: var(--bg-deep); }
@@ -38521,28 +38557,32 @@ function migrateProfileKeys(parsed) {
   return parsed;
 }
 
+// A save, read and brought up to date: an older save gains what newer ones have. Throws on a
+// save that cannot be read. Used at every launch, and to check a backup before it is restored.
+function readSave(raw) {
+  const parsed = migrateProfileKeys(JSON.parse(raw));
+  // Ensure all profiles exist (for legacy saves)
+  for (const pid of ['k','g3','g5']) {
+    if (!parsed.profiles[pid]) parsed.profiles[pid] = newProfile();
+    if (!parsed.profiles[pid].reviews) parsed.profiles[pid].reviews = [];
+    if (!parsed.profiles[pid].rounds) parsed.profiles[pid].rounds = {};
+    if (typeof parsed.profiles[pid].summerMode !== 'boolean') parsed.profiles[pid].summerMode = false;
+    if (typeof parsed.profiles[pid].autoRead !== 'boolean') parsed.profiles[pid].autoRead = false;
+    if (!Array.isArray(parsed.profiles[pid].history)) parsed.profiles[pid].history = [];
+    const un = parsed.profiles[pid].unitNow;
+    if (!un || typeof un !== 'object' || Array.isArray(un)) parsed.profiles[pid].unitNow = {};
+  }
+  if (!parsed.parent) parsed.parent = { reportRequired: true };
+  if (typeof parsed.parent.reportRequired !== 'boolean') parsed.parent.reportRequired = true;
+  if (typeof parsed.parent.secondChance !== 'boolean') parsed.parent.secondChance = true;
+  if (!(parsed.version >= SAVE_VERSION)) parsed.version = SAVE_VERSION;
+  return parsed;
+}
+
 function loadState() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = migrateProfileKeys(JSON.parse(saved));
-      // Ensure all profiles exist (for legacy saves)
-      for (const pid of ['k','g3','g5']) {
-        if (!parsed.profiles[pid]) parsed.profiles[pid] = newProfile();
-        if (!parsed.profiles[pid].reviews) parsed.profiles[pid].reviews = [];
-        if (!parsed.profiles[pid].rounds) parsed.profiles[pid].rounds = {};
-        if (typeof parsed.profiles[pid].summerMode !== 'boolean') parsed.profiles[pid].summerMode = false;
-        if (typeof parsed.profiles[pid].autoRead !== 'boolean') parsed.profiles[pid].autoRead = false;
-        if (!Array.isArray(parsed.profiles[pid].history)) parsed.profiles[pid].history = [];
-        const un = parsed.profiles[pid].unitNow;
-        if (!un || typeof un !== 'object' || Array.isArray(un)) parsed.profiles[pid].unitNow = {};
-      }
-      if (!parsed.parent) parsed.parent = { reportRequired: true };
-      if (typeof parsed.parent.reportRequired !== 'boolean') parsed.parent.reportRequired = true;
-      if (typeof parsed.parent.secondChance !== 'boolean') parsed.parent.secondChance = true;
-      if (!(parsed.version >= SAVE_VERSION)) parsed.version = SAVE_VERSION;
-      return parsed;
-    }
+    if (saved) return readSave(saved);
   } catch(e) {
     // A save that cannot be read must never be silently overwritten by a
     // fresh one: keep a copy of it before the game starts afresh.
@@ -38569,8 +38609,9 @@ function newProfile(autoRead) {
 }
 
 function saveState() {
-  // Just looking: the visit plays from this tab's copy and is never saved.
-  if (guestMode) return true;
+  // Just looking: the visit plays from this tab's copy and is never saved. Held: the page is
+  // reloading to pick up a restored backup (or a reset), which this tab's copy must not undo.
+  if (guestMode || saveState.hold) return true;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; }
   catch (e) {
     // Storage is full (or switched off). Show-your-work items are the only
@@ -38611,6 +38652,9 @@ function mergeSavedProgress(raw) {
   let disk = null;
   try { disk = JSON.parse(raw || localStorage.getItem(STORAGE_KEY)); } catch (e) { return; }
   if (!disk || !disk.profiles || typeof disk.profiles !== 'object') return;
+  // A backup restored in another tab (or a restore undone) replaces the whole save, older
+  // progress included, so it is not merged child by child: this tab starts again from it.
+  if (disk.restoredAt && disk.restoredAt !== state.restoredAt) { saveState.hold = true; location.reload(); return; }
   migrateProfileKeys(disk);
   const answers = d => (d && Number(d.attempts)) || 0;
   const whole = d => d && typeof d === 'object' && Array.isArray(d.trophies) && d.packs && typeof d.packs === 'object';
@@ -38624,7 +38668,7 @@ function mergeSavedProgress(raw) {
   if (mineNewer) saveState();
 }
 window.addEventListener('storage', e => {
-  if (e.key === null || (e.key === STORAGE_KEY && e.newValue === null)) { location.reload(); return; }
+  if (e.key === null || (e.key === STORAGE_KEY && e.newValue === null)) { saveState.hold = true; location.reload(); return; }
   if (e.key === STORAGE_KEY) mergeSavedProgress(e.newValue);
 });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') mergeSavedProgress(); });
@@ -135958,6 +136002,7 @@ function renderProfileSelect() {
       <div class="brand-v">🏆 COOLEST KIDS EVER · FAMILY EDITION 🏆</div>
       <div class="brand-tag">Math · Reading · Science · Puzzles</div>
       <button class="about-link" onclick="renderAbout()">ℹ️ For grown-ups: about this game</button>
+      ${typeof offlineUpdateHtml === 'function' ? offlineUpdateHtml() : ''}
       ${scoutTitleHtml()}
       <div class="profiles">${cards}</div>
       ${titleGradesHtml()}
@@ -138139,7 +138184,10 @@ function renderAbout() {
         a 3rd grader and a 5th grader. It has not been reviewed or endorsed by AACPS or its teachers. It practices this
         year's grade-level work in the programs AACPS uses (Amplify CKLA for reading and Reveal Math for math), explains why
         every answer is right, and shows those programs' methods when a child is stuck. It is one file that runs in a web browser on a
-        laptop or desktop (on an iPad it has to be opened from a web address, not from an email or the Files app). It needs no internet connection, no account and no sign-in, and has no ads or purchases.</p>
+        laptop or desktop. On an iPad, open its web address in Safari, tap Share, then Add to Home Screen, and open the new icon
+        once on Wi-Fi, until its first screen says Ready to play without internet: from then on it opens like an app and plays with
+        no internet (a copy from an email or the Files app does not run). It needs no account and no sign-in, and has no ads or
+        purchases. Progress stays on the device; the parent dashboard can back it up to a file.</p>
         <p class="about-figures">
           <span><strong>${packs.length}</strong> packs, kindergarten to 5th grade</span>
           <span><strong>${round100(writtenQuestionCount())}+</strong> written questions, each with an explanation</span>
@@ -138237,7 +138285,7 @@ function renderAbout() {
         <ul class="about-list">
           <li>No accounts or sign-in. The only names are the three profile labels: Kindergarten, 3rd Grade, 5th Grade.</li>
           <li>Progress is saved only in this browser, on this device. A child's answers are never sent anywhere. No ads,
-            tracking or purchases.</li>
+            tracking or purchases. A backup of the progress (on the parent dashboard) goes only where the grown-up sends it.</li>
           <li>When online, the page loads its typefaces from Google Fonts. Read-aloud uses the most natural voice the device or
             browser offers; in Edge and Chrome some of those are online voices, which receive the words being read aloud: the game's own
             words, plus any name a 3rd or 5th grader types for their buddy. A parent can choose a voice built into the device instead.</li>
@@ -138453,10 +138501,11 @@ function renderParentDash() {
       ${FUN.html('parentExtra', {})}
 
       ${blocks}
+      ${backupPanelHtml()}
       <button class="switch-btn" onclick="renderProfileSelect()" style="margin-top:1rem;">← BACK TO GAME</button>
       <div style="margin-top:3rem;">
       <button class="reset-btn" onclick="if(confirm('Reset ALL progress for all three children? You can undo the last reset from this page.')){try{localStorage.setItem('${STORAGE_KEY}_before_reset',localStorage.getItem('${STORAGE_KEY}')||'')}catch(e){}localStorage.removeItem('${STORAGE_KEY}');location.reload();}">⚠ RESET ALL</button>
-      ${(() => { try { return localStorage.getItem(STORAGE_KEY + '_before_reset') ? '<button class="reset-btn" style="background:white;color:var(--ink);" onclick="restoreBeforeReset()">↩ UNDO THE LAST RESET</button>' : ''; } catch (e) { return ''; } })()}
+      ${(() => { try { return localStorage.getItem(STORAGE_KEY + '_before_reset') ? '<button class="reset-btn" style="background:white;color:var(--ink);" onclick="restoreBeforeReset()">↩ UNDO THE LAST RESET OR RESTORE</button>' : ''; } catch (e) { return ''; } })()}
       </div>
     </div>
   `);
@@ -138499,16 +138548,155 @@ function previewVoice(name) {
   speakText(VOICE_SAMPLE);
 }
 
-// Put back the save that RESET ALL replaced.
+// Put back the save that RESET ALL, or restoring a backup, replaced.
 function restoreBeforeReset() {
-  if (!confirm('Bring back all three children\'s progress from before the last reset? Anything played since then is replaced.')) return;
+  if (!confirm('Bring back all three children\'s progress from before the last reset or restore? Anything played since then is replaced.')) return;
   try {
-    const old = localStorage.getItem(STORAGE_KEY + '_before_reset');
+    let old = localStorage.getItem(STORAGE_KEY + '_before_reset');
     if (!old) return;
+    // Marked as restored, so another open tab starts again from it instead of merging into it.
+    try { const o = JSON.parse(old); if (o && typeof o === 'object') { o.restoredAt = Date.now(); old = JSON.stringify(o); } } catch (e) {}
+    saveState.hold = true;
     localStorage.setItem(STORAGE_KEY, old);
     localStorage.removeItem(STORAGE_KEY + '_before_reset');
-  } catch (e) { alert('That copy could not be restored on this device.'); return; }
+  } catch (e) { saveState.hold = false; alert('That copy could not be restored on this device.'); return; }
   location.reload();
+}
+
+// ─── Back up and restore progress ───
+// Progress is kept on one device, in one place: on an iPad the Home Screen icon and Safari each
+// keep their own, and deleting the icon deletes its progress. A backup is one small file (JSON)
+// with the whole save. Restored on any device, in either place, it brings every child back.
+const BACKUP_KINDS = ['k', 'g3', 'g5', ...Object.keys(PROFILE_MIGRATIONS)];
+function backupPanelHtml() {
+  return `
+      <div class="kid-block backup-block" style="border-color:var(--gold);">
+        <h3>💾 Back Up Progress</h3>
+        <p style="font-size:0.9rem;line-height:1.55;">The children's progress is kept on this device only, and in one place: on an
+        iPad, the Home Screen icon and Safari each keep their own, and deleting the icon deletes its progress. A backup is one
+        small file with all three children's progress. Make one now and then, and keep it in Files, Notes or an email to
+        yourself. To move progress (from Safari to the icon, or to a new iPad), back up in one place and restore in the other.</p>
+        <div class="backup-acts">
+          <button type="button" class="backup-btn backup-go" onclick="backupSave()">💾 BACK UP PROGRESS</button>
+          <button type="button" class="backup-btn" onclick="backupCopy()">📋 COPY AS TEXT</button>
+          <label class="backup-btn backup-file">📂 RESTORE FROM A FILE<input type="file" accept=".json,application/json,text/plain" onchange="backupFromFile(this)"></label>
+        </div>
+        <label class="mini-label backup-paste-label" for="backup-text">Or paste a backup's text here, then tap RESTORE FROM THE TEXT:</label>
+        <textarea id="backup-text" class="backup-text" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
+        <button type="button" class="backup-btn" onclick="backupFromText()">↩ RESTORE FROM THE TEXT</button>
+        <div id="backup-note" class="backup-note" role="status" aria-live="polite"></div>
+      </div>`;
+}
+function backupName() {
+  const d = new Date(), pad = n => String(n).padStart(2, '0');
+  return `Ticali-Trio-progress-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`;
+}
+function backupText() {
+  let save = state;
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) save = JSON.parse(raw); } catch (e) {}
+  return JSON.stringify({ game: 'Ticali Trio', backup: 1, made: new Date().toISOString(), save });
+}
+function backupNote(msg, bad) {
+  const n = document.getElementById('backup-note');
+  if (!n) return;
+  n.textContent = msg;
+  n.classList.toggle('backup-bad', !!bad);
+}
+// iPad and iPhone: the share sheet (Save to Files, AirDrop, Mail, Messages). Elsewhere: a download.
+async function backupSave() {
+  const text = backupText(), name = backupName();
+  let file = null;
+  try { file = new File([text], name, { type: 'application/json' }); } catch (e) {}
+  let canShare = false;
+  try { canShare = !!(file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) {}
+  if (canShare) {
+    try {
+      await navigator.share({ files: [file], title: 'Ticali Trio progress' });
+      backupNote('✓ Backup made: ' + name + '. Keep it somewhere safe, such as Files or an email to yourself.');
+      return 'shared';
+    } catch (e) {
+      if (e && e.name === 'AbortError') { backupNote('No backup was made (the share was closed).'); return 'cancelled'; }
+    }
+  }
+  try {
+    const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: name });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    backupNote('✓ Backup saved: ' + name + ' (in Downloads). Keep it somewhere safe.');
+    return 'downloaded';
+  } catch (e) {
+    backupNote('This device could not save a file. Tap COPY AS TEXT instead.', true);
+    return 'failed';
+  }
+}
+async function backupCopy() {
+  const text = backupText();
+  try {
+    await navigator.clipboard.writeText(text);
+    backupNote('✓ Copied. Paste it into Notes or an email to yourself to keep it.');
+    return 'copied';
+  } catch (e) {}
+  const box = document.getElementById('backup-text');
+  if (box) { box.value = text; box.focus(); box.select(); }
+  backupNote('The backup is in the box below: select all of it and copy it.');
+  return 'shown';
+}
+// A backup's save, checked: the save itself, or a backup file holding one. Throws a message for
+// the grown-up when it is not a whole Ticali Trio save, so nothing is changed.
+function backupRead(text) {
+  let j;
+  try { j = JSON.parse(String(text || '').trim()); }
+  catch (e) { throw new Error('That is not a Ticali Trio backup (it could not be read), so nothing was changed.'); }
+  const save = j && j.save && typeof j.save === 'object' ? j.save : j;
+  const profiles = save && save.profiles;
+  const ids = profiles && typeof profiles === 'object' && !Array.isArray(profiles) ? Object.keys(profiles).filter(id => BACKUP_KINDS.includes(id)) : [];
+  if (!ids.length) throw new Error('That is not a Ticali Trio backup (it has no children\'s progress in it), so nothing was changed.');
+  for (const id of ids) {
+    const d = profiles[id];
+    if (!d || typeof d !== 'object' || Array.isArray(d) || !Array.isArray(d.trophies) || !d.packs || typeof d.packs !== 'object' || !(Number(d.xp) >= 0)) {
+      throw new Error('That backup is damaged (a child\'s progress in it is incomplete), so nothing was changed.');
+    }
+  }
+  let normal;
+  try { normal = readSave(JSON.stringify(save)); }
+  catch (e) { throw new Error('That backup is damaged, so nothing was changed.'); }
+  return { save: normal, made: j && j.made };
+}
+function backupRestore(text) {
+  let got;
+  try { got = backupRead(text); } catch (e) { backupNote(e.message, true); return false; }
+  const made = got.made ? new Date(got.made) : null;
+  const when = made && !isNaN(made) ? ' made ' + made.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+  const sum = Object.values(PROFILES).map(p => `${p.short}: ${(got.save.profiles[p.id] || {}).xp || 0} XP`).join(', ');
+  if (!confirm(`Restore the backup${when} (${sum})? It replaces all three children's progress on this device. The progress here now is kept, and UNDO THE LAST RESET OR RESTORE brings it back.`)) {
+    backupNote('Nothing was changed.');
+    return false;
+  }
+  try {
+    saveState.hold = true;
+    const now = localStorage.getItem(STORAGE_KEY);
+    if (now) localStorage.setItem(STORAGE_KEY + '_before_reset', now);
+    got.save.restoredAt = Date.now();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(got.save));
+  } catch (e) {
+    saveState.hold = false;
+    backupNote('The backup could not be written on this device (its storage may be full), so nothing was changed.', true);
+    return false;
+  }
+  location.reload();
+  return true;
+}
+function backupFromFile(input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  input.value = '';
+  if (f.size > 20e6) { backupNote('That file is too big to be a Ticali Trio backup, so nothing was changed.', true); return; }
+  f.text().then(backupRestore, () => backupNote('That file could not be opened, so nothing was changed.', true));
+}
+function backupFromText() {
+  const box = document.getElementById('backup-text');
+  backupRestore(box ? box.value : '');
 }
 
 function saveSecondChance() {
@@ -140560,6 +140748,102 @@ document.addEventListener('click', e => {
   const host = b && b.closest('#coach-overlay, #scout-tour, .scout-guide, .scout-hello');
   if (host) setTimeout(() => scoutTalk(host.querySelector('.coach-kicker, .scout-tour-pal, .scout-pal')), 60);
 });
+
+// ─── Installed from its web address: the offline copy and the Home Screen manifest ───
+// On the web (https, or localhost for the checks) the game registers sw.js, which keeps a copy so
+// the Home Screen icon opens with no internet, and links manifest.webmanifest (name, icons, full
+// screen). A game opened as a file has neither and needs neither. Installed, it asks the device
+// to keep its saved progress.
+// The icon keeps its own copy (the one Safari saved does not carry over), so opened from the icon
+// the first screen says when that copy is saved: "Ready to play without internet". And when the
+// game comes back to the front with a newer version on the web (an icon left open can stay in the
+// background for days), the first screen offers it.
+const OFFLINE_WEB = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const OFFLINE_GAME_URL = new URL('Ticali_Trio_Family_Edition.html', location.href).href;
+const OFFLINE_CHECK_MS = 20 * 60 * 1000;   // at most one look for a new version every 20 minutes
+let offlineReady = false;      // this device has the whole game saved for playing without internet
+let offlineVersion = null;     // the version playing now (the saved copy's Last-Modified or ETag)
+let offlineNewer = false;      // a newer version is on the web
+let offlineChecked = Date.now();
+function offlineInstalled() {
+  return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+}
+function offlineTag(res) {
+  if (!res) return null;
+  const mod = res.headers.get('Last-Modified');
+  if (mod) return mod;
+  const tag = res.headers.get('ETag');
+  return tag ? tag.replace(/^W\//, '') : null;
+}
+// The first screen: the offline mark at its foot, a new version under the grown-ups' link.
+function offlineStatusHtml() {
+  if (!OFFLINE_WEB) return '';
+  let inner = '';
+  if (offlineInstalled()) {
+    inner = offlineReady
+      ? '<div class="offline-status offline-ok">✓ Ready to play without internet</div>'
+      : '<div class="offline-status">⏳ Saving the game on this device so it plays without internet. Keep the Wi-Fi on for a minute.</div>';
+  }
+  return `<div id="offline-box" class="offline-box">${inner}</div>`;
+}
+function offlineUpdateHtml() {
+  if (!OFFLINE_WEB) return '';
+  const inner = offlineNewer ? '<button type="button" class="offline-update" onclick="location.reload()">✨ A NEW VERSION OF THE GAME IS READY · TAP TO UPDATE</button>' : '';
+  return `<div id="offline-new" class="offline-new">${inner}</div>`;
+}
+function offlineShow() {
+  const box = document.getElementById('offline-box');
+  if (box) box.outerHTML = offlineStatusHtml();
+  const fresh = document.getElementById('offline-new');
+  if (fresh) fresh.outerHTML = offlineUpdateHtml();
+}
+FUN.slot('titleExtra', () => offlineStatusHtml(), 95);
+// Is the whole game saved? The worker turns on only once it has saved the game (sw.js), so this
+// waits for it, then looks.
+async function offlineCheckReady() {
+  if (!OFFLINE_WEB || !('serviceWorker' in navigator) || !window.caches) return false;
+  try {
+    await navigator.serviceWorker.ready;
+    const saved = await caches.match(OFFLINE_GAME_URL);
+    offlineReady = !!saved;
+    if (offlineVersion === null) offlineVersion = offlineTag(saved);
+  } catch (e) {}
+  offlineShow();
+  return offlineReady;
+}
+// A newer version on the web? Asks for the game's headers only (no download), at most every
+// OFFLINE_CHECK_MS unless forced, and only online. The worker is asked to check sw.js too.
+async function offlineCheckForUpdate(force) {
+  if (!OFFLINE_WEB || offlineNewer || navigator.onLine === false) return offlineNewer;
+  if (!force && Date.now() - offlineChecked < OFFLINE_CHECK_MS) return false;
+  offlineChecked = Date.now();
+  try {
+    const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
+    if (reg) reg.update().catch(() => {});
+    const res = await fetch(OFFLINE_GAME_URL, { method: 'HEAD', cache: 'no-cache' });
+    const tag = res.ok ? offlineTag(res) : null;
+    if (!tag) return false;
+    if (offlineVersion === null) { offlineVersion = tag; return false; }
+    if (tag !== offlineVersion) { offlineNewer = true; offlineShow(); }
+  } catch (e) {}
+  return offlineNewer;
+}
+(function () {
+  if (!OFFLINE_WEB) return;
+  // The game's built-in manifest (for a file) gives way to the web's, whose icons and start page are real files.
+  const man = document.querySelector('link[rel="manifest"]') || document.head.appendChild(Object.assign(document.createElement('link'), { rel: 'manifest' }));
+  man.href = 'manifest.webmanifest';
+  // The version playing now: the saved copy as the page opens (a slow connection opens the saved
+  // copy while the new one downloads in the background).
+  if (window.caches) caches.match(OFFLINE_GAME_URL).then(r => { if (offlineVersion === null) offlineVersion = offlineTag(r); }).catch(() => {});
+  if ('serviceWorker' in navigator) {
+    const go = () => navigator.serviceWorker.register('sw.js').catch(e => console.warn('[offline] not set up:', e && e.message));
+    if (document.readyState === 'complete') go(); else window.addEventListener('load', go);
+    offlineCheckReady();
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') offlineCheckForUpdate(false); });
+  if (offlineInstalled() && navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+})();
 
 // Launch. Every module has added its packs by now, so each pack's home
 // profile and grade can be settled once.

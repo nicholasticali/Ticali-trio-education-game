@@ -38,19 +38,45 @@ from the Word file.
 
 - **Laptop or desktop:** save the file (for example, the email attachment) to the
   computer, then double-click it. It opens in the web browser.
-- **iPad:** a downloaded copy, from an email or the Files app, opens in a preview,
-  and that preview does not run the game. On an iPad the game has to be opened from
-  a web address (for example a private link or a family web server). Once it is
-  open in Safari from a web address, **Share ▸ Add to Home Screen** gives it an app
-  tile that runs full screen.
+- **iPad, as an installed game that works with no internet:**
+  1. Open `https://nicholasticali.github.io/Ticali-trio-education-game/` in Safari.
+  2. Tap **Share ▸ Add to Home Screen** (scroll the list, or tap More, to find it),
+     then **Add**.
+  3. While still on Wi-Fi, open the new **Ticali Trio** icon. Leave it open until
+     the foot of the first screen says **✓ Ready to play without internet** (about
+     a minute). The icon keeps its own copy of the game (`sw.js`, a service worker):
+     the copy Safari saved does not carry over to it.
+
+  From then on the icon opens the game full screen and plays with no Wi-Fi.
+  Whenever the iPad is online, the game comes fresh from the web, so updates arrive
+  by themselves; a game left open in the background offers **✨ A NEW VERSION OF THE
+  GAME IS READY** on its first screen. Always open it from the icon: the icon and a
+  Safari tab keep separate progress, and deleting the icon deletes its progress
+  (back it up first; see Parent side). A downloaded copy (from an email or the Files
+  app) opens only in a preview, which does not run the game.
 - **From GitHub Pages:** with this repository public and Pages turned on (Settings ▸
   Pages ▸ Deploy from a branch, the folder `/ (root)`), the game is at
   `https://nicholasticali.github.io/Ticali-trio-education-game/`. `index.html` opens
-  the game file. Safari can clear a website's saved data after about a week without
-  a visit; a Home Screen app keeps it, so add the game to the Home Screen.
+  the game file, and `manifest.webmanifest`, the icons (`icon-*.png`, drawn by
+  `tools/app-icon/make_icons.js`; `tools/app-icon/inline_icon.py` puts the same icon
+  into the game file) and `sw.js` make it installable. Safari can clear a website's
+  saved data after about a week without a visit; a Home Screen app keeps it, so add
+  the game to the Home Screen.
 
-Progress lives in that browser on that device, for that web address. A copy opened
-somewhere else starts fresh and never touches the children's progress.
+`sw.js` takes the game from the web first and falls back to the saved copy when
+the iPad is offline, or when the whole game has not arrived within 6 seconds (a slow
+or stalling connection); a slow download carries on and replaces the copy for next
+time. An unchanged game is not saved again. It saves the typefaces from Google Fonts
+as it sets up; a typeface that has not arrived after 2.5 seconds is skipped and the
+game uses its built-in ones. It never sets up without the game itself: if the game's
+download fails, the setup is tried again on the next visit. Its caches are named
+`ticali-…`; a new name for `CORE` in `sw.js` replaces every old copy once the new one
+is saved.
+
+Progress lives in that browser on that device, for that web address (on an iPad, the
+Home Screen icon counts as its own place). A copy opened somewhere else starts fresh
+and never touches the children's progress. To move it, use **💾 Back Up Progress** on
+the parent dashboard.
 
 ## The three children, 2026-2027
 
@@ -267,17 +293,26 @@ The small **parent** link (bottom right) opens the parent dashboard. Its PIN is
 - the family goal's reward and weekly target;
 - for each child: XP, level, accuracy, rounds, best streak, each pack's best score,
   and the show-your-work queue (what the child typed, what was expected, and buttons
-  to mark the paper).
+  to mark the paper);
+- **💾 Back Up Progress:** BACK UP PROGRESS saves all three children's progress as
+  one small file (`Ticali-Trio-progress-<date>.json`): on an iPad the share sheet
+  opens (Save to Files, AirDrop, Mail), on a laptop it downloads. COPY AS TEXT copies
+  the same backup to paste into Notes or an email. RESTORE FROM A FILE, or pasting a
+  backup's text and tapping RESTORE FROM THE TEXT, asks first (naming the backup's
+  date and each child's XP), then replaces the progress on this device. Use it to
+  move progress from Safari to the Home Screen icon or to a new iPad, and before
+  deleting the icon. A file that is not a backup changes nothing.
 
-**⚠ RESET ALL** sits on its own below the second BACK TO GAME. After a reset,
-**↩ UNDO THE LAST RESET** brings the replaced save back.
+**⚠ RESET ALL** sits on its own below the second BACK TO GAME. After a reset or a
+restore, **↩ UNDO THE LAST RESET OR RESTORE** brings the replaced save back.
 
 ## Privacy
 
 There are no accounts or sign-in. The only names are the three profile labels:
 Kindergarten, 3rd Grade, 5th Grade. Progress is saved only in that browser, on that
-device, and a child's answers are never sent anywhere. When online, the page loads
-its typefaces from Google Fonts. In Edge and Chrome some of the most natural voices
+device, and a child's answers are never sent anywhere. A backup file (Back Up
+Progress) goes only where the grown-up sends it. When online, the page loads its
+typefaces from Google Fonts. In Edge and Chrome some of the most natural voices
 are online voices, which receive the words being read aloud: the game's own words,
 plus any name a 3rd or 5th grader types for their buddy (up to 12 letters). A parent
 can choose a voice built into the device instead.
@@ -398,7 +433,9 @@ input change, also `screens.js`, `platforms.js`, `saves.js` and `speech.js`; aft
 changing questions or coaching steps, `coach.js`, and for K and 1st grade
 `readaloud.js`; after changing a math generator, `generators.js`; after changing
 the year plan, the hub or Mix & Match, `units.js`; after changing speech, sounds or
-the sounds page, `sounds.js`; after changing Scout, `scout.js`. After changing a
+the sounds page, `sounds.js`; after changing Scout, `scout.js`; after changing
+`sw.js`, the manifest or the icons, `offline.js`; after changing how progress is
+saved, backed up or reset, `saves.js`, `backup.js` and `reset.js`. After changing a
 fun module, run its own suite in `tools/modules/`; after changing the Reading Road's
 content, `node modules/readcheck.js` and `node modules/reading.test.js`. The iPad
 runs are Chromium with touch input at iPad screen sizes, not real Safari, so try a
