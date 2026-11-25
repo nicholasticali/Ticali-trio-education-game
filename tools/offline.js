@@ -35,10 +35,11 @@ const until = async (page, fn, arg, ms) => { const end = Date.now() + ms; while 
 //   mode.ver        2 or more: the game carries `window.__gameVer = n` (an update), and a newer date
 //   mode.slowMs     the game's answer starts this late (a slow connection)
 //   mode.stallMs    the game's answer sends its first part, then stalls this long (a dropping one)
+//   mode.dropMs     the game's answer sends its first part, then the connection breaks this late
 //   mode.failSwGame the service worker's own download of the game fails (503)
 //   mode.redirect   the start page has moved (302) to the game, with "?via=redirect"
 //   mode.swCore     sw.js names its cache this instead (a new offline version)
-const mode = { ver: 1, slowMs: 0, stallMs: 0, failSwGame: false, redirect: false, swCore: null };
+const mode = { ver: 1, slowMs: 0, stallMs: 0, dropMs: 0, failSwGame: false, redirect: false, swCore: null };
 const stats = { game200: 0, copy: 0 };
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.json': 'application/json' };
 const server = http.createServer((req, res) => {
@@ -60,6 +61,7 @@ const server = http.createServer((req, res) => {
   const send = () => {
     res.writeHead(200, head);
     if (isGame && mode.stallMs && req.method === 'GET') { res.write(body.subarray(0, 65536)); setTimeout(() => res.end(body.subarray(65536)), mode.stallMs); }
+    else if (isGame && mode.dropMs && req.method === 'GET') { res.write(body.subarray(0, 65536)); setTimeout(() => res.destroy(), mode.dropMs); }
     else res.end(body);
   };
   if (isGame && mode.slowMs) setTimeout(send, mode.slowMs); else send();
@@ -96,7 +98,9 @@ const status = page => page.evaluate(() => { const b = document.getElementById('
   const b = await chromium.launch({ executablePath: CHROMIUM });
   const errs = [];
   const watch = page => { page.on('pageerror', e => errs.push(e.message)); return page; };
-  const ctx = await b.newContext({ viewport: { width: 820, height: 1180 }, hasTouch: true });
+  // New York time: the page's clock is then not the one Chromium writes document.lastModified in
+  // (this machine's), as in a browser that writes it in UTC. Versions must still match.
+  const ctx = await b.newContext({ viewport: { width: 820, height: 1180 }, hasTouch: true, timezoneId: 'America/New_York' });
   await routeFonts(ctx);
   const p = watch(await ctx.newPage());
   await p.addInitScript(quiet);
@@ -186,20 +190,23 @@ const status = page => page.evaluate(() => { const b = document.getElementById('
   await ctx.setOffline(false);
   // An icon left open in the background: no navigation, so the page itself looks.
   await p.goto(BASE + GAME); await p.waitForSelector('.title-screen'); await p.waitForTimeout(500);
-  mode.ver = 3;
+  mode.ver = 3; mode.stallMs = 9000;   // a new version, on a connection that takes 9 s to bring it
   const backToFront = () => p.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await backToFront(); await p.waitForTimeout(1200);
   ok(!(await p.locator('.offline-update').count()), 'back to the front just after opening, it does not look yet (at most every 20 minutes)');
   await p.evaluate(() => { offlineChecked = 0; });
-  await backToFront();
-  await until(p, () => !!document.querySelector('.offline-update'), null, 5000);
-  ok(await p.locator('.offline-update').isVisible(), 'back to the front later, the game offers the newer version: "' + ((await p.locator('.offline-update').textContent().catch(() => '')) || '').trim() + '"');
+  await backToFront(); await p.waitForTimeout(4000);
+  ok(!(await p.locator('.offline-update').count()), 'back to the front later, it downloads the newer version, and offers nothing while that is under way');
+  await until(p, () => !!document.querySelector('.offline-update'), null, 30000);
+  ok(await p.locator('.offline-update').isVisible() && /__gameVer = 3/.test((await savedGame(p)).text), 'once it is saved, the game offers it: "' + ((await p.locator('.offline-update').textContent().catch(() => '')) || '').trim() + '"');
+  let t0 = Date.now();
   await Promise.all([p.waitForNavigation(), p.locator('.offline-update').tap()]);
   await p.waitForSelector('.title-screen');
-  ok(await p.evaluate(() => window.__gameVer === 3) && !(await p.locator('.offline-update').count()), 'one tap updates it');
+  ok(await p.evaluate(() => window.__gameVer === 3) && !(await p.locator('.offline-update').count()) && Date.now() - t0 < 4000, `one tap opens it at once, though the connection is still slow (${Math.round((Date.now() - t0) / 100) / 10} s)`);
+  mode.stallMs = 0;
 
   mode.slowMs = 15000;
-  let t0 = Date.now();
+  t0 = Date.now();
   await p.goto(BASE + GAME, { timeout: 20000 }).catch(() => {});
   let shown = await p.waitForSelector('.title-screen', { timeout: 14000 }).then(() => true).catch(() => false);
   ok(shown && Date.now() - t0 < 12000, `a slow connection: the saved copy opens instead (${Math.round((Date.now() - t0) / 100) / 10} s)`);
@@ -212,6 +219,13 @@ const status = page => page.evaluate(() => { const b = document.getElementById('
   await until(p, async () => { const r = await caches.match(location.origin + location.pathname); return !!r && (await r.text()).includes('__gameVer = 4'); }, null, 25000);
   ok(/__gameVer = 4/.test((await savedGame(p)).text), 'and the slow download, once finished, becomes the saved copy for next time');
   mode.stallMs = 0;
+  ok(await p.evaluate(() => window.__gameVer === 3 && offlineCheckForUpdate(true)) === true && await p.locator('.offline-update').isVisible(), 'the game playing the old copy knows it is the old one, and offers the version that finished behind it');
+  mode.ver = 5; mode.dropMs = 800;
+  t0 = Date.now();
+  await p.goto(BASE + GAME, { timeout: 20000 }).catch(() => {});
+  shown = await p.waitForSelector('.title-screen', { timeout: 14000 }).then(() => true).catch(() => false);
+  ok(shown && await p.evaluate(() => window.__gameVer === 4 && document.readyState === 'complete'), `a connection that breaks off while a new version downloads: the saved copy opens, not a blank screen (${Math.round((Date.now() - t0) / 100) / 10} s)`);
+  mode.dropMs = 0; mode.ver = 4;
 
   mode.redirect = true;
   await p.goto(BASE); await p.waitForSelector('.title-screen');

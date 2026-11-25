@@ -6,11 +6,17 @@
 // 2. BACK UP: the share sheet (iPad, iPhone) gets a dated .json file holding the whole save, a
 //    closed share sheet makes nothing, and a device with no share sheet downloads the file;
 // 3. COPY AS TEXT copies the same backup, or puts it in the box to copy by hand;
-// 4. RESTORE FROM A FILE brings every child's progress back after a yes, keeps what was there
-//    for UNDO, and a no changes nothing; RESTORE FROM THE TEXT does the same;
-// 5. last year's save (old grade keys) and a bare save (not wrapped in a backup) restore too;
+//    the file is shared alone (no title, which Save to Files would keep as a stray text file), and
+//    a second tap while the share sheet opens is left alone; when saving has started failing, the
+//    backup still holds the progress in memory;
+// 4. RESTORE FROM A FILE asks first, naming each child's XP in the backup and here now; a yes brings
+//    every child's progress back and keeps what was there for UNDO, which swaps the two back; a no
+//    changes nothing; RESTORE FROM THE TEXT does the same;
+// 5. last year's save (old grade keys) and a bare save (not wrapped in a backup) restore too, and a
+//    child who has played more here than in the backup can keep this progress, after a question;
 // 6. a file that is not a backup, or a damaged one, is refused with a message and nothing changes;
-// 7. another open tab picks up the restored progress instead of saving its own over it;
+// 7. another open tab picks up the restored progress instead of saving its own over it, and an old
+//    copy of the game that saves its own progress over the restore is reported;
 // 8. no JS errors.
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -26,12 +32,18 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   const b = await chromium.launch({ executablePath: CHROMIUM });
   const ctx = await b.newContext({ viewport: { width: 820, height: 1180 }, hasTouch: true, acceptDownloads: true });
   const errs = [];
-  // Each dialog: the PIN, then whatever `answer` says to a confirm.
-  let answer = true, asked = [];
+  // Each dialog: the PIN; whatever `keep` says to "keep this child's progress from here?"; whatever
+  // `answer` says to any other confirm.
+  let answer = true, keep = false, asked = [];
   const open = async () => {
     const p = await ctx.newPage();
     p.on('pageerror', e => errs.push(e.message));
-    p.on('dialog', d => { asked.push(d.message()); return d.type() === 'prompt' ? d.accept('0000') : (answer ? d.accept() : d.dismiss()); });
+    p.on('dialog', d => {
+      asked.push(d.message());
+      if (d.type() === 'prompt') return d.accept('0000');
+      if (d.type() === 'alert') return d.accept();
+      return (/has played more here/.test(d.message()) ? keep : answer) ? d.accept() : d.dismiss();
+    });
     await p.addInitScript(() => { const ss = window.speechSynthesis; ss.speak = u => setTimeout(() => u.onend && u.onend({}), 20); ss.getVoices = () => []; });
     return p;
   };
@@ -61,7 +73,7 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   await p.evaluate(() => {
     window.__shared = null;
     navigator.canShare = d => !!(d && d.files && d.files.length);
-    navigator.share = async d => { const f = d.files[0]; window.__shared = { name: f.name, type: f.type, text: await f.text() }; };
+    navigator.share = async d => { const f = d.files[0]; window.__shared = { keys: Object.keys(d), name: f.name, type: f.type, text: await f.text() }; };
   });
   await p.locator('.backup-go').tap(); await p.waitForTimeout(300);
   const shared = await p.evaluate(() => window.__shared);
@@ -69,10 +81,14 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   ok(!!shared && /^Ticali-Trio-progress-\d{4}-\d\d-\d\d\.json$/.test(shared.name) && shared.type === 'application/json', 'on an iPad the share sheet gets a dated file: ' + (shared && shared.name));
   ok(file && file.game === 'Ticali Trio' && file.save && file.save.profiles.g3.xp === 777 && file.save.profiles.g5.xp === 1234 && file.save.profiles.k.xp === 111 && !isNaN(new Date(file.made)), 'it holds the whole save (all three children) and when it was made');
   ok(/Backup made/.test(await note(p)), 'and the panel says so: "' + (await note(p)).trim() + '"');
+  ok(shared && shared.keys.join() === 'files', 'the file goes to the share sheet alone (a title would reach Save to Files as a stray text file): ' + (shared && shared.keys.join()));
   await p.evaluate(() => { navigator.share = async () => { throw new DOMException('closed', 'AbortError'); }; });
   let downloaded = false; const dl = () => { downloaded = true; }; p.on('download', dl);
   await p.locator('.backup-go').tap(); await p.waitForTimeout(800);
   ok(!downloaded && /No backup was made/.test(await note(p)), 'closing the share sheet makes nothing: "' + (await note(p)).trim() + '"');
+  await p.evaluate(() => { backupNote(''); navigator.share = async () => { throw new DOMException('share() is already in progress', 'InvalidStateError'); }; });
+  const busy = await p.evaluate(() => backupSave()); await p.waitForTimeout(500);
+  ok(busy === 'busy' && !downloaded && (await note(p)) === '', 'a second tap while the share sheet opens is left alone: no download, nothing said'); 
   p.off('download', dl);
   await p.evaluate(() => { navigator.canShare = undefined; navigator.share = undefined; });
   const [download] = await Promise.all([p.waitForEvent('download'), p.locator('.backup-go').tap()]);
@@ -91,6 +107,18 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   await p.locator('.backup-btn', { hasText: 'COPY AS TEXT' }).tap(); await p.waitForTimeout(200);
   const boxText = await p.evaluate(() => document.getElementById('backup-text').value);
   ok(!!boxText && JSON.parse(boxText).save.profiles.g5.xp === 1234 && /select all of it/.test(await note(p)), 'where copying is not allowed, the backup appears in the box to copy by hand');
+  const full = await p.evaluate(() => {
+    const real = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k, v) { if (k === 'tapChampions_v3') throw new DOMException('full', 'QuotaExceededError'); return real.call(this, k, v); };
+    const warned = saveState.warned; saveState.warned = true;   // no toast
+    state.profiles.g5.xp = 4321; state.profiles.g5.attempts += 5;   // a round played, not saved
+    const saved = saveState();
+    const backedUp = JSON.parse(backupText()).save.profiles.g5.xp;
+    Storage.prototype.setItem = real; saveState.warned = warned;
+    state.profiles.g5.xp = 1234; state.profiles.g5.attempts -= 5; saveState();
+    return { saved, backedUp };
+  });
+  ok(full.saved === false && full.backedUp === 4321, 'when this device has stopped saving (storage full), the backup still holds the newest progress: 4321 XP, not the 1234 last saved');
 
   // ─── 4. RESTORE ───
   console.log('\n▶ RESTORE');
@@ -98,7 +126,7 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   await p.waitForSelector('.backup-block');
   answer = false; asked = [];
   await p.setInputFiles('.backup-file input', backupFile); await p.waitForTimeout(500);
-  ok(asked.length === 1 && /Restore the backup made .+ \(K: 111 XP, 3rd: 777 XP, 5th: 1234 XP\)\?/.test(asked[0]), 'a backup file first asks, naming its date and each child\'s XP: "' + (asked[0] || '').slice(0, 90) + '…"');
+  ok(asked.length === 1 && /Restore the backup made [A-Z][a-z]+ \d+, \d{4}\? K: 111 XP \(here now: 5\), 3rd: 777 XP \(here now: 6\), 5th: 1234 XP \(here now: 7\)\./.test(asked[0]) && /Close the game in any other tab or window first/.test(asked[0]), 'a backup file first asks, naming its date and each child\'s XP in it and here now: "' + (asked[0] || '').slice(0, 130) + '…"');
   ok(await xp(p) === '5/6/7' && /Nothing was changed/.test(await note(p)), 'a no changes nothing');
   answer = true;
   await Promise.all([p.waitForNavigation(), p.setInputFiles('.backup-file input', backupFile)]);
@@ -110,6 +138,7 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   await Promise.all([p.waitForNavigation(), p.locator('[onclick="restoreBeforeReset()"]').click()]);
   await p.waitForSelector('.title-screen');
   ok(await xp(p) === '5/6/7', 'and the undo brings it back: 5/6/7 XP');
+  ok(await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('tapChampions_v3_before_reset')); return [s.profiles.k.xp, s.profiles.g3.xp, s.profiles.g5.xp].join('/'); }) === '111/777/1234', 'keeping the restored save in its place, so nothing is lost and the same button switches back');
   await dash(p);
   await p.fill('#backup-text', fs.readFileSync(backupFile, 'utf8'));
   await Promise.all([p.waitForNavigation(), p.locator('.backup-btn', { hasText: 'RESTORE FROM THE TEXT' }).tap()]);
@@ -124,6 +153,15 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   await Promise.all([p.waitForNavigation(), p.locator('.backup-btn', { hasText: 'RESTORE FROM THE TEXT' }).tap()]);
   await p.waitForSelector('.title-screen');
   ok(await p.evaluate(() => [state.profiles.k.xp, state.profiles.g3.xp, state.profiles.g5.xp].join('/')) === '50/60/70' && await p.evaluate(() => Array.isArray(state.profiles.k.reviews) && state.profiles.k.unitNow && typeof state.profiles.k.unitNow === 'object'), "last year's save (a bare save, last year's grades) restores into this year's: 50/60/70 XP, brought up to date");
+  ok(asked.filter(m => /has played more here/.test(m)).length === 1 && asked.some(m => /^3rd grade has played more here \(777 XP, 40 answers\) than in the backup \(60 XP, 2 answers\)\. Keep 3rd grade's progress from here\?/.test(m)), 'it asks about each child who has played more here than in the backup (the 3rd grader), and a no takes the backup\'s');
+  // Safari's progress into a Home Screen icon the younger and older child already played in.
+  asked = []; keep = true;
+  await dash(p);
+  await p.fill('#backup-text', fs.readFileSync(backupFile, 'utf8'));
+  await Promise.all([p.waitForNavigation(), p.locator('.backup-btn', { hasText: 'RESTORE FROM THE TEXT' }).tap()]);
+  await p.waitForSelector('.title-screen');
+  ok(await xp(p) === '50/777/70' && asked.filter(m => /has played more here/.test(m)).length === 2, 'a yes keeps that child\'s progress from here and takes the others from the backup: 50/777/70 XP');
+  keep = false; asked = [];
 
   // ─── 6. not a backup ───
   console.log('\n▶ not a backup');
@@ -161,10 +199,25 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   ok(await other.evaluate(() => !window.__stillHere && state.profiles.g3.xp === 777), 'the other tab starts again from the restored progress (777 XP), instead of keeping its own');
   await other.evaluate(() => { state.profiles.g3.xp += 10; saveState(); });
   ok(await xp(p) === '111/787/1234', 'and its next save adds to the restored progress: 111/787/1234 XP');
+  await other.close();
+  // A copy of the previous version still open: it knows nothing of restores and saves its own over one.
+  fs.writeFileSync(path.join(TMP, 'old-version.html'), `<!doctype html><title>old</title><script>
+    const KEY = 'tapChampions_v3', mine = localStorage.getItem(KEY);
+    addEventListener('storage', e => { if (e.key === KEY && e.newValue && !window.__done) { window.__done = true; const s = JSON.parse(mine); delete s.restoredAt; localStorage.setItem(KEY, JSON.stringify(s)); } });
+  </script>`);
+  const old = await ctx.newPage();
+  await old.goto('file://' + path.join(TMP, 'old-version.html'));
+  asked = [];
+  await dash(p);
+  await p.fill('#backup-text', JSON.stringify(lastYear));
+  await Promise.all([p.waitForNavigation(), p.locator('.backup-btn', { hasText: 'RESTORE FROM THE TEXT' }).tap()]);
+  await p.waitForSelector('.title-screen');
+  ok(asked.some(m => /still open in another tab or window/.test(m)) && await xp(p) === '111/787/1234' && await p.evaluate(() => !!localStorage.getItem('tapChampions_v3_before_reset')), 'an old copy of the game that saves its own progress over the restore is reported ("still open in another tab or window"), and the progress from before is kept');
+  await old.close();
 
   ok(!errs.length, 'no JS errors' + (errs.length ? ': ' + [...new Set(errs)].slice(0, 3).join(' | ') : ''));
   await b.close();
   fs.rmSync(TMP, { recursive: true, force: true });
-  console.log(fails.length ? `\nbackup: FAIL — ${fails.length} of ${good + fails.length} checks failed` : `\nbackup: PASS — ${good} checks: progress backs up to a file or text, restores anywhere after a yes, can be undone, and a wrong file changes nothing`);
+  console.log(fails.length ? `\nbackup: FAIL — ${fails.length} of ${good + fails.length} checks failed` : `\nbackup: PASS — ${good} checks: progress backs up to a file or text, restores anywhere after a yes (keeping a child who played more here, if asked), can be switched back, and a wrong file changes nothing`);
   process.exit(fails.length ? 1 : 0);
 })().catch(e => { console.error(e); console.log('backup: FAIL — ' + e.message.split('\n')[0]); fs.rmSync(TMP, { recursive: true, force: true }); process.exit(1); });

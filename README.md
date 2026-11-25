@@ -46,11 +46,15 @@ from the Word file.
      the foot of the first screen says **✓ Ready to play without internet** (about
      a minute). The icon keeps its own copy of the game (`sw.js`, a service worker):
      the copy Safari saved does not carry over to it.
+  4. The icon also starts with no progress of its own. If the children already
+     played in Safari, open the parent dashboard there, tap **BACK UP PROGRESS**,
+     and restore that backup in the icon's parent dashboard before they play in it.
 
   From then on the icon opens the game full screen and plays with no Wi-Fi.
   Whenever the iPad is online, the game comes fresh from the web, so updates arrive
-  by themselves; a game left open in the background offers **✨ A NEW VERSION OF THE
-  GAME IS READY** on its first screen. Always open it from the icon: the icon and a
+  by themselves. A game left open in the background downloads a newer version when it
+  comes back to the front, and once it is saved offers **✨ A NEW VERSION OF THE GAME
+  IS READY** on its first screen; one tap opens it. Always open it from the icon: the icon and a
   Safari tab keep separate progress, and deleting the icon deletes its progress
   (back it up first; see Parent side). A downloaded copy (from an email or the Files
   app) opens only in a preview, which does not run the game.
@@ -299,12 +303,16 @@ The small **parent** link (bottom right) opens the parent dashboard. Its PIN is
   opens (Save to Files, AirDrop, Mail), on a laptop it downloads. COPY AS TEXT copies
   the same backup to paste into Notes or an email. RESTORE FROM A FILE, or pasting a
   backup's text and tapping RESTORE FROM THE TEXT, asks first (naming the backup's
-  date and each child's XP), then replaces the progress on this device. Use it to
-  move progress from Safari to the Home Screen icon or to a new iPad, and before
-  deleting the icon. A file that is not a backup changes nothing.
+  date, and each child's XP in it and here now), then replaces the progress on this
+  device. A child who has played more here than in the backup can keep this progress
+  instead: it asks for each such child. Close the game in any other tab or window
+  first; if one saves its own progress over the restore, it says so. Use it to move
+  progress from Safari to the Home Screen icon or to a new iPad, and before deleting
+  the icon. A file that is not a backup changes nothing.
 
 **⚠ RESET ALL** sits on its own below the second BACK TO GAME. After a reset or a
-restore, **↩ UNDO THE LAST RESET OR RESTORE** brings the replaced save back.
+restore, **↩ UNDO THE LAST RESET OR RESTORE** switches back to the replaced save, and
+keeps the one it replaces, so the same button can switch back again.
 
 ## Privacy
 

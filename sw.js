@@ -106,12 +106,14 @@ function fromWebFirst(event, req) {
   const copy = web.then(res => usable(res) ? res.clone() : null, () => null);
   const saved = caches.open(CORE).then(cache => cache.match(key)).catch(() => undefined);
   // Settles once the whole download is on the device ('saved'), or with 'same' (the saved copy is
-  // this very version: nothing is written), 'unsaved' (it could not be written) or null (nothing
-  // to save: offline, an error page or a redirect).
+  // this very version: nothing is written), 'unsaved' (it all arrived, but the device's storage is
+  // full) or null (nothing to save: offline, an error page, a redirect, or a download that broke
+  // off partway, whose other half is broken too).
   const saving = Promise.all([copy, saved]).then(([fresh, old]) => {
     if (!fresh) return null;
     if (old && sameVersion(fresh, old)) { if (fresh.body) fresh.body.cancel().catch(() => {}); return 'same'; }
-    return caches.open(CORE).then(cache => cache.put(key, fresh)).then(() => 'saved', () => 'unsaved');
+    return caches.open(CORE).then(cache => cache.put(key, fresh))
+      .then(() => 'saved', e => e && e.name === 'QuotaExceededError' ? 'unsaved' : null);
   });
   event.waitUntil(saving.catch(() => {}));
   return (async () => {
@@ -136,8 +138,8 @@ function fromWebFirst(event, req) {
       const res = await web.catch(() => null);
       if (res && res.type === 'opaqueredirect') return res;   // moved: the browser follows it
     }
-    // Offline, too slow, or an error page: the saved copy. A slow download carries on and
-    // replaces the copy for next time.
+    // Offline, too slow, broken off, or an error page: the saved copy. A slow download carries on
+    // and replaces the copy for next time.
     return old;
   })();
 }

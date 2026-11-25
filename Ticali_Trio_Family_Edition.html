@@ -138186,8 +138186,10 @@ function renderAbout() {
         every answer is right, and shows those programs' methods when a child is stuck. It is one file that runs in a web browser on a
         laptop or desktop, with no internet connection needed. On an iPad, open its web address in Safari, tap Share, then Add to Home Screen, and open the new icon
         once on Wi-Fi, until its first screen says Ready to play without internet: from then on it opens like an app and plays with
-        no internet (a copy from an email or the Files app does not run). It needs no account and no sign-in, and has no ads or
-        purchases. Progress stays on the device; the parent dashboard can back it up to a file.</p>
+        no internet (a copy from an email or the Files app does not run). The icon starts with no progress of its own: if the
+        children already played in Safari, back up their progress there (parent dashboard, BACK UP PROGRESS) and restore it in
+        the icon before they play in it. It needs no account and no sign-in, and has no ads or purchases. Progress stays on
+        the device; the parent dashboard can back it up to a file.</p>
         <p class="about-figures">
           <span><strong>${packs.length}</strong> packs, kindergarten to 5th grade</span>
           <span><strong>${round100(writtenQuestionCount())}+</strong> written questions, each with an explanation</span>
@@ -138548,19 +138550,24 @@ function previewVoice(name) {
   speakText(VOICE_SAMPLE);
 }
 
-// Put back the save that RESET ALL, or restoring a backup, replaced.
+// Put back the save that RESET ALL, or restoring a backup, replaced. It swaps the two: the
+// progress it replaces is kept in its place, so nothing played since is lost for good, and the
+// same button switches back again.
 function restoreBeforeReset() {
-  if (!confirm('Bring back all three children\'s progress from before the last reset or restore? Anything played since then is replaced.')) return;
+  let old = null, cur = null;
+  try { old = localStorage.getItem(STORAGE_KEY + '_before_reset'); cur = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+  if (!old) return;
+  if (!confirm(`Switch back to the progress from before the last reset or restore (${backupXpList(old)})? The progress here now (${backupXpList(cur)}) is kept, so this button can switch back again. Close the game in any other tab or window first.`)) return;
+  // Marked as restored, so another open tab starts again from it instead of merging into it.
+  const stamp = Date.now();
+  let marked = false;
+  try { const o = JSON.parse(old); if (o && typeof o === 'object') { o.restoredAt = stamp; old = JSON.stringify(o); marked = true; } } catch (e) {}
   try {
-    let old = localStorage.getItem(STORAGE_KEY + '_before_reset');
-    if (!old) return;
-    // Marked as restored, so another open tab starts again from it instead of merging into it.
-    try { const o = JSON.parse(old); if (o && typeof o === 'object') { o.restoredAt = Date.now(); old = JSON.stringify(o); } } catch (e) {}
     saveState.hold = true;
     localStorage.setItem(STORAGE_KEY, old);
-    localStorage.removeItem(STORAGE_KEY + '_before_reset');
+    if (cur) localStorage.setItem(STORAGE_KEY + '_before_reset', cur); else localStorage.removeItem(STORAGE_KEY + '_before_reset');
   } catch (e) { saveState.hold = false; alert('That copy could not be restored on this device.'); return; }
-  location.reload();
+  if (marked) backupReloadWhenKept(stamp); else location.reload();
 }
 
 // ─── Back up and restore progress ───
@@ -138591,10 +138598,31 @@ function backupName() {
   const d = new Date(), pad = n => String(n).padStart(2, '0');
   return `Ticali-Trio-progress-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`;
 }
+// The newest progress: another tab's newer rounds merged in, then saved. If saving fails (storage
+// full), the backup still holds the progress in memory, rounds this device could not save included.
 function backupText() {
-  let save = state;
-  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) save = JSON.parse(raw); } catch (e) {}
-  return JSON.stringify({ game: 'Ticali Trio', backup: 1, made: new Date().toISOString(), save });
+  try { mergeSavedProgress(); } catch (e) {}
+  saveState();
+  return JSON.stringify({ game: 'Ticali Trio', backup: 1, made: new Date().toISOString(), save: state });
+}
+// "K: 120 XP, 3rd: 640 XP, 5th: 980 XP", from a save's text.
+function backupXpList(raw) {
+  let pr = null;
+  try { pr = readSave(raw).profiles; } catch (e) {}
+  return Object.values(PROFILES).map(p => `${p.short}: ${(pr && pr[p.id] && Number(pr[p.id].xp)) || 0} XP`).join(', ');
+}
+// Another copy of the game still open (an older version that does not know about restores) can
+// save its own progress straight back over a restore. A moment later, check the restore held,
+// say so if it did not, then start again from what is saved.
+function backupReloadWhenKept(stamp) {
+  setTimeout(() => {
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) {}
+    if (!s || s.restoredAt !== stamp) {
+      alert('The game is still open in another tab or window, and it saved its own progress over this. Close it, then try again. The progress from before is kept: UNDO THE LAST RESET OR RESTORE brings it back.');
+    }
+    location.reload();
+  }, 800);
 }
 function backupNote(msg, bad) {
   const n = document.getElementById('backup-note');
@@ -138611,11 +138639,13 @@ async function backupSave() {
   try { canShare = !!(file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) {}
   if (canShare) {
     try {
-      await navigator.share({ files: [file], title: 'Ticali Trio progress' });
+      // The file alone: with a title too, Save to Files also saves the title as a stray text file.
+      await navigator.share({ files: [file] });
       backupNote('✓ Backup made: ' + name + '. Keep it somewhere safe, such as Files or an email to yourself.');
       return 'shared';
     } catch (e) {
       if (e && e.name === 'AbortError') { backupNote('No backup was made (the share was closed).'); return 'cancelled'; }
+      if (e && e.name === 'InvalidStateError') return 'busy';   // a second tap while the share sheet opens
     }
   }
   try {
@@ -138623,7 +138653,7 @@ async function backupSave() {
     const a = Object.assign(document.createElement('a'), { href: url, download: name });
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 60000);
-    backupNote('✓ Backup saved: ' + name + ' (in Downloads). Keep it somewhere safe.');
+    backupNote('✓ Backup saved: ' + name + ' (in Downloads). Keep it somewhere safe. If no file appeared, tap COPY AS TEXT instead.');
     return 'downloaded';
   } catch (e) {
     backupNote('This device could not save a file. Tap COPY AS TEXT instead.', true);
@@ -138668,23 +138698,37 @@ function backupRestore(text) {
   try { got = backupRead(text); } catch (e) { backupNote(e.message, true); return false; }
   const made = got.made ? new Date(got.made) : null;
   const when = made && !isNaN(made) ? ' made ' + made.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
-  const sum = Object.values(PROFILES).map(p => `${p.short}: ${(got.save.profiles[p.id] || {}).xp || 0} XP`).join(', ');
-  if (!confirm(`Restore the backup${when} (${sum})? It replaces all three children's progress on this device. The progress here now is kept, and UNDO THE LAST RESET OR RESTORE brings it back.`)) {
+  const here = state.profiles;   // the progress here now, as the dashboard shows it
+  const xpOf = d => (d && Number(d.xp)) || 0, answersOf = d => (d && Number(d.attempts)) || 0;
+  const sum = Object.values(PROFILES).map(p => `${p.short}: ${xpOf(got.save.profiles[p.id])} XP (here now: ${xpOf(here[p.id])})`).join(', ');
+  if (!confirm(`Restore the backup${when}? ${sum}. It replaces the children's progress on this device. Close the game in any other tab or window first. The progress here now is kept, and UNDO THE LAST RESET OR RESTORE brings it back.`)) {
     backupNote('Nothing was changed.');
     return false;
   }
+  // A child who has played more here than in the backup (more answers, for example on the Home
+  // Screen icon while the backup came from Safari) can keep this progress instead.
+  for (const p of Object.values(PROFILES)) {
+    const mine = here[p.id], theirs = got.save.profiles[p.id];
+    const who = p.id === 'k' ? 'Kindergarten' : `${p.short} grade`;
+    if (answersOf(mine) > answersOf(theirs) &&
+        confirm(`${who} has played more here (${xpOf(mine)} XP, ${answersOf(mine)} answers) than in the backup (${xpOf(theirs)} XP, ${answersOf(theirs)} answers). Keep ${who}'s progress from here? OK keeps it; Cancel takes the backup's.`)) {
+      got.save.profiles[p.id] = JSON.parse(JSON.stringify(mine));
+    }
+  }
+  const stamp = Date.now();
   try {
     saveState.hold = true;
     const now = localStorage.getItem(STORAGE_KEY);
     if (now) localStorage.setItem(STORAGE_KEY + '_before_reset', now);
-    got.save.restoredAt = Date.now();
+    got.save.restoredAt = stamp;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(got.save));
   } catch (e) {
     saveState.hold = false;
     backupNote('The backup could not be written on this device (its storage may be full), so nothing was changed.', true);
     return false;
   }
-  location.reload();
+  backupNote('Restoring…');
+  backupReloadWhenKept(stamp);
   return true;
 }
 function backupFromFile(input) {
@@ -140761,19 +140805,32 @@ document.addEventListener('click', e => {
 const OFFLINE_WEB = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 const OFFLINE_GAME_URL = new URL('Ticali_Trio_Family_Edition.html', location.href).href;
 const OFFLINE_CHECK_MS = 20 * 60 * 1000;   // at most one look for a new version every 20 minutes
+// Versions are told apart by their Last-Modified time. The version playing is taken from the page
+// itself (document.lastModified, "MM/DD/YYYY hh:mm:ss"), never from the saved copy: a slow launch
+// opens the saved copy while the new version downloads and replaces it. Browsers write that time
+// in local time, or in UTC, so a version counts as the one playing if it matches either way.
+function offlineStamp(ms, utc) {
+  const d = new Date(ms), p = n => String(n).padStart(2, '0');
+  const [mo, da, yr, hr, mi, se] = utc
+    ? [d.getUTCMonth() + 1, d.getUTCDate(), d.getUTCFullYear(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()]
+    : [d.getMonth() + 1, d.getDate(), d.getFullYear(), d.getHours(), d.getMinutes(), d.getSeconds()];
+  return `${p(mo)}/${p(da)}/${yr} ${p(hr)}:${p(mi)}:${p(se)}`;
+}
+function offlineTag(res) {   // a web answer's Last-Modified, in ms (null without one)
+  const mod = res && res.headers.get('Last-Modified');
+  const ms = mod ? Date.parse(mod) : NaN;
+  return isNaN(ms) ? null : ms;
+}
+function offlinePlaying(ms) {
+  return offlineVersion === offlineStamp(ms, false) || offlineVersion === offlineStamp(ms, true);
+}
 let offlineReady = false;      // this device has the whole game saved for playing without internet
-let offlineVersion = null;     // the version playing now (the saved copy's Last-Modified or ETag)
-let offlineNewer = false;      // a newer version is on the web
+let offlineVersion = OFFLINE_WEB ? document.lastModified : null;   // the version playing now
+let offlineNewer = false;      // a newer version is saved on the device, ready to open
+let offlineLooking = false;    // a look for a new version is under way
 let offlineChecked = Date.now();
 function offlineInstalled() {
   return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-}
-function offlineTag(res) {
-  if (!res) return null;
-  const mod = res.headers.get('Last-Modified');
-  if (mod) return mod;
-  const tag = res.headers.get('ETag');
-  return tag ? tag.replace(/^W\//, '') : null;
 }
 // The first screen: the offline mark at its foot, a new version under the grown-ups' link.
 function offlineStatusHtml() {
@@ -140804,28 +140861,38 @@ async function offlineCheckReady() {
   if (!OFFLINE_WEB || !('serviceWorker' in navigator) || !window.caches) return false;
   try {
     await navigator.serviceWorker.ready;
-    const saved = await caches.match(OFFLINE_GAME_URL);
-    offlineReady = !!saved;
-    if (offlineVersion === null) offlineVersion = offlineTag(saved);
+    offlineReady = !!(await caches.match(OFFLINE_GAME_URL));
   } catch (e) {}
   offlineShow();
   return offlineReady;
 }
-// A newer version on the web? Asks for the game's headers only (no download), at most every
-// OFFLINE_CHECK_MS unless forced, and only online. The worker is asked to check sw.js too.
+// A newer version on the web? First the game's headers only (no download), at most every
+// OFFLINE_CHECK_MS unless forced, and only online; the worker is asked to check sw.js too. A newer
+// game is then downloaded through the worker and offered only once it is saved, so the tap opens
+// it at once, even on a slow connection. If it is not saved within about 3 minutes, nothing is
+// offered: the next look, or the next launch, tries again.
 async function offlineCheckForUpdate(force) {
-  if (!OFFLINE_WEB || offlineNewer || navigator.onLine === false) return offlineNewer;
+  if (!OFFLINE_WEB || offlineNewer || offlineLooking || navigator.onLine === false) return offlineNewer;
   if (!force && Date.now() - offlineChecked < OFFLINE_CHECK_MS) return false;
   offlineChecked = Date.now();
+  offlineLooking = true;
   try {
     const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
     if (reg) reg.update().catch(() => {});
     const res = await fetch(OFFLINE_GAME_URL, { method: 'HEAD', cache: 'no-cache' });
     const tag = res.ok ? offlineTag(res) : null;
-    if (!tag) return false;
-    if (offlineVersion === null) { offlineVersion = tag; return false; }
-    if (tag !== offlineVersion) { offlineNewer = true; offlineShow(); }
-  } catch (e) {}
+    if (tag === null || offlinePlaying(tag)) return false;
+    if (!(navigator.serviceWorker && navigator.serviceWorker.controller) || !window.caches) {
+      offlineNewer = true;   // no saved copy in the way: a reload comes straight from the web
+    } else {
+      fetch(OFFLINE_GAME_URL).then(r => { if (r.body) r.body.cancel().catch(() => {}); }).catch(() => {});
+      for (let i = 0; i < 90 && !offlineNewer; i++) {
+        if (offlineTag(await caches.match(OFFLINE_GAME_URL)) === tag) offlineNewer = true;
+        else await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+    if (offlineNewer) offlineShow();
+  } catch (e) {} finally { offlineLooking = false; }
   return offlineNewer;
 }
 (function () {
@@ -140833,9 +140900,6 @@ async function offlineCheckForUpdate(force) {
   // The game's built-in manifest (for a file) gives way to the web's, whose icons and start page are real files.
   const man = document.querySelector('link[rel="manifest"]') || document.head.appendChild(Object.assign(document.createElement('link'), { rel: 'manifest' }));
   man.href = 'manifest.webmanifest';
-  // The version playing now: the saved copy as the page opens (a slow connection opens the saved
-  // copy while the new one downloads in the background).
-  if (window.caches) caches.match(OFFLINE_GAME_URL).then(r => { if (offlineVersion === null) offlineVersion = offlineTag(r); }).catch(() => {});
   if ('serviceWorker' in navigator) {
     const go = () => navigator.serviceWorker.register('sw.js').catch(e => console.warn('[offline] not set up:', e && e.message));
     if (document.readyState === 'complete') go(); else window.addEventListener('load', go);
