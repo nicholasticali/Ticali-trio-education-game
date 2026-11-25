@@ -114,11 +114,15 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
     state.profiles.g5.xp = 4321; state.profiles.g5.attempts += 5;   // a round played, not saved
     const saved = saveState();
     const backedUp = JSON.parse(backupText()).save.profiles.g5.xp;
+    // Progress that adds no answers (a Speed Sprint's XP, a grown-up's setting), not saved either.
+    state.profiles.k.xp += 25; state.parent.secondChance = false; saveState();
+    const quiet = JSON.parse(backupText()).save;
     Storage.prototype.setItem = real; saveState.warned = warned;
-    state.profiles.g5.xp = 1234; state.profiles.g5.attempts -= 5; saveState();
-    return { saved, backedUp };
+    state.profiles.g5.xp = 1234; state.profiles.g5.attempts -= 5; state.profiles.k.xp -= 25; state.parent.secondChance = true; saveState();
+    return { saved, backedUp, k: quiet.profiles.k.xp, second: quiet.parent.secondChance, failedAfter: saveState.failed };
   });
   ok(full.saved === false && full.backedUp === 4321, 'when this device has stopped saving (storage full), the backup still holds the newest progress: 4321 XP, not the 1234 last saved');
+  ok(full.k === 136 && full.second === false && full.failedAfter === false, 'and progress that adds no answers (Speed Sprint XP, a changed setting) too: K 136 XP, second chances off');
 
   // ─── 4. RESTORE ───
   console.log('\n▶ RESTORE');
@@ -157,10 +161,14 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   // Safari's progress into a Home Screen icon the younger and older child already played in.
   asked = []; keep = true;
   await dash(p);
+  const baseHere = await p.evaluate(() => { familyState(); return { ...state.family.base }; });
   await p.fill('#backup-text', fs.readFileSync(backupFile, 'utf8'));
   await Promise.all([p.waitForNavigation(), p.locator('.backup-btn', { hasText: 'RESTORE FROM THE TEXT' }).tap()]);
   await p.waitForSelector('.title-screen');
   ok(await xp(p) === '50/777/70' && asked.filter(m => /has played more here/.test(m)).length === 2, 'a yes keeps that child\'s progress from here and takes the others from the backup: 50/777/70 XP');
+  const baseAfter = await p.evaluate(() => ({ ...state.family.base }));
+  const baseBackup = ((fileSaved.save.family || {}).base || {}).k;
+  ok(baseAfter.k === baseHere.k && baseAfter.g5 === baseHere.g5 && baseBackup !== baseHere.k, `a kept child keeps their place in this week's family goal, so no stars are invented (K counts from ${baseAfter.k} XP, as here, not the backup's ${baseBackup})`);
   keep = false; asked = [];
 
   // ─── 6. not a backup ───
@@ -212,8 +220,27 @@ const TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'ticali-backup-'));
   await p.fill('#backup-text', JSON.stringify(lastYear));
   await Promise.all([p.waitForNavigation(), p.locator('.backup-btn', { hasText: 'RESTORE FROM THE TEXT' }).tap()]);
   await p.waitForSelector('.title-screen');
-  ok(asked.some(m => /still open in another tab or window/.test(m)) && await xp(p) === '111/787/1234' && await p.evaluate(() => !!localStorage.getItem('tapChampions_v3_before_reset')), 'an old copy of the game that saves its own progress over the restore is reported ("still open in another tab or window"), and the progress from before is kept');
+  ok(asked.some(m => /still open in another tab or window.*Close it, then tap UNDO THE LAST RESET OR RESTORE, which brings back the progress from before, and then restore the backup again/.test(m)) && await xp(p) === '111/787/1234' && await p.evaluate(() => !!localStorage.getItem('tapChampions_v3_before_reset')), 'an old copy of the game that saves its own progress over the restore is reported, with advice that loses nothing (UNDO first, then restore again), and the progress from before is kept');
   await old.close();
+  // The same old copy, saving its own over an UNDO: the save the undo switched to goes back in the undo's place.
+  await p.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('tapChampions_v3'));
+    const t = JSON.parse(JSON.stringify(s)); t.profiles.k.xp = 1; t.profiles.g3.xp = 2; t.profiles.g5.xp = 3;
+    localStorage.setItem('tapChampions_v3_before_reset', JSON.stringify(t));
+  });
+  const old2 = await ctx.newPage();
+  await old2.goto('file://' + path.join(TMP, 'old-version.html'));
+  asked = [];
+  await dash(p);
+  await Promise.all([p.waitForNavigation(), p.locator('[onclick="restoreBeforeReset()"]').click()]);
+  await p.waitForSelector('.title-screen');
+  const slot = await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('tapChampions_v3_before_reset')); return [s.profiles.k.xp, s.profiles.g3.xp, s.profiles.g5.xp].join('/'); });
+  ok(asked.some(m => /still open in another tab or window.*tap UNDO THE LAST RESET OR RESTORE again/.test(m)) && await xp(p) === '111/787/1234' && slot === '1/2/3', 'an UNDO that an old copy saves over is reported, and the save it switched to (1/2/3 XP) stays in the undo\'s place');
+  await old2.close();
+  await dash(p);
+  await Promise.all([p.waitForNavigation(), p.locator('[onclick="restoreBeforeReset()"]').click()]);
+  await p.waitForSelector('.title-screen');
+  ok(await xp(p) === '1/2/3', 'with the old copy closed, UNDO then switches to it: 1/2/3 XP');
 
   ok(!errs.length, 'no JS errors' + (errs.length ? ': ' + [...new Set(errs)].slice(0, 3).join(' | ') : ''));
   await b.close();

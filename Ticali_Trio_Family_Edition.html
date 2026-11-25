@@ -38612,7 +38612,8 @@ function saveState() {
   // Just looking: the visit plays from this tab's copy and is never saved. Held: the page is
   // reloading to pick up a restored backup (or a reset), which this tab's copy must not undo.
   if (guestMode || saveState.hold) return true;
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; }
+  // saveState.failed: the latest save could not be written (this tab's copy is then the newest).
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); saveState.failed = false; return true; }
   catch (e) {
     // Storage is full (or switched off). Show-your-work items are the only
     // part of a save with no limit, so keep each child's newest 300 still to
@@ -38626,8 +38627,10 @@ function saveState() {
         d.reviews = d.reviews.filter(r => keep.has(r));
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveState.failed = false;
       return true;
     } catch (e2) {
+      saveState.failed = true;
       if (!saveState.warned) {
         saveState.warned = true;
         console.warn('[save] progress could not be saved', e2);
@@ -138567,7 +138570,8 @@ function restoreBeforeReset() {
     localStorage.setItem(STORAGE_KEY, old);
     if (cur) localStorage.setItem(STORAGE_KEY + '_before_reset', cur); else localStorage.removeItem(STORAGE_KEY + '_before_reset');
   } catch (e) { saveState.hold = false; alert('That copy could not be restored on this device.'); return; }
-  if (marked) backupReloadWhenKept(stamp); else location.reload();
+  if (marked) backupReloadWhenKept(stamp, old, 'Close it, then tap UNDO THE LAST RESET OR RESTORE again: the progress you were switching to is kept.');
+  else location.reload();
 }
 
 // ─── Back up and restore progress ───
@@ -138598,10 +138602,11 @@ function backupName() {
   const d = new Date(), pad = n => String(n).padStart(2, '0');
   return `Ticali-Trio-progress-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}.json`;
 }
-// The newest progress: another tab's newer rounds merged in, then saved. If saving fails (storage
-// full), the backup still holds the progress in memory, rounds this device could not save included.
+// The newest progress: another tab's newer rounds merged in, then saved. Once saving has failed
+// (storage full), this tab's copy is the newest, so it is backed up as it is, with no merge: the
+// rounds and settings this device could not save included.
 function backupText() {
-  try { mergeSavedProgress(); } catch (e) {}
+  if (!saveState.failed) try { mergeSavedProgress(); } catch (e) {}
   saveState();
   return JSON.stringify({ game: 'Ticali Trio', backup: 1, made: new Date().toISOString(), save: state });
 }
@@ -138614,12 +138619,15 @@ function backupXpList(raw) {
 // Another copy of the game still open (an older version that does not know about restores) can
 // save its own progress straight back over a restore. A moment later, check the restore held,
 // say so if it did not, then start again from what is saved.
-function backupReloadWhenKept(stamp) {
+// `keep` (an undo's target) goes back in the undo's place if it was saved over; `advice` says what
+// to do next without losing anything.
+function backupReloadWhenKept(stamp, keep, advice) {
   setTimeout(() => {
     let s = null;
     try { s = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) {}
     if (!s || s.restoredAt !== stamp) {
-      alert('The game is still open in another tab or window, and it saved its own progress over this. Close it, then try again. The progress from before is kept: UNDO THE LAST RESET OR RESTORE brings it back.');
+      if (keep) try { localStorage.setItem(STORAGE_KEY + '_before_reset', keep); } catch (e) {}
+      alert('The game is still open in another tab or window, and it saved its own progress over this. ' + advice);
     }
     location.reload();
   }, 800);
@@ -138713,6 +138721,12 @@ function backupRestore(text) {
     if (answersOf(mine) > answersOf(theirs) &&
         confirm(`${who} has played more here (${xpOf(mine)} XP, ${answersOf(mine)} answers) than in the backup (${xpOf(theirs)} XP, ${answersOf(theirs)} answers). Keep ${who}'s progress from here? OK keeps it; Cancel takes the backup's.`)) {
       got.save.profiles[p.id] = JSON.parse(JSON.stringify(mine));
+      // The family goal counts this week's stars from each child's XP at the week's start (its
+      // base): the kept child's comes from here too (or, from another week, counts from now).
+      const gf = got.save.family, hf = state.family;
+      if (gf && gf.base && typeof gf.base === 'object') {
+        gf.base[p.id] = hf && hf.base && hf.week === gf.week && typeof hf.base[p.id] === 'number' ? hf.base[p.id] : xpOf(mine);
+      }
     }
   }
   const stamp = Date.now();
@@ -138728,7 +138742,7 @@ function backupRestore(text) {
     return false;
   }
   backupNote('Restoring…');
-  backupReloadWhenKept(stamp);
+  backupReloadWhenKept(stamp, null, 'Close it, then tap UNDO THE LAST RESET OR RESTORE, which brings back the progress from before, and then restore the backup again.');
   return true;
 }
 function backupFromFile(input) {
@@ -140822,10 +140836,14 @@ function offlineTag(res) {   // a web answer's Last-Modified, in ms (null withou
   return isNaN(ms) ? null : ms;
 }
 function offlinePlaying(ms) {
-  return offlineVersion === offlineStamp(ms, false) || offlineVersion === offlineStamp(ms, true);
+  return ms === offlineVersionMs || offlineVersion === offlineStamp(ms, false) || offlineVersion === offlineStamp(ms, true);
 }
 let offlineReady = false;      // this device has the whole game saved for playing without internet
 let offlineVersion = OFFLINE_WEB ? document.lastModified : null;   // the version playing now
+// The same, as an instant read in the time zone the game opened in, so a trip to another zone
+// with the game left open does not look like a new version.
+const offlineVersionMs = (m => m ? new Date(m[3], m[1] - 1, m[2], m[4], m[5], m[6]).getTime() : NaN)(
+  offlineVersion && /^(\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):(\d\d)$/.exec(offlineVersion));
 let offlineNewer = false;      // a newer version is saved on the device, ready to open
 let offlineLooking = false;    // a look for a new version is under way
 let offlineChecked = Date.now();

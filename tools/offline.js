@@ -283,6 +283,19 @@ const status = page => page.evaluate(() => { const b = document.getElementById('
   ok(stats.game200 - downloads === 1, `the first visit downloads the game once: the setup asks whether it changed and keeps the copy just downloaded (${stats.game200 - downloads} download)`);
   await b2.close(); fs.rmSync(profile, { recursive: true, force: true });
 
+  // A trip to another time zone with the game left open: the browser writes document.lastModified
+  // in the zone the game opened in (New York here), and the iPad's clock then moves to Denver.
+  const b3 = await chromium.launch({ executablePath: CHROMIUM, env: { ...process.env, TZ: 'America/New_York' }, args: ['--host-resolver-rules=MAP fonts.googleapis.com ~NOTFOUND, MAP fonts.gstatic.com ~NOTFOUND'] });
+  const trip = watch(await (await b3.newContext()).newPage());
+  await trip.addInitScript(quiet);
+  await trip.goto(BASE + GAME); await trip.waitForSelector('.title-screen');
+  await until(trip, async () => !!(await navigator.serviceWorker.ready) && !!navigator.serviceWorker.controller, null, 20000);
+  const zoneBefore = await trip.evaluate(() => document.lastModified);
+  await (await trip.context().newCDPSession(trip)).send('Emulation.setTimezoneOverride', { timezoneId: 'America/Denver' });
+  const moved = await trip.evaluate(() => new Date(2026, 10, 25, 12).getTimezoneOffset());
+  ok(moved === 420 && await trip.evaluate(() => offlineCheckForUpdate(true)) === false && !(await trip.locator('.offline-update').count()), `after a move to another time zone with the game open, nothing is offered (opened ${zoneBefore} New York time)`);
+  await b3.close();
+
   // ─── 6. opened as a file ───
   console.log('\n▶ opened as a file');
   const f = watch(await ctx.newPage());
